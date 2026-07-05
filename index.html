@@ -5,57 +5,63 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#F6F2EA">
-<title>Washi</title>
+<meta name="theme-color" content="#1D4166">
+<title>Mekuru</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAADt0lEQVR42u1WTWgdVRQ+5/7NzHvz+tL8CGJoTUISjCklNFCxFPxBqogLVyH+rVoF97p048KtilsrujIF0U3JKim6SNtA+1oSIW1i/aEkoU2iaV5f7sy9c4+LeX15894ziUhXdmDgzuWc7zvn+869DB56/QN4mA+Dh/w8IvhvBLg/DPz3BIwxRHSJI6J03QIWkTFGRC5x6Xq/BIhYKVessV7gc8HTNbIMBzK0xlbKFS64F/jG2O1ypWUdohk91vHoS6PHX3mm/fGOWEe3rv8yPTG9eXdT+pIcpeixjtu62l4Ye7H3aK/yvY2V9UuTl0rTJc9XRFQPyItPnahXRt/Xz489N/7+2MGuts2NP8NifnhosO/4wPzMvL6vOeeIaI0tdhTf/eTMyMjTliXbW5XDfYeOPTuyHeul0pLyMhw7BIhoYvNYd9fbH76RJPbbzya+/+KHK1NX27vbhwf7nYS5mXnlK0SMKtFrp18dHRm+Mnv9y4/O/vjdT2vLdweP9fcN98zNzG/9VeaCt/AAGZrI9Awd7vTCpbnFi5Oz0pfrK+tT5y5Ysv1HeoJ84BLnrMsVcgNHeg3ZqXMX1lc3pCcvTl5emlvs9MOeoSdNZOoNy5hMAEHgSwC9pYUUiKh8ZbRxmAS+J5UgIiISSgS+cmBNZNKehOT63rYECHIe7T5FCCAABMNUR3KECAKQZ2MYgECGCNUwIsGYaHUkWPM3r+5S+iIAB+TZ3AbKbOLuHSAIAJbC1yYBoBkurZceaMsw3cHdCAgAAQUAq4vDKkEms7mnBsr9SLRDIQA57hQBAByBZxVngHtIhHUms6ylzRLt0kHD7SdaThFDzO4gUvUwVuGIGupgTZW19qAmUTpDyFDr2FpzIB9wzuPIxLERghdyfmKs1jEiAqWJyAEQcA8PgACdQ1edbqXk6srab4u3u8PCW++8HBZyhUIw/uapJ3Lhr4u3V1fWlZLpUUAidK7J46xERORJ0c5YPvCoqgk4574+e37g4/fGT504efIoEHTnwztaf/PVeedcqhkR5ALVwZinxD/epojgHBWLofLVtZ9vLdz4QwhOREqJ5eW1q6UbXj44WAwTk1wu3fz084mFhd9zOc85AgDnqKuzTcd29trN5eU1KXmNBev/ixDRGBvFRgruebIWxBjTOrKJOxDmAOBeuSIY8wPPOVcrLoqMsYmnpJSZJholklKkstYHOed8XwGgsRYAwnwAQDX0VCLPU76PDYktxrQ54gEHAVA6pvXQeyY++vH6HxD8DZ9mrghOtQQhAAAAAElFTkSuQmCC">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   :root{
-    --bg:#F6F2EA; --paper:#FFFDF8; --ink:#2A2722; --ink-soft:#8A8174;
-    --line:#E2D9C7; --accent:#A6342B; --accent-soft:rgba(166,52,43,0.09);
-    --known:#4F6B52; --known-soft:rgba(79,107,82,0.12);
-    --shadow:0 1px 2px rgba(40,35,25,0.04), 0 8px 24px rgba(40,35,25,0.05);
-    --radius:14px; --text-scale:1;
+    --bg:#F6F2EA;--paper:#FFFDF8;--ink:#2A2722;--ink-soft:#8A8174;
+    --line:#E2D9C7;--accent:#A6342B;--accent-soft:rgba(166,52,43,0.09);
+    --known:#4F6B52;--known-soft:rgba(79,107,82,0.12);
+    --shadow:0 1px 2px rgba(40,35,25,0.04),0 8px 24px rgba(40,35,25,0.05);
+    --radius:14px;--text-scale:1;
     --font-ui:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic Medium","Segoe UI",Roboto,sans-serif;
     --font-display:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic Medium","Segoe UI",Roboto,sans-serif;
     --font-back:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    color-scheme:light;
   }
-  [data-theme="dark"]{
-    --bg:#1E1B17; --paper:#272320; --ink:#ECE6DA; --ink-soft:#9C9284;
-    --line:#3D3731; --accent:#E0857B; --accent-soft:rgba(224,133,123,0.14);
-    --known:#8FB28F; --known-soft:rgba(143,178,143,0.14); --shadow:none;
+  [data-theme="dark"],[data-theme="amoled"]{
+    --ink:#ECE6DA;--ink-soft:#9C9284;
+    --line:#4A4A4A;--accent:#E0857B;--accent-soft:rgba(224,133,123,0.14);
+    --known:#8FB28F;--known-soft:rgba(143,178,143,0.14);--shadow:none;
+    color-scheme:dark;
   }
-  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  [data-theme="dark"]{--bg:#303030;--paper:#3C3C3C;}
+  [data-theme="amoled"]{--bg:#000000;--paper:#111111;}
+  *{box-sizing:border-box;}html,body{margin:0;padding:0;}
+  html{min-height:100vh;min-height:100dvh;background:var(--bg);}
   [hidden]{display:none !important;}
-  body{
-    background:var(--bg); color:var(--ink); font-family:var(--font-ui);
-    min-height:100vh; min-height:100dvh;
-    display:flex; justify-content:center; align-items:center;
-    padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
-    transition:background-color .2s ease, color .2s ease;
-  }
-  #app{ width:100%; max-width:440px; display:flex; flex-direction:column; padding:18px 20px 28px; }
-  button{font-family:inherit;cursor:pointer;}
-  input,textarea,select{font-family:inherit;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);min-height:100vh;min-height:100dvh;display:flex;justify-content:center;transition:background-color .2s ease,color .2s ease;}
+  #app{width:100%;max-width:440px;display:flex;flex-direction:column;padding:0 20px max(28px,env(safe-area-inset-bottom));min-height:100vh;min-height:100dvh;background:var(--bg);}
+  button{font-family:inherit;cursor:pointer;}input,textarea,select{font-family:inherit;}
   button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 
-  /* ---- header ---- */
-  header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:18px;}
-  #headerLabel{font-size:18px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  header{position:sticky;top:0;z-index:100;background:var(--bg);padding:max(18px,env(safe-area-inset-top)) 0 14px;border-bottom:1px solid var(--line);margin:0 0 18px;display:flex;flex-direction:column;transition:background-color .2s ease;}
+  .headerMain{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  #headerLabel{display:flex;align-items:center;min-width:0;overflow:hidden;flex:1;cursor:pointer;}
+  #headerLabel:hover{opacity:.8;}
+  #headerText{font-size:18px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;transition:color .15s ease;}
+  .logoImg{height:26px;display:none;flex-shrink:0;}
+  .headerShowLogo .logoImg{display:block;}
+  .headerShowLogo .logoImgDark{display:none;}
+  [data-theme="dark"] .headerShowLogo .logoImg,[data-theme="amoled"] .headerShowLogo .logoImg{display:none;}
+  [data-theme="dark"] .headerShowLogo .logoImgDark,[data-theme="amoled"] .headerShowLogo .logoImgDark{display:block;}
+  .headerShowLogo #headerText{display:none;}
   .headerIcons{display:flex;gap:8px;flex-shrink:0;}
   .iconCircleBtn{background:none;border:1px solid var(--line);color:var(--ink-soft);border-radius:999px;width:34px;height:34px;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .iconCircleBtn:hover{border-color:var(--ink-soft);color:var(--ink);}
   .iconCircleBtn.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
-  .deckPill{display:flex;align-items:center;gap:4px;background:none;border:none;color:var(--ink-soft);font-size:12.5px;padding:0;margin:-6px 0 16px;cursor:pointer;}
+  .deckPill{display:flex;align-items:center;gap:4px;background:none;border:none;color:var(--ink-soft);font-size:12px;padding:7px 0 0;cursor:pointer;}
   .deckPill:hover{color:var(--ink);}
-  .deckPill .chev{font-size:12px;opacity:.7;}
+  .deckPill .chev{font-size:11px;opacity:.7;}
 
-  /* ---- screens / subviews ---- */
-  .screen{display:none;flex-direction:column;} .screen.active{display:flex;}
-  .subview{display:none;} .subview.active{display:flex;flex-direction:column;}
+  .screen{display:none;flex-direction:column;}.screen.active{display:flex;}
+  .subview{display:none;}.subview.active{display:flex;flex-direction:column;}
   #emptyView.active{align-items:center;text-align:center;gap:18px;padding:56px 0;}
   #emptyView h1{font-size:20px;margin:0;font-weight:600;}
   #emptyView p{font-size:14px;color:var(--ink-soft);margin:0;max-width:300px;line-height:1.5;}
 
-  /* ---- live progress bar (tri-color) ---- */
   .progressRow{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;font-size:12.5px;color:var(--ink-soft);gap:8px;}
   .progressScores{display:flex;gap:8px;flex-shrink:0;}
   .scoreKnown{color:var(--known);font-weight:600;}
@@ -65,41 +71,50 @@
   #progressUnknown{position:absolute;top:0;height:100%;background:var(--accent);transition:left .25s ease,width .25s ease;}
   .progressRight{flex-shrink:0;white-space:nowrap;}
 
-  /* ---- mode buttons ---- */
-  .modeRow{display:flex;gap:6px;margin-bottom:18px;}
-  .modeBtn{flex:1;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);border-radius:999px;padding:7px 6px;font-size:12px;font-weight:500;}
+  .modeRow{display:flex;gap:5px;margin-bottom:14px;}
+  .modeBtn{flex:1;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);border-radius:999px;padding:7px 4px;font-size:11px;font-weight:500;}
   .modeBtn.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 
-  /* ---- card ---- */
-  .cardStage{display:flex;align-items:center;justify-content:center;margin:6px 0;perspective:1200px;}
-  .card{position:relative;width:100%;max-width:340px;height:clamp(220px,52vh,300px);cursor:pointer;}
+  .cardStage{display:flex;align-items:center;justify-content:center;margin:4px 0;perspective:1200px;}
+  .card{position:relative;width:100%;max-width:340px;height:clamp(200px,48vh,280px);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;}
+  .card:focus{outline:none;}
   .cardInner{position:relative;width:100%;height:100%;transition:transform .35s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d;}
   .card.flipped .cardInner{transform:rotateY(180deg);}
   .face{position:absolute;inset:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;padding:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden;text-align:center;}
   .face-back{transform:rotateY(180deg);}
-  .face-front .text{font-family:var(--font-display);font-size:calc(clamp(40px,12vw,64px)*var(--text-scale));font-weight:600;line-height:1.2;word-break:break-word;}
-  .face-back .text{font-family:var(--font-back);font-style:italic;font-size:calc(clamp(20px,6vw,28px)*var(--text-scale));line-height:1.4;color:var(--ink);}
-  .tapHint{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
+  .face-front .text{font-family:var(--font-display);font-size:calc(clamp(38px,11vw,60px)*var(--text-scale));font-weight:600;line-height:1.2;word-break:break-word;}
+  .face-back .text{font-family:var(--font-back);font-style:italic;font-size:calc(clamp(18px,6vw,26px)*var(--text-scale));line-height:1.4;color:var(--ink);}
+  .tapHint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
 
-  /* ---- hanko stamp ---- */
-  .stamp{position:absolute;top:50%;left:50%;width:128px;height:128px;margin:-64px 0 0 -64px;display:flex;align-items:center;justify-content:center;opacity:0;background:var(--paper);transform:scale(.45) rotate(var(--stamp-rot,-8deg));transition:opacity .2s ease,transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
-  .stamp.show{opacity:1;transform:scale(1) rotate(var(--stamp-rot,-8deg));}
-  .stamp.know{--stamp-rot:-8deg;border-radius:50%;border:3px solid var(--known);box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--known);color:var(--known);}
-  .stamp.dontknow{--stamp-rot:7deg;border-radius:10px;border:3px solid var(--accent);color:var(--accent);}
+  /* subtle circular swipe hints */
+  .swipeHint{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:50px;height:50px;border-radius:50%;border:2.5px solid;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;opacity:0;pointer-events:none;background:var(--paper);}
+  .swipeHintRight{right:14px;color:var(--known);border-color:var(--known);}
+  .swipeHintLeft{left:14px;color:var(--accent);border-color:var(--accent);}
+
+  .stamp{position:absolute;top:50%;left:50%;width:128px;height:128px;margin:-64px 0 0 -64px;z-index:15;display:flex;align-items:center;justify-content:center;opacity:0;background:var(--paper);transform:scale(.45) rotate(var(--sr,-8deg));transition:opacity .2s ease,transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
+  .stamp.show{opacity:1;transform:scale(1) rotate(var(--sr,-8deg));}
+  .stamp.know{--sr:-8deg;border-radius:50%;border:3px solid var(--known);box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--known);color:var(--known);}
+  .stamp.dontknow{--sr:7deg;border-radius:10px;border:3px solid var(--accent);color:var(--accent);}
   .stampText{font-family:var(--font-display);font-weight:700;font-size:27px;letter-spacing:.05em;line-height:1.15;text-align:center;}
 
-  /* ---- action buttons ---- */
-  .actionRow{display:flex;gap:10px;margin-top:18px;min-height:48px;}
+  .quizGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+  .quizBtn{padding:15px 8px;border:1px solid var(--line);background:var(--paper);border-radius:12px;font-size:14.5px;font-weight:500;color:var(--ink);text-align:center;cursor:pointer;min-height:52px;line-height:1.3;word-break:break-word;transition:background .12s,border-color .12s,color .12s;}
+  .quizBtn:hover:not(:disabled){border-color:var(--ink-soft);}
+  .quizBtn.correct{background:var(--known);border-color:var(--known);color:#fff;}
+  .quizBtn.wrong{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .quizBtn.reveal{background:var(--known-soft);border-color:var(--known);color:var(--known);}
+  .quizBtn:disabled{cursor:default;}
+
+  .actionRow{display:flex;gap:10px;margin-top:14px;min-height:48px;}
   .actionBtn{flex:1;border-radius:12px;border:1px solid var(--line);background:var(--paper);padding:13px 10px;font-size:14.5px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;}
   .actionBtn.dontknow{color:var(--accent);border-color:rgba(166,52,43,0.3);}
   .actionBtn.dontknow:hover{background:var(--accent-soft);}
   .actionBtn.know{background:var(--known-soft);border-color:transparent;color:var(--known);}
   .actionBtn.know:hover{background:var(--known);color:#fff;}
-  .hintRow{text-align:center;font-size:11.5px;color:var(--ink-soft);margin-top:10px;opacity:.8;}
-  .skipLink{background:none;border:none;color:var(--ink-soft);font-size:12.5px;text-decoration:underline;text-underline-offset:2px;align-self:center;margin-top:2px;}
+  .hintRow{text-align:center;font-size:11px;color:var(--ink-soft);margin-top:8px;opacity:.75;}
+  .skipLink{background:none;border:none;color:var(--ink-soft);font-size:12px;text-decoration:underline;text-underline-offset:2px;align-self:center;margin-top:2px;}
 
-  /* ---- session complete ---- */
-  #completeView.active{gap:16px;padding:20px 0;}
+  #completeView.active{gap:14px;padding:16px 0;}
   #completeView h2{margin:0;font-size:19px;font-weight:600;}
   .sessionSummaryCard{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;}
   .sessionNums{display:flex;gap:0;margin-bottom:12px;}
@@ -108,17 +123,20 @@
   .sessionNum .n.green{color:var(--known);}
   .sessionNum .n.red{color:var(--accent);}
   .sessionNum .l{font-size:11px;color:var(--ink-soft);margin-top:3px;text-transform:uppercase;letter-spacing:.05em;}
-  .sessionDivider{width:1px;background:var(--line);margin:4px 16px;}
+  .sessionDivider{width:1px;background:var(--line);margin:4px 14px;}
   .sessionBarWrap{height:10px;background:var(--line);border-radius:5px;overflow:hidden;display:flex;}
   .sessionBarKnown{height:100%;background:var(--known);}
   .sessionBarUnknown{height:100%;background:var(--accent);}
+  .sessionTime{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:10px;}
+  .toggleRow{display:flex;align-items:center;justify-content:space-between;font-size:14px;padding:4px 0;cursor:pointer;gap:12px;}
+  .toggleRow span{color:var(--ink);}
+  input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--known);flex-shrink:0;}
   .nextLabel{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);margin-bottom:6px;font-weight:600;}
   .primaryBtn{background:var(--ink);color:var(--paper);border:none;border-radius:12px;padding:13px 22px;font-size:14.5px;font-weight:600;text-align:center;}
   .outlineBtn{background:none;border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:13px 22px;font-size:14.5px;font-weight:600;text-align:center;}
   .outlineBtn:hover{border-color:var(--ink-soft);}
   .btnStack{display:flex;flex-direction:column;gap:8px;}
 
-  /* ---- settings screen ---- */
   .settingsTopRow{display:flex;align-items:center;gap:8px;margin-bottom:20px;}
   .backLink{background:none;border:none;color:var(--ink-soft);font-size:14px;padding:4px 0;display:flex;align-items:center;gap:4px;}
   .backLink:hover{color:var(--ink);}
@@ -149,12 +167,30 @@
   .destinationBlock{margin-top:16px;display:flex;flex-direction:column;gap:10px;}
   .destinationBlock.disabled{opacity:.45;pointer-events:none;}
   .saveNote{font-size:11px;color:var(--ink-soft);text-align:center;margin-top:14px;opacity:.85;min-height:14px;}
-  .fontSizeRow{display:flex;align-items:center;gap:14px;}
-  .stepBtn{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:9px;padding:8px 16px;font-size:14px;font-weight:700;}
-  .stepBtn:disabled{opacity:.35;cursor:default;}
-  #fontSizeLabel{font-size:13.5px;color:var(--ink-soft);min-width:42px;text-align:center;}
+  .sliderWrap{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .sliderA{color:var(--ink-soft);font-weight:600;flex-shrink:0;}
+  .sliderA.sm{font-size:13px;}.sliderA.lg{font-size:22px;}
+  .rangeSlider{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--line);border-radius:2px;cursor:pointer;outline:none;}
+  .rangeSlider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--ink);cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.18);}
+  .rangeSlider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--ink);cursor:pointer;border:none;}
+  .fontPreviewCard{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 12px 10px;text-align:center;}
+  .fontPreviewInner{display:flex;align-items:center;justify-content:center;gap:10px;}
+  .fontPreviewFront{font-family:var(--font-display);font-weight:600;line-height:1;color:var(--ink);}
+  .fontPreviewArrow{color:var(--ink-soft);font-size:14px;}
+  .fontPreviewBack{font-family:var(--font-back);font-style:italic;color:var(--ink-soft);}
+  .fontPreviewPct{font-size:11px;color:var(--ink-soft);margin-top:8px;}
+  .appFooter{text-align:center;padding:20px 0 4px;border-top:1px solid var(--line);margin-top:8px;}
+  .appFooterName{font-size:14px;font-weight:600;color:var(--ink);}
+  .appFooterDot{color:var(--line);margin:0 6px;}
+  .appFooterVer{font-size:13px;color:var(--ink-soft);}
 
-  /* ---- history screen ---- */
+  /* sync section */
+  .syncSection{margin-top:12px;}
+  textarea.syncArea{width:100%;min-height:80px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;resize:vertical;background:var(--paper);color:var(--ink);}
+  .syncNote{font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.5;}
+  .syncNote.success{color:var(--known);}
+  .syncNote.error{color:var(--accent);}
+
   .histStats{display:flex;gap:20px;margin-bottom:20px;}
   .histStat{flex:1;}
   .histStatN{font-size:22px;font-weight:700;color:var(--ink);}
@@ -169,8 +205,8 @@
   .bestBarUnknown{height:100%;background:var(--accent);}
   .bubblesSection{margin-bottom:20px;}
   .bubblesLabel{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);font-weight:600;margin-bottom:10px;}
-  .bubblesWrap{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;}
-  .bubble{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;flex-shrink:0;position:relative;cursor:default;}
+  .bubblesWrap{display:flex;flex-wrap:wrap;gap:8px;}
+  .bubble{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;flex-shrink:0;}
   .bubble.best{outline:2.5px solid var(--ink);outline-offset:2px;}
   .histList{display:flex;flex-direction:column;}
   .histEntry{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);}
@@ -183,32 +219,25 @@
   .histBarKnown{height:100%;background:var(--known);}
   .histBarUnknown{height:100%;background:var(--accent);}
   .noHistHint{font-size:13px;color:var(--ink-soft);padding:20px 0;}
-
-  @media (prefers-reduced-motion: reduce){
-    .cardInner,.stamp,.progressBar,body{transition:none !important;}
-    #progressKnown,#progressUnknown{transition:none !important;}
-  }
+  @media(prefers-reduced-motion:reduce){.cardInner,.stamp,body,header,.quizBtn{transition:none !important;}#progressKnown,#progressUnknown{transition:none !important;}}
 </style>
 </head>
 <body>
 <div id="app">
-
   <header>
-    <span id="headerLabel">Washi</span>
-    <div class="headerIcons">
-      <button class="iconCircleBtn" id="historyToggle" aria-label="Session history" title="Session history">◷</button>
-      <button class="iconCircleBtn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">☾</button>
-      <button class="iconCircleBtn" id="settingsToggle" aria-label="Settings" title="Settings">⚙</button>
+    <div class="headerMain">
+      <div id="headerLabel" class="headerShowLogo"><span id="headerText"></span><img id="headerLogoLight" class="logoImg" src="data:image/png;base64,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" alt="Mekuru"><img id="headerLogoDark" class="logoImg logoImgDark" src="data:image/png;base64,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" alt="Mekuru"></div>
+      <div class="headerIcons">
+        <button class="iconCircleBtn" id="historyToggle" title="Session history">◷</button>
+        <button class="iconCircleBtn" id="themeToggle" title="Toggle dark mode">☾</button>
+        <button class="iconCircleBtn" id="settingsToggle" title="Settings">⚙</button>
+      </div>
     </div>
+    <button class="deckPill" id="deckPill" hidden><span id="deckPillName"></span><span class="chev">›</span></button>
   </header>
 
-  <button class="deckPill" id="deckPill" hidden>
-    <span id="deckPillName"></span><span class="chev">›</span>
-  </button>
-
-  <!-- ========== STUDY SCREEN ========== -->
+  <!-- STUDY -->
   <div class="screen active" id="studyScreen">
-
     <div class="subview" id="emptyView">
       <h1>No deck yet</h1>
       <p>Import a two-column CSV — one side per column — to start studying.</p>
@@ -217,44 +246,37 @@
 
     <div class="subview" id="liveView">
       <div class="progressRow">
-        <div class="progressScores">
-          <span class="scoreKnown" id="scoreKnown">✓ 0</span>
-          <span class="scoreUnknown" id="scoreUnknown">✗ 0</span>
-        </div>
-        <div class="progressBar">
-          <div id="progressKnown" style="width:0%"></div>
-          <div id="progressUnknown" style="width:0%;left:0%"></div>
-        </div>
+        <div class="progressScores"><span class="scoreKnown" id="scoreKnown">✓ 0</span><span class="scoreUnknown" id="scoreUnknown">✗ 0</span></div>
+        <div class="progressBar"><div id="progressKnown" style="width:0%"></div><div id="progressUnknown" style="width:0%;left:0%"></div></div>
         <span class="progressRight" id="progressRight">0 / 0</span>
       </div>
-
       <div class="modeRow">
-        <button class="modeBtn active" id="modeAll" title="Study every card in the deck">All</button>
-        <button class="modeBtn" id="modeFocus" title="Only cards you haven't mastered">Focus</button>
-        <button class="modeBtn" id="modeMixed" title="Mostly unknown + some known to keep them fresh">Mixed</button>
+        <button class="modeBtn active" id="modeAll" title="Study every card">All</button>
+        <button class="modeBtn" id="modeFocus" title="Unknown cards only">Focus</button>
+        <button class="modeBtn" id="modeMixed" title="Mostly unknown + some known">Mixed</button>
+        <button class="modeBtn" id="modeQuiz" title="Multiple-choice quiz">Quiz</button>
       </div>
-
       <div class="cardStage">
-        <div class="card" id="card" tabindex="0" role="button" aria-label="Flashcard — tap or press Space to flip">
+        <div class="card" id="card" tabindex="0" role="button">
+          <div class="swipeHint swipeHintRight" id="swipeHintRight">✓</div>
+          <div class="swipeHint swipeHintLeft" id="swipeHintLeft">✗</div>
           <div class="cardInner">
-            <div class="face face-front">
-              <span class="text" id="frontText"></span>
-              <span class="tapHint">tap to reveal</span>
-            </div>
-            <div class="face face-back">
-              <span class="text" id="backText"></span>
-              <div class="stamp" id="stamp"><span class="stampText" id="stampText"></span></div>
-            </div>
+            <div class="face face-front"><span class="text" id="frontText"></span><span class="tapHint" id="tapHint">tap to reveal</span></div>
+            <div class="face face-back"><span class="text" id="backText"></span></div>
           </div>
+          <div class="stamp" id="stamp"><span class="stampText" id="stampText"></span></div>
         </div>
       </div>
-
-      <div class="actionRow">
+      <div class="quizGrid" id="quizGrid" hidden>
+        <button class="quizBtn" id="qBtn0"></button><button class="quizBtn" id="qBtn1"></button>
+        <button class="quizBtn" id="qBtn2"></button><button class="quizBtn" id="qBtn3"></button>
+      </div>
+      <div class="actionRow" id="actionRow">
         <button class="actionBtn dontknow" id="btnDontKnow">✗ Don't know</button>
         <button class="actionBtn know" id="btnKnow">Got it ✓</button>
       </div>
-      <button class="skipLink" id="skipBtn">skip without marking</button>
-      <p class="hintRow">space / tap to flip · ← don't know · → got it</p>
+      <button class="skipLink" id="skipBtn">Skip</button>
+      <p class="hintRow" id="hintRow">tap to flip · swipe ← / → to mark</p>
     </div>
 
     <div class="subview" id="completeView">
@@ -267,43 +289,67 @@
           <div class="sessionDivider"></div>
           <div class="sessionNum"><div class="n" id="completePct">—</div><div class="l">Score</div></div>
         </div>
-        <div class="sessionBarWrap">
-          <div class="sessionBarKnown" id="sessionBarKnown"></div>
-          <div class="sessionBarUnknown" id="sessionBarUnknown"></div>
-        </div>
+        <div class="sessionBarWrap"><div class="sessionBarKnown" id="sessionBarKnown"></div><div class="sessionBarUnknown" id="sessionBarUnknown"></div></div>
+        <div class="sessionTime" id="sessionTime"></div>
       </div>
       <div class="btnStack">
         <button class="primaryBtn" id="reviseBtn" hidden>Revise mistakes →</button>
         <div>
           <div class="nextLabel">Next session</div>
           <div class="modeRow" style="margin-bottom:10px;">
-            <button class="modeBtn" id="nextAll" title="Study every card">All</button>
-            <button class="modeBtn active" id="nextFocus" title="Unknown cards only">Focus</button>
-            <button class="modeBtn" id="nextMixed" title="Mostly unknown + some known">Mixed</button>
+            <button class="modeBtn" id="nextAll">All</button>
+            <button class="modeBtn active" id="nextFocus">Focus</button>
+            <button class="modeBtn" id="nextMixed">Mixed</button>
+            <button class="modeBtn" id="nextQuiz">Quiz</button>
           </div>
           <button class="outlineBtn" id="studyAgainBtn" style="width:100%">Study again</button>
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- ========== SETTINGS SCREEN ========== -->
+  <!-- SETTINGS -->
   <div class="screen" id="settingsScreen">
-    <div class="settingsTopRow">
-      <button class="backLink" id="backBtn">‹ Back to cards</button>
-    </div>
+    <div class="settingsTopRow"><button class="backLink" id="backBtn">‹ Back to cards</button></div>
     <div class="panelSection">
       <h3>Your decks</h3>
       <div class="deckList" id="deckList"></div>
       <p class="emptyHint" id="noDeckHint" hidden>No decks yet — import one below.</p>
     </div>
+    <div class="panelSection" id="appearanceSection" hidden>
+      <h3>Appearance</h3>
+      <label class="toggleRow">
+        <span>Pure black / AMOLED</span>
+        <input type="checkbox" id="amoledCheck">
+      </label>
+    </div>
     <div class="panelSection">
       <h3>Card text size</h3>
-      <div class="fontSizeRow">
-        <button class="stepBtn" id="fontDecBtn" aria-label="Decrease text size">A−</button>
-        <span id="fontSizeLabel">100%</span>
-        <button class="stepBtn" id="fontIncBtn" aria-label="Increase text size">A+</button>
+        <span class="sliderA sm">A</span>
+        <input type="range" id="fontSlider" class="rangeSlider" min="70" max="160" step="10" value="100">
+        <span class="sliderA lg">A</span>
+      </div>
+      <div class="fontPreviewCard">
+        <div class="fontPreviewInner">
+          <span class="fontPreviewFront" id="fontPreviewFront">あ</span>
+          <span class="fontPreviewArrow">→</span>
+          <span class="fontPreviewBack" id="fontPreviewBack">a</span>
+        </div>
+        <div class="fontPreviewPct" id="fontPreviewPct">100%</div>
+      </div>
+    </div>
+    <div class="panelSection">
+      <h3>Sync / Backup</h3>
+      <p class="muted">Copy all your decks and progress to use on another device — phone ↔ computer. Paste it on the other device to restore.</p>
+      <div class="btnRow">
+        <button class="smallBtn" id="exportBtn">↑ Export data</button>
+        <button class="smallBtn" id="importBtn">↓ Import data</button>
+      </div>
+      <div class="syncSection" id="syncSection" hidden>
+        <div class="fieldLabel" id="syncLabel">Your data — copy everything:</div>
+        <textarea class="syncArea" id="syncArea" rows="3" placeholder="Paste export data here…"></textarea>
+        <div class="btnRow"><button class="smallBtn primary" id="syncActionBtn">Copy to clipboard</button></div>
+        <p class="syncNote" id="syncNote"></p>
       </div>
     </div>
     <div class="panelSection">
@@ -322,9 +368,7 @@
         <div>
           <div class="fieldLabel" style="margin-top:0;">Save as a new deck</div>
           <input class="textInput" id="newDeckName" placeholder="Deck name">
-          <div class="btnRow">
-            <button class="smallBtn primary" id="createDeckBtn">Create new deck</button>
-          </div>
+          <div class="btnRow"><button class="smallBtn primary" id="createDeckBtn">Create new deck</button></div>
         </div>
         <div id="updateExistingBlock" hidden>
           <div class="fieldLabel">— or add to your current deck —</div>
@@ -345,581 +389,303 @@
       </div>
     </div>
     <p class="saveNote" id="saveNote"></p>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.3</span></div>
   </div>
 
-  <!-- ========== HISTORY SCREEN ========== -->
+  <!-- HISTORY -->
   <div class="screen" id="historyScreen">
-    <div class="settingsTopRow">
-      <button class="backLink" id="histBackBtn">‹ Back to cards</button>
-    </div>
+    <div class="settingsTopRow"><button class="backLink" id="histBackBtn">‹ Back to cards</button></div>
     <div id="historyContent"></div>
   </div>
-
 </div>
 
 <script>
 (function(){
 "use strict";
-
-/* ================= storage ================= */
-var hasClaudeStorage = (typeof window.storage !== "undefined" && window.storage && typeof window.storage.get === "function");
-var LIB_KEY = "flashcards:library";
-var THEME_KEY = "flashcards:theme";
-var FONT_KEY = "flashcards:textScale";
-
-function storageGet(key){
-  if(hasClaudeStorage) return window.storage.get(key,false).then(function(r){return r?JSON.parse(r.value):null;}).catch(function(){return null;});
-  try{var v=localStorage.getItem(key);return Promise.resolve(v?JSON.parse(v):null);}catch(e){return Promise.resolve(null);}
-}
-function storageSet(key,value){
-  if(hasClaudeStorage) return window.storage.set(key,JSON.stringify(value),false).then(function(){return true;}).catch(function(){return false;});
-  try{localStorage.setItem(key,JSON.stringify(value));return Promise.resolve(true);}catch(e){return Promise.resolve(false);}
-}
-
+/* storage */
+var hasCS=(typeof window.storage!=="undefined"&&window.storage&&typeof window.storage.get==="function");
+var LIB_KEY="flashcards:library",THEME_KEY="flashcards:theme",FONT_KEY="flashcards:textScale";
+function storageGet(k){if(hasCS)return window.storage.get(k,false).then(function(r){return r?JSON.parse(r.value):null;}).catch(function(){return null;});try{var v=localStorage.getItem(k);return Promise.resolve(v?JSON.parse(v):null);}catch(e){return Promise.resolve(null);}}
+function storageSet(k,v){if(hasCS)return window.storage.set(k,JSON.stringify(v),false).then(function(){return true;}).catch(function(){return false;});try{localStorage.setItem(k,JSON.stringify(v));return Promise.resolve(true);}catch(e){return Promise.resolve(false);}}
 var saveTimer=null;
-function scheduleSave(){
-  clearTimeout(saveTimer);
-  el("saveNote").textContent="Saving…";
-  saveTimer=setTimeout(function(){
-    storageSet(LIB_KEY,library).then(function(ok){el("saveNote").textContent=ok?"":"Couldn't save — progress may reset on reload.";});
-  },250);
-}
+function scheduleSave(){clearTimeout(saveTimer);el("saveNote").textContent="Saving…";saveTimer=setTimeout(function(){storageSet(LIB_KEY,library).then(function(ok){el("saveNote").textContent=ok?"":"Couldn't save.";});},250);}
 
-/* ================= helpers ================= */
+/* helpers */
 function el(id){return document.getElementById(id);}
 function escapeHtml(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML;}
-function shuffle(arr){
-  var a=arr.slice();
-  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
-  return a;
-}
-function pctColor(pct){
-  var h=Math.round(pct*1.2);
-  return "hsl("+h+",65%,46%)";
-}
-function fmtDate(ts){
-  var d=new Date(ts);
-  return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" "+d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
-}
+function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function pctColor(p){return "hsl("+Math.round(p*1.2)+",65%,46%)";}
+function fmtDate(ts){var d=new Date(ts);return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" "+d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});}
 
-/* ================= CSV parsing ================= */
-function parseCSV(text){
-  var rows=[],i=0,field="",row=[],inQuotes=false;
-  function pushField(){row.push(field);field="";}
-  function pushRow(){pushField();rows.push(row);row=[];}
-  while(i<text.length){
-    var c=text[i];
-    if(inQuotes){
-      if(c==='"'){if(text[i+1]==='"'){field+='"';i+=2;continue;}inQuotes=false;i++;continue;}
-      else{field+=c;i++;continue;}
-    } else {
-      if(c==='"'){inQuotes=true;i++;continue;}
-      if(c===','){pushField();i++;continue;}
-      if(c==='\r'){i++;continue;}
-      if(c==='\n'){pushRow();i++;continue;}
-      field+=c;i++;continue;
-    }
-  }
-  if(field.length>0||row.length>0)pushRow();
-  return rows.map(function(r){return r.map(function(c){return c.trim();});}).filter(function(r){return r.length>=2&&(r[0]!=""||r[1]!="");});
-}
-var HEADER_PAIRS=["front,back","term,definition","question,answer","kana,romaji","kana,meaning","character,reading","japanese,english","word,translation"];
-function rowsToCards(rows){
-  var data=rows;
-  if(data.length>0){var hk=data[0].slice(0,2).map(function(s){return s.toLowerCase();}).join(",");if(HEADER_PAIRS.indexOf(hk)!==-1)data=data.slice(1);}
-  return data.map(function(r){return{front:r[0],back:r[1]};});
-}
+/* CSV */
+function parseCSV(text){var rows=[],i=0,field="",row=[],inQ=false;function pF(){row.push(field);field="";}function pR(){pF();rows.push(row);row=[];}while(i<text.length){var c=text[i];if(inQ){if(c==='"'){if(text[i+1]==='"'){field+='"';i+=2;continue;}inQ=false;i++;continue;}else{field+=c;i++;continue;}}else{if(c==='"'){inQ=true;i++;continue;}if(c===','){pF();i++;continue;}if(c==='\r'){i++;continue;}if(c==='\n'){pR();i++;continue;}field+=c;i++;continue;}}if(field.length>0||row.length>0)pR();return rows.map(function(r){return r.map(function(c){return c.trim();});}).filter(function(r){return r.length>=2&&(r[0]!=""||r[1]!="");});}
+var HP=["front,back","term,definition","question,answer","kana,romaji","kana,meaning","character,reading","japanese,english","word,translation"];
+function rowsToCards(rows){var d=rows;if(d.length>0){var hk=d[0].slice(0,2).map(function(s){return s.toLowerCase();}).join(",");if(HP.indexOf(hk)!==-1)d=d.slice(1);}return d.map(function(r){return{front:r[0],back:r[1]};});}
 function cardKey(c){return c.front+"\u0000"+c.back;}
-function mergeCards(existingCards,existingProgress,newCards,mode){
-  var existingByKey={};existingCards.forEach(function(c){existingByKey[cardKey(c)]=c;});
-  var nextId=existingCards.reduce(function(m,c){return Math.max(m,c.id);},0)+1;
-  if(mode==="replace"){
-    var cards=newCards.map(function(c){var ex=existingByKey[cardKey(c)];return ex?ex:{id:nextId++,front:c.front,back:c.back};});
-    var keepIds={};cards.forEach(function(c){keepIds[c.id]=true;});
-    var progress={};Object.keys(existingProgress).forEach(function(id){if(keepIds[id])progress[id]=existingProgress[id];});
-    return{cards:cards,progress:progress};
-  } else {
-    var cards2=existingCards.slice();
-    newCards.forEach(function(c){if(!existingByKey[cardKey(c)]){var card={id:nextId++,front:c.front,back:c.back};cards2.push(card);existingByKey[cardKey(c)]=card;}});
-    return{cards:cards2,progress:Object.assign({},existingProgress)};
-  }
-}
+function mergeCards(ec,ep,nc,mode){var ebk={};ec.forEach(function(c){ebk[cardKey(c)]=c;});var nid=ec.reduce(function(m,c){return Math.max(m,c.id);},0)+1;if(mode==="replace"){var ca=nc.map(function(c){var x=ebk[cardKey(c)];return x?x:{id:nid++,front:c.front,back:c.back};});var ki={};ca.forEach(function(c){ki[c.id]=true;});var pr={};Object.keys(ep).forEach(function(id){if(ki[id])pr[id]=ep[id];});return{cards:ca,progress:pr};}else{var ca2=ec.slice();nc.forEach(function(c){if(!ebk[cardKey(c)]){var cd={id:nid++,front:c.front,back:c.back};ca2.push(cd);ebk[cardKey(c)]=cd;}});return{cards:ca2,progress:Object.assign({},ep)};}}
 
-/* ================= state ================= */
+/* state */
 var library={decks:[],activeDeckId:null,history:[]};
 var session={order:[],pos:0,mode:"all",results:{},startTime:0,reviseIds:null};
-var nextMode="focus"; /* mode selected in complete screen for next session */
-var flipped=false;
-var marking=false;
-var currentScreen="study";
-var stagedCards=[];
-
+var nextMode="focus";
+var flipped=false,marking=false,currentScreen="study",stagedCards=[];
 function activeDeck(){return library.decks.find(function(d){return d.id===library.activeDeckId;})||null;}
 function nextDeckId(){return library.decks.reduce(function(m,d){return Math.max(m,d.id);},0)+1;}
-function knownCountOf(deck){return Object.keys(deck.progress).filter(function(id){return deck.progress[id]==="known";}).length;}
+function knownCountOf(d){return Object.keys(d.progress).filter(function(id){return d.progress[id]==="known";}).length;}
 
-/* ================= screens ================= */
+/* screens */
 var headerLabel=el("headerLabel");
-var studyScreen=el("studyScreen");
-var settingsScreen=el("settingsScreen");
-var historyScreen=el("historyScreen");
-var settingsToggle=el("settingsToggle");
-var historyToggle=el("historyToggle");
-var deckPill=el("deckPill");
-var deckPillName=el("deckPillName");
-
-function updateDeckPill(){
-  var deck=activeDeck();
-  var show=deck&&currentScreen==="study";
-  deckPill.hidden=!show;
-  if(show)deckPillName.textContent=deck.name;
-}
-deckPill.addEventListener("click",function(){showScreen("settings");});
-
-function showScreen(name){
-  currentScreen=name;
-  studyScreen.classList.toggle("active",name==="study");
-  settingsScreen.classList.toggle("active",name==="settings");
-  historyScreen.classList.toggle("active",name==="history");
-  settingsToggle.classList.toggle("active",name==="settings");
-  historyToggle.classList.toggle("active",name==="history");
-  headerLabel.textContent=name==="settings"?"Settings":name==="history"?"History":"Washi";
-  updateDeckPill();
-  if(name==="settings")renderSettings();
-  if(name==="history")renderHistory();
-}
-
-settingsToggle.addEventListener("click",function(){showScreen(currentScreen==="settings"?"study":"settings");});
-historyToggle.addEventListener("click",function(){showScreen(currentScreen==="history"?"study":"history");});
+var headerConfirm={active:false,timer:null};
+function resetHeaderConfirm(){headerConfirm.active=false;clearTimeout(headerConfirm.timer);el("headerText").style.color="";if(currentScreen==="study"){headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";}else{headerLabel.classList.remove("headerShowLogo");el("headerText").textContent=currentScreen==="settings"?"Settings":"History";}}
+function updateDeckPill(){var deck=activeDeck();var show=deck&&currentScreen==="study";el("deckPill").hidden=!show;if(show)el("deckPillName").textContent=deck.name;}
+el("deckPill").addEventListener("click",function(){showScreen("settings");});
+function showScreen(name){resetHeaderConfirm();currentScreen=name;el("studyScreen").classList.toggle("active",name==="study");el("settingsScreen").classList.toggle("active",name==="settings");el("historyScreen").classList.toggle("active",name==="history");el("settingsToggle").classList.toggle("active",name==="settings");el("historyToggle").classList.toggle("active",name==="history");if(name==="study"){headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";}else{headerLabel.classList.remove("headerShowLogo");el("headerText").textContent=name==="settings"?"Settings":"History";}updateDeckPill();if(name==="settings")renderSettings();if(name==="history")renderHistory();}
+el("settingsToggle").addEventListener("click",function(){showScreen(currentScreen==="settings"?"study":"settings");});
+el("historyToggle").addEventListener("click",function(){showScreen(currentScreen==="history"?"study":"history");});
 el("backBtn").addEventListener("click",function(){showScreen("study");});
 el("histBackBtn").addEventListener("click",function(){showScreen("study");});
 el("emptyImportBtn").addEventListener("click",function(){showScreen("settings");});
 
-/* ================= theme + font ================= */
-var themeToggle=el("themeToggle");
-function applyTheme(theme){
-  if(theme==="dark")document.documentElement.setAttribute("data-theme","dark");
-  else document.documentElement.removeAttribute("data-theme");
-  themeToggle.textContent=theme==="dark"?"☀":"☾";
-}
-themeToggle.addEventListener("click",function(){
-  var isDark=document.documentElement.getAttribute("data-theme")==="dark";
-  var next=isDark?"light":"dark";
-  applyTheme(next);storageSet(THEME_KEY,next);
+/* header tap to end session */
+headerLabel.addEventListener("click",function(){
+  if(currentScreen!=="study"){showScreen("study");return;}
+  var midSession=liveView.classList.contains("active")&&session.pos>0&&!marking;
+  if(!midSession){return;}
+  if(!headerConfirm.active){
+    headerConfirm.active=true;
+    headerLabel.classList.remove("headerShowLogo");el("headerText").textContent="End session? Tap again";
+    el("headerText").style.color="var(--accent)";
+    headerConfirm.timer=setTimeout(resetHeaderConfirm,3000);
+  } else {
+    resetHeaderConfirm();
+    saveSessionToHistory();
+    renderStudy();
+  }
 });
 
-var FONT_MIN=0.7,FONT_MAX=1.6,FONT_STEP=0.1,textScale=1;
-var fontDecBtn=el("fontDecBtn"),fontIncBtn=el("fontIncBtn"),fontSizeLabel=el("fontSizeLabel");
-function applyTextScale(v){
-  textScale=Math.round(v*100)/100;
-  document.documentElement.style.setProperty("--text-scale",textScale);
-  fontSizeLabel.textContent=Math.round(textScale*100)+"%";
-  fontDecBtn.disabled=textScale<=FONT_MIN+1e-9;
-  fontIncBtn.disabled=textScale>=FONT_MAX-1e-9;
+/* theme */
+function applyTheme(t){
+  var root=document.documentElement;
+  if(t==="amoled"){root.setAttribute("data-theme","amoled");}
+  else if(t==="dark"){root.setAttribute("data-theme","dark");}
+  else{root.removeAttribute("data-theme");}
+  el("themeToggle").textContent=(t==="dark"||t==="amoled")?"☀":"☾";
+  var isDark=t==="dark"||t==="amoled";
+  el("appearanceSection").hidden=!isDark;
+  if(el("amoledCheck"))el("amoledCheck").checked=(t==="amoled");
 }
-fontDecBtn.addEventListener("click",function(){applyTextScale(Math.max(FONT_MIN,textScale-FONT_STEP));storageSet(FONT_KEY,textScale);});
-fontIncBtn.addEventListener("click",function(){applyTextScale(Math.min(FONT_MAX,textScale+FONT_STEP));storageSet(FONT_KEY,textScale);});
+el("themeToggle").addEventListener("click",function(){
+  var cur=document.documentElement.getAttribute("data-theme");
+  var next=(cur==="dark"||cur==="amoled")?"light":"dark";
+  applyTheme(next);storageSet(THEME_KEY,next);
+});
+el("amoledCheck").addEventListener("change",function(){
+  var t=el("amoledCheck").checked?"amoled":"dark";
+  applyTheme(t);storageSet(THEME_KEY,t);
+});
 
-/* ================= session ================= */
+/* font slider */
+var fontSlider=el("fontSlider"),textScale=1;
+function applyTextScale(v){textScale=Math.round(v*100)/100;document.documentElement.style.setProperty("--text-scale",textScale);if(fontSlider)fontSlider.value=Math.round(textScale*100);var pct=Math.round(textScale*100);var pctEl=el("fontPreviewPct"),frontEl=el("fontPreviewFront"),backEl=el("fontPreviewBack");if(pctEl)pctEl.textContent=pct+"%";if(frontEl)frontEl.style.fontSize=Math.round(44*textScale)+"px";if(backEl)backEl.style.fontSize=Math.round(20*textScale)+"px";}
+fontSlider.addEventListener("input",function(){applyTextScale(parseInt(fontSlider.value)/100);storageSet(FONT_KEY,textScale);});
+
+/* sync export/import */
+function exportLib(){var json=JSON.stringify({decks:library.decks,activeDeckId:library.activeDeckId,history:library.history});return json;}
+function importLib(json){var data=JSON.parse(json);if(!data.decks||!Array.isArray(data.decks))throw new Error("Invalid data");return data;}
+var syncMode="";
+el("exportBtn").addEventListener("click",function(){
+  syncMode="export";el("syncSection").hidden=false;
+  var json=exportLib();el("syncArea").value=json;
+  el("syncLabel").textContent="Your data — copy everything:";
+  el("syncActionBtn").textContent="Copy to clipboard";el("syncNote").textContent="";el("syncNote").className="syncNote";
+  el("syncArea").readOnly=true;el("syncArea").select();
+});
+el("importBtn").addEventListener("click",function(){
+  syncMode="import";el("syncSection").hidden=false;
+  el("syncArea").value="";el("syncLabel").textContent="Paste your export data here:";
+  el("syncActionBtn").textContent="Apply import";el("syncNote").textContent="";el("syncNote").className="syncNote";
+  el("syncArea").readOnly=false;el("syncArea").focus();
+});
+el("syncActionBtn").addEventListener("click",function(){
+  if(syncMode==="export"){
+    var text=el("syncArea").value;
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){el("syncNote").textContent="Copied! Paste on the other device.";el("syncNote").className="syncNote success";}).catch(function(){el("syncNote").textContent="Select all text above and copy manually.";el("syncNote").className="syncNote";});}
+    else{el("syncNote").textContent="Select all text above and copy manually.";el("syncNote").className="syncNote";}
+  } else {
+    try{
+      var data=importLib(el("syncArea").value.trim());
+      library=data;if(!library.history)library.history=[];
+      if(!library.decks.some(function(d){return d.id===library.activeDeckId;})&&library.decks.length)library.activeDeckId=library.decks[0].id;
+      storageSet(LIB_KEY,library);
+      el("syncNote").textContent="Imported successfully — "+library.decks.length+" deck(s) loaded.";el("syncNote").className="syncNote success";
+      renderSettings();renderStudy();
+    }catch(e){el("syncNote").textContent="Couldn't read that data. Make sure you copied the full export.";el("syncNote").className="syncNote error";}
+  }
+});
+
+/* session */
 var emptyView=el("emptyView"),liveView=el("liveView"),completeView=el("completeView");
 var cardEl=el("card"),stampEl=el("stamp"),stampTextEl=el("stampText");
-var frontText=el("frontText"),backText=el("backText");
+var frontText=el("frontText"),backText=el("backText"),tapHint=el("tapHint");
+var actionRow=el("actionRow"),quizGrid=el("quizGrid"),hintRow=el("hintRow"),skipBtn=el("skipBtn");
+var frontFace=frontText.parentElement,backFace=backText.parentElement;
+function fmtDuration(ms){var s=Math.max(0,Math.round(ms/1000));if(s<60)return s+"s";var m=Math.floor(s/60),r=s%60;if(m<60)return m+"m"+(r>0?" "+r+"s":"");var h=Math.floor(m/60),rm=m%60;return h+"h"+(rm>0?" "+rm+"m":"");}
+function resetFaces(){frontFace.style.opacity="";backFace.style.opacity="";backFace.style.transform="";backFace.style.zIndex="";}
+function showSubview(w){emptyView.classList.toggle("active",w==="empty");liveView.classList.toggle("active",w==="live");completeView.classList.toggle("active",w==="complete");}
 
-function showSubview(which){
-  emptyView.classList.toggle("active",which==="empty");
-  liveView.classList.toggle("active",which==="live");
-  completeView.classList.toggle("active",which==="complete");
-}
+function buildPool(mode){var deck=activeDeck();if(!deck)return[];if(mode==="focus"){return deck.cards.filter(function(c){return deck.progress[c.id]!=="known";}).map(function(c){return c.id;});}else if(mode==="mixed"){var un=deck.cards.filter(function(c){return deck.progress[c.id]!=="known";});var kn=deck.cards.filter(function(c){return deck.progress[c.id]==="known";});var tk=Math.min(kn.length,Math.max(2,Math.round(un.length*0.25)));return un.map(function(c){return c.id;}).concat(shuffle(kn.map(function(c){return c.id;})).slice(0,tk));}else{return deck.cards.map(function(c){return c.id;});}}
 
-function buildPool(mode){
-  var deck=activeDeck();if(!deck)return[];
-  if(mode==="focus"){
-    return deck.cards.filter(function(c){return deck.progress[c.id]!=="known";}).map(function(c){return c.id;});
-  } else if(mode==="mixed"){
-    var unknown=deck.cards.filter(function(c){return deck.progress[c.id]!=="known";});
-    var known=deck.cards.filter(function(c){return deck.progress[c.id]==="known";});
-    var take=Math.min(known.length,Math.max(2,Math.round(unknown.length*0.25)));
-    var knownSample=shuffle(known.map(function(c){return c.id;})).slice(0,take);
-    return unknown.map(function(c){return c.id;}).concat(knownSample);
-  } else { /* all */
-    return deck.cards.map(function(c){return c.id;});
-  }
-}
+function setModeBtns(mode){["all","focus","mixed","quiz"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.classList.toggle("active",m===mode);});}
 
-function setModeBtns(mode){
-  el("modeAll").classList.toggle("active",mode==="all");
-  el("modeFocus").classList.toggle("active",mode==="focus");
-  el("modeMixed").classList.toggle("active",mode==="mixed");
-}
+function updateModeAvailability(){var deck=activeDeck();var focusOk=deck&&knownCountOf(deck)>0&&buildPool("focus").length>0;el("modeFocus").hidden=!focusOk;el("nextFocus").hidden=!focusOk;}
 
-function startSession(mode,overrideIds){
-  var deck=activeDeck();if(!deck){showSubview("empty");return;}
-  session.mode=mode||"all";
-  session.results={};
-  session.startTime=Date.now();
-  session.reviseIds=null;
-  flipped=false;
-  if(overrideIds){
-    session.order=shuffle(overrideIds);
-  } else {
-    var pool=buildPool(session.mode);
-    session.order=shuffle(pool);
-  }
-  session.pos=0;
-  marking=false;
-  setModeBtns(session.mode);
-  renderProgress();
-  renderCard();
-}
+function updateStudyUi(){var isQuiz=session.mode==="quiz";actionRow.hidden=isQuiz;skipBtn.hidden=isQuiz;quizGrid.hidden=!isQuiz;tapHint.hidden=isQuiz;hintRow.textContent=isQuiz?"select the correct reading":"tap to flip · swipe ← / → to mark";}
 
-function renderProgress(){
-  var deck=activeDeck();if(!deck)return;
-  var total=session.order.length;
-  var knownN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;
-  var unknownN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;
-  var seenN=knownN+unknownN;
-  el("scoreKnown").textContent="✓ "+knownN;
-  el("scoreUnknown").textContent="✗ "+unknownN;
-  el("progressRight").textContent=seenN+" / "+total;
-  var knownPct=total?Math.round(knownN/total*100):0;
-  var unknownPct=total?Math.round(unknownN/total*100):0;
-  el("progressKnown").style.width=knownPct+"%";
-  el("progressUnknown").style.left=knownPct+"%";
-  el("progressUnknown").style.width=unknownPct+"%";
-}
+function startSession(mode,overrideIds){var deck=activeDeck();if(!deck){showSubview("empty");return;}session.mode=mode||"all";session.results={};session.startTime=Date.now();session.reviseIds=null;flipped=false;marking=false;session.order=overrideIds?shuffle(overrideIds):shuffle(buildPool(session.mode));session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
 
-function currentCard(){
-  var deck=activeDeck();if(!deck||session.pos>=session.order.length)return null;
-  var id=session.order[session.pos];
-  return deck.cards.find(function(c){return c.id===id;})||null;
-}
+function renderProgress(){var deck=activeDeck();if(!deck)return;var tot=session.order.length;var kN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;var uN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;el("scoreKnown").textContent="✓ "+kN;el("scoreUnknown").textContent="✗ "+uN;el("progressRight").textContent=(kN+uN)+" / "+tot;var kP=tot?Math.round(kN/tot*100):0,uP=tot?Math.round(uN/tot*100):0;el("progressKnown").style.width=kP+"%";el("progressUnknown").style.left=kP+"%";el("progressUnknown").style.width=uP+"%";}
 
-function saveSessionToHistory(){
-  var deck=activeDeck();if(!deck)return;
-  var knownN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;
-  var unknownN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;
-  var seen=knownN+unknownN;
-  if(seen===0)return; /* don't save empty sessions */
-  var pct=seen>0?Math.round(knownN/seen*100):0;
-  if(!library.history)library.history=[];
-  library.history.push({
-    id:Date.now(),deckId:deck.id,deckName:deck.name,mode:session.mode,
-    total:session.order.length,seen:seen,known:knownN,unknown:unknownN,pct:pct,ts:Date.now()
-  });
-  /* keep last 200 history entries total */
-  if(library.history.length>200)library.history=library.history.slice(-200);
-  scheduleSave();
-}
+function currentCard(){var deck=activeDeck();if(!deck||session.pos>=session.order.length)return null;var id=session.order[session.pos];return deck.cards.find(function(c){return c.id===id;})||null;}
+
+function saveSessionToHistory(){var deck=activeDeck();if(!deck)return;var kN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;var uN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;var seen=kN+uN;if(seen===0)return;var dur=Date.now()-session.startTime;if(!library.history)library.history=[];library.history.push({id:Date.now(),deckId:deck.id,deckName:deck.name,mode:session.mode,total:session.order.length,seen:seen,known:kN,unknown:uN,pct:Math.round(kN/seen*100),duration:dur,ts:Date.now()});if(library.history.length>200)library.history=library.history.slice(-200);scheduleSave();}
 
 function renderCard(){
   var card=currentCard();
-  flipped=false;
-  cardEl.classList.remove("flipped");
-  stampEl.classList.remove("show","know","dontknow");
-  stampTextEl.textContent="";
-
+  flipped=false;cardEl.classList.remove("flipped");
+  cardEl.style.transition="none";cardEl.style.transform="";cardEl.style.opacity="";
+  stampEl.classList.remove("show","know","dontknow");stampTextEl.textContent="";
+  el("swipeHintRight").style.opacity=0;el("swipeHintLeft").style.opacity=0;
+  resetFaces();
+  updateStudyUi();updateModeAvailability();
   if(!card){
     saveSessionToHistory();
-    /* populate complete screen */
-    var knownN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;
-    var unknownN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;
-    var seen=knownN+unknownN;
-    var pct=seen>0?Math.round(knownN/seen*100):0;
+    var kN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;
+    var uN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;
+    var seen=kN+uN,pct=seen>0?Math.round(kN/seen*100):0;
+    var dur=Date.now()-session.startTime;
     el("completeTitle").textContent=session.order.length===0?"Nothing to study here":"Session complete";
-    el("completeKnown").textContent=knownN;
-    el("completeUnknown").textContent=unknownN;
+    el("completeKnown").textContent=kN;el("completeUnknown").textContent=uN;
     el("completePct").textContent=seen>0?pct+"%":"—";
-    el("sessionBarKnown").style.width=seen>0?Math.round(knownN/seen*100)+"%":"0%";
-    el("sessionBarUnknown").style.width=seen>0?Math.round(unknownN/seen*100)+"%":"0%";
-    /* revise button */
-    var wrongIds=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).map(Number);
-    el("reviseBtn").hidden=wrongIds.length===0;
-    session.reviseIds=wrongIds;
-    /* default next mode: focus if there are unknowns, else all */
-    var defaultNext=unknownN>0?"focus":"all";
-    setNextModeBtns(defaultNext);
-    showSubview("complete");
-    return;
+    el("sessionBarKnown").style.width=seen>0?Math.round(kN/seen*100)+"%":"0%";
+    el("sessionBarUnknown").style.width=seen>0?Math.round(uN/seen*100)+"%":"0%";
+    el("sessionTime").textContent=seen>0?"Completed in "+fmtDuration(dur):"";
+    var wIds=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).map(Number);
+    el("reviseBtn").hidden=wIds.length===0;session.reviseIds=wIds;
+    setNextModeBtns(uN>0?"focus":"all");showSubview("complete");return;
   }
-  showSubview("live");
-  frontText.textContent=card.front;
-  backText.textContent=card.back;
+  showSubview("live");frontText.textContent=card.front;backText.textContent=card.back;
+  if(session.mode==="quiz")renderQuizOptions(card);
 }
 
-/* next-session mode in complete screen */
-function setNextModeBtns(mode){
-  nextMode=mode;
-  el("nextAll").classList.toggle("active",mode==="all");
-  el("nextFocus").classList.toggle("active",mode==="focus");
-  el("nextMixed").classList.toggle("active",mode==="mixed");
-}
-el("nextAll").addEventListener("click",function(){setNextModeBtns("all");});
-el("nextFocus").addEventListener("click",function(){setNextModeBtns("focus");});
-el("nextMixed").addEventListener("click",function(){setNextModeBtns("mixed");});
+/* quiz */
+function buildQuizOptions(card){var deck=activeDeck();var others=deck.cards.filter(function(c){return c.id!==card.id;}).map(function(c){return c.back;});var unique=[];others.forEach(function(v){if(unique.indexOf(v)===-1)unique.push(v);});return shuffle([card.back].concat(shuffle(unique).slice(0,3)));}
+function renderQuizOptions(card){var opts=buildQuizOptions(card);["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id,i){var btn=el(id);btn.textContent=opts[i]||"";btn.dataset.value=opts[i]||"";btn.classList.remove("correct","wrong","reveal");btn.disabled=!opts[i];btn.hidden=!opts[i];});}
+function handleQuizAnswer(value,card){if(marking)return;marking=true;var isCorrect=(value===card.back);var status=isCorrect?"known":"unknown";["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id){var btn=el(id);btn.disabled=true;if(btn.dataset.value===card.back)btn.classList.add(isCorrect?"correct":"reveal");if(btn.dataset.value===value&&!isCorrect)btn.classList.add("wrong");});session.results[card.id]=status;activeDeck().progress[card.id]=status;scheduleSave();renderProgress();showStamp(status);setTimeout(advance,900);}
+["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id){el(id).addEventListener("click",function(){var card=currentCard();if(card)handleQuizAnswer(el(id).dataset.value,card);});});
 
-el("studyAgainBtn").addEventListener("click",function(){startSession(nextMode);});
-el("reviseBtn").addEventListener("click",function(){
-  if(session.reviseIds&&session.reviseIds.length>0)startSession("focus",session.reviseIds);
-});
-
-function flipCard(){if(!currentCard())return;flipped=!flipped;cardEl.classList.toggle("flipped",flipped);}
-
-function showStamp(status){
-  stampEl.classList.remove("show","know","dontknow");
-  stampTextEl.textContent=status==="known"?"合格":"復習";
-  stampEl.classList.add(status==="known"?"know":"dontknow");
-  void stampEl.offsetWidth;
-  stampEl.classList.add("show");
-}
-
-function markCard(status){
-  if(marking)return;
-  var card=currentCard(),deck=activeDeck();
-  if(!card||!deck)return;
-  marking=true;
-  /* record to session results */
-  session.results[card.id]=status;
-  /* update cumulative deck progress */
-  deck.progress[card.id]=status;
-  scheduleSave();
-  renderProgress();
-  var stampAndAdvance=function(){showStamp(status);setTimeout(advance,650);};
-  if(!flipped){flipped=true;cardEl.classList.add("flipped");setTimeout(stampAndAdvance,370);}
-  else{stampAndAdvance();}
-}
+/* flip / mark */
+function flipCard(){if(!currentCard()||session.mode==="quiz")return;flipped=!flipped;cardEl.classList.toggle("flipped",flipped);}
+function showStamp(status){stampEl.classList.remove("show","know","dontknow");stampTextEl.textContent=status==="known"?"合格":"復習";stampEl.classList.add(status==="known"?"know":"dontknow");void stampEl.offsetWidth;stampEl.classList.add("show");}
+function markCard(status){if(marking)return;var card=currentCard(),deck=activeDeck();if(!card||!deck)return;marking=true;session.results[card.id]=status;deck.progress[card.id]=status;scheduleSave();renderProgress();var go=function(){showStamp(status);setTimeout(advance,650);};if(!flipped){flipped=true;cardEl.classList.add("flipped");setTimeout(go,370);}else{go();}}
 function advance(){marking=false;session.pos++;renderCard();}
 
-cardEl.addEventListener("click",flipCard);
+/* smooth swipe — snap back then flip to reveal answer */
+var tStartX=0,tStartY=0,swipeMode=false,lastSwipeTime=0,SWIPE_THRESH=72;
+cardEl.addEventListener("touchstart",function(e){
+  if(e.touches.length!==1||marking||session.mode==="quiz")return;
+  tStartX=e.touches[0].clientX;tStartY=e.touches[0].clientY;swipeMode=false;
+  cardEl.style.transition="none";
+  if(!flipped){backFace.style.transform="none";backFace.style.zIndex="2";backFace.style.opacity="0";}
+},{passive:true});
+cardEl.addEventListener("touchmove",function(e){
+  if(marking||session.mode==="quiz"||!currentCard())return;
+  var dx=e.touches[0].clientX-tStartX,dy=e.touches[0].clientY-tStartY;
+  if(!swipeMode){if(Math.abs(dx)<8&&Math.abs(dy)<8)return;if(Math.abs(dy)>Math.abs(dx))return;swipeMode=true;}
+  e.preventDefault();
+  var progress=Math.min(Math.abs(dx)/SWIPE_THRESH,1);
+  cardEl.style.transform="translateX("+dx+"px) rotate("+(dx*0.05)+"deg)";
+  if(!flipped){frontFace.style.opacity=String(Math.max(0,1-progress));backFace.style.opacity=String(progress);}
+  el("swipeHintRight").style.opacity=dx>5?progress:0;
+  el("swipeHintLeft").style.opacity=dx<-5?progress:0;
+},{passive:false});
+cardEl.addEventListener("touchend",function(e){
+  el("swipeHintRight").style.opacity=0;el("swipeHintLeft").style.opacity=0;
+  if(!swipeMode){resetFaces();return;}
+  swipeMode=false;
+  var dx=e.changedTouches[0].clientX-tStartX;
+  if(Math.abs(dx)>=SWIPE_THRESH&&!marking){
+    lastSwipeTime=Date.now();
+    var status=dx>0?"known":"unknown";
+    var card=currentCard(),deck=activeDeck();if(!card||!deck)return;
+    marking=true;session.results[card.id]=status;deck.progress[card.id]=status;scheduleSave();renderProgress();
+    /* fly all the way off → reset invisible → flip to back → fade in with stamp → flash → advance */
+    var dir=dx>0?1:-1;
+    cardEl.style.transition="transform 0.26s ease-out,opacity 0.26s ease-out";
+    cardEl.style.transform="translateX("+(dir*520)+"px) rotate("+(dir*22)+"deg)";
+    cardEl.style.opacity="0";
+    setTimeout(function(){
+      cardEl.style.transition="none";cardEl.style.transform="";
+      resetFaces();
+      flipped=true;cardEl.classList.add("flipped");
+      requestAnimationFrame(function(){
+        showStamp(status);
+        cardEl.style.transition="opacity 0.14s ease-in";cardEl.style.opacity="1";
+        setTimeout(function(){
+          cardEl.style.transition="opacity 0.1s ease";cardEl.style.opacity="0";
+          setTimeout(advance,110);
+        },480);
+      });
+    },260);
+  } else {
+    resetFaces();
+    cardEl.style.transition="transform 0.38s cubic-bezier(.34,1.56,.64,1)";
+    cardEl.style.transform="";
+    setTimeout(function(){cardEl.style.transition="";},380);
+  }
+},{passive:true});
+
+cardEl.addEventListener("click",function(){if(Date.now()-lastSwipeTime<300||swipeMode)return;if(session.mode!=="quiz")flipCard();});
 el("btnKnow").addEventListener("click",function(e){e.stopPropagation();markCard("known");});
 el("btnDontKnow").addEventListener("click",function(e){e.stopPropagation();markCard("unknown");});
 el("skipBtn").addEventListener("click",function(e){e.stopPropagation();advance();});
-el("modeAll").addEventListener("click",function(){if(session.mode!=="all")startSession("all");});
-el("modeFocus").addEventListener("click",function(){if(session.mode!=="focus")startSession("focus");});
-el("modeMixed").addEventListener("click",function(){if(session.mode!=="mixed")startSession("mixed");});
+["all","focus","mixed","quiz"].forEach(function(m){el("mode"+m.charAt(0).toUpperCase()+m.slice(1)).addEventListener("click",function(){if(session.mode!==m)startSession(m);});});
 
-document.addEventListener("keydown",function(e){
-  if(currentScreen!=="study")return;
-  if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;
-  if(!liveView.classList.contains("active"))return;
-  if(e.code==="Space"||e.code==="Enter"){e.preventDefault();flipCard();}
-  else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}
-  else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}
-});
+document.addEventListener("keydown",function(e){if(currentScreen!=="study")return;if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;if(!liveView.classList.contains("active")||session.mode==="quiz")return;if(e.code==="Space"||e.code==="Enter"){e.preventDefault();flipCard();}else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}});
 
-function renderStudy(){
-  updateDeckPill();
-  if(!activeDeck()){showSubview("empty");return;}
-  startSession("all");
-}
+/* complete screen */
+function setNextModeBtns(mode){nextMode=mode;["all","focus","mixed","quiz"].forEach(function(m){el("next"+m.charAt(0).toUpperCase()+m.slice(1)).classList.toggle("active",m===mode);});}
+el("nextAll").addEventListener("click",function(){setNextModeBtns("all");});
+el("nextFocus").addEventListener("click",function(){setNextModeBtns("focus");});
+el("nextMixed").addEventListener("click",function(){setNextModeBtns("mixed");});
+el("nextQuiz").addEventListener("click",function(){setNextModeBtns("quiz");});
+el("studyAgainBtn").addEventListener("click",function(){startSession(nextMode);});
+el("reviseBtn").addEventListener("click",function(){if(session.reviseIds&&session.reviseIds.length>0)startSession("focus",session.reviseIds);});
+function renderStudy(){updateDeckPill();if(!activeDeck()){showSubview("empty");return;}startSession("all");}
 
-/* ================= history screen ================= */
-function deckHistory(){
-  var deck=activeDeck();if(!deck||!library.history)return[];
-  return library.history.filter(function(h){return h.deckId===deck.id;});
-}
+/* history */
+function deckHistory(){var deck=activeDeck();if(!deck||!library.history)return[];return library.history.filter(function(h){return h.deckId===deck.id;});}
+function renderHistory(){var deck=activeDeck();var hist=deckHistory();var container=el("historyContent");container.innerHTML="";if(!deck){container.innerHTML='<p class="noHistHint">Select a deck to see its history.</p>';return;}if(hist.length===0){container.innerHTML='<p class="noHistHint">No sessions yet.</p>';return;}var totalSeen=hist.reduce(function(s,h){return s+h.seen;},0);var avgPct=Math.round(hist.reduce(function(s,h){return s+h.pct;},0)/hist.length);var sDiv=document.createElement("div");sDiv.className="histStats";sDiv.innerHTML='<div class="histStat"><div class="histStatN">'+hist.length+'</div><div class="histStatL">Sessions</div></div><div class="histStat"><div class="histStatN">'+totalSeen+'</div><div class="histStatL">Cards seen</div></div><div class="histStat"><div class="histStatN">'+avgPct+'%</div><div class="histStatL">Avg score</div></div>';container.appendChild(sDiv);var best=hist.slice().sort(function(a,b){return b.pct!==a.pct?b.pct-a.pct:b.seen-a.seen;})[0];var bKP=best.seen>0?Math.round(best.known/best.seen*100):0,bUP=best.seen>0?Math.round(best.unknown/best.seen*100):0;var bestDiv=document.createElement("div");bestDiv.className="bestSessionCard";bestDiv.innerHTML='<div class="bestLabel">Best session</div><div class="bestRow"><span class="bestPct" style="color:'+pctColor(best.pct)+'">'+best.pct+'%</span><div class="bestMeta">'+best.known+' got it · '+best.unknown+' to review<br>'+fmtDate(best.ts)+' · '+best.mode+'</div></div><div class="bestBar"><div class="bestBarKnown" style="width:'+bKP+'%"></div><div class="bestBarUnknown" style="width:'+bUP+'%"></div></div>';container.appendChild(bestDiv);var bSec=document.createElement("div");bSec.className="bubblesSection";bSec.innerHTML='<div class="bubblesLabel">All sessions</div>';var bWrap=document.createElement("div");bWrap.className="bubblesWrap";hist.slice(-40).forEach(function(h){var b=document.createElement("div");b.className="bubble"+(h===best?" best":"");b.style.background=pctColor(h.pct);b.textContent=h.pct+"%";b.title=fmtDate(h.ts)+"\n"+h.known+" got it · "+h.unknown+" · "+h.mode;bWrap.appendChild(b);});bSec.appendChild(bWrap);container.appendChild(bSec);var lLabel=document.createElement("div");lLabel.className="bubblesLabel";lLabel.textContent="Recent sessions";container.appendChild(lLabel);var lDiv=document.createElement("div");lDiv.className="histList";hist.slice().reverse().slice(0,20).forEach(function(h){var entry=document.createElement("div");entry.className="histEntry";var kP=h.seen>0?Math.round(h.known/h.seen*100):0,uP=h.seen>0?Math.round(h.unknown/h.seen*100):0;entry.innerHTML='<div class="histPctBadge" style="background:'+pctColor(h.pct)+'">'+h.pct+'%</div><div class="histMeta"><div class="histDate">'+fmtDate(h.ts)+'</div><div class="histSub">'+h.known+' got it · '+h.unknown+' to review · '+h.seen+' cards · '+h.mode+(h.duration?' · '+fmtDuration(h.duration):'')+'</div><div class="histBar"><div class="histBarKnown" style="width:'+kP+'%"></div><div class="histBarUnknown" style="width:'+uP+'%"></div></div></div>';lDiv.appendChild(entry);});container.appendChild(lDiv);}
 
-function renderHistory(){
-  var deck=activeDeck();
-  var hist=deckHistory();
-  var container=el("historyContent");
-  container.innerHTML="";
-
-  if(!deck){container.innerHTML='<p class="noHistHint">Select a deck first to see its history.</p>';return;}
-  if(hist.length===0){container.innerHTML='<p class="noHistHint">No sessions recorded for this deck yet. Complete a session to see history here.</p>';return;}
-
-  /* all-time stats */
-  var totalSessions=hist.length;
-  var totalSeen=hist.reduce(function(s,h){return s+h.seen;},0);
-  var avgPct=Math.round(hist.reduce(function(s,h){return s+h.pct;},0)/hist.length);
-  var statsDiv=document.createElement("div");
-  statsDiv.className="histStats";
-  statsDiv.innerHTML=[
-    '<div class="histStat"><div class="histStatN">'+totalSessions+'</div><div class="histStatL">Sessions</div></div>',
-    '<div class="histStat"><div class="histStatN">'+totalSeen+'</div><div class="histStatL">Cards seen</div></div>',
-    '<div class="histStat"><div class="histStatN">'+avgPct+'%</div><div class="histStatL">Avg score</div></div>'
-  ].join("");
-  container.appendChild(statsDiv);
-
-  /* best session */
-  var best=hist.slice().sort(function(a,b){
-    if(b.pct!==a.pct)return b.pct-a.pct;
-    return b.seen-a.seen; /* tie-break: more cards seen */
-  })[0];
-  var bestDiv=document.createElement("div");
-  bestDiv.className="bestSessionCard";
-  var bestKnPct=best.seen>0?Math.round(best.known/best.seen*100):0;
-  var bestUnPct=best.seen>0?Math.round(best.unknown/best.seen*100):0;
-  bestDiv.innerHTML='<div class="bestLabel">Best session</div>'+
-    '<div class="bestRow"><span class="bestPct" style="color:'+pctColor(best.pct)+'">'+best.pct+'%</span>'+
-    '<div class="bestMeta">'+best.known+' got it · '+best.unknown+" to review<br>"+fmtDate(best.ts)+' · '+best.mode+'</div></div>'+
-    '<div class="bestBar"><div class="bestBarKnown" style="width:'+bestKnPct+'%"></div>'+
-    '<div class="bestBarUnknown" style="width:'+bestUnPct+'%"></div></div>';
-  container.appendChild(bestDiv);
-
-  /* bubble chart */
-  var bubblesSection=document.createElement("div");
-  bubblesSection.className="bubblesSection";
-  bubblesSection.innerHTML='<div class="bubblesLabel">All sessions</div>';
-  var bubblesWrap=document.createElement("div");
-  bubblesWrap.className="bubblesWrap";
-  var recent=hist.slice(-40); /* last 40 */
-  recent.forEach(function(h){
-    var b=document.createElement("div");
-    b.className="bubble"+(h===best?" best":"");
-    b.style.background=pctColor(h.pct);
-    b.textContent=h.pct+"%";
-    b.title=fmtDate(h.ts)+"\n"+h.known+" got it · "+h.unknown+" to review · "+h.pct+"% · "+h.mode;
-    bubblesWrap.appendChild(b);
-  });
-  bubblesSection.appendChild(bubblesWrap);
-  container.appendChild(bubblesSection);
-
-  /* session list */
-  var listLabel=document.createElement("div");
-  listLabel.className="bubblesLabel";
-  listLabel.textContent="Recent sessions";
-  container.appendChild(listLabel);
-  var listDiv=document.createElement("div");
-  listDiv.className="histList";
-  var toShow=hist.slice().reverse().slice(0,20);
-  toShow.forEach(function(h){
-    var entry=document.createElement("div");
-    entry.className="histEntry";
-    var knPct=h.seen>0?Math.round(h.known/h.seen*100):0;
-    var unPct=h.seen>0?Math.round(h.unknown/h.seen*100):0;
-    entry.innerHTML=
-      '<div class="histPctBadge" style="background:'+pctColor(h.pct)+'">'+h.pct+'%</div>'+
-      '<div class="histMeta">'+
-        '<div class="histDate">'+fmtDate(h.ts)+'</div>'+
-        '<div class="histSub">'+h.known+' got it · '+h.unknown+' to review · '+h.seen+' cards · '+h.mode+'</div>'+
-        '<div class="histBar"><div class="histBarKnown" style="width:'+knPct+'%"></div>'+
-        '<div class="histBarUnknown" style="width:'+unPct+'%"></div></div>'+
-      '</div>';
-    listDiv.appendChild(entry);
-  });
-  container.appendChild(listDiv);
-}
-
-/* ================= settings ================= */
-var deckListEl=el("deckList"),noDeckHint=el("noDeckHint"),thisDeckSection=el("thisDeckSection");
-
-function renderSettings(){
-  renderDeckList();renderDestinationBlock();thisDeckSection.hidden=!activeDeck();
-}
-function renderDeckList(){
-  deckListEl.innerHTML="";noDeckHint.hidden=library.decks.length>0;
-  library.decks.forEach(function(d){
-    var row=document.createElement("div");
-    row.className="deckRow"+(d.id===library.activeDeckId?" active":"");
-    row.innerHTML='<span class="name">'+escapeHtml(d.name)+'</span><span class="count">'+knownCountOf(d)+'/'+d.cards.length+'</span>';
-    row.addEventListener("click",function(){library.activeDeckId=d.id;scheduleSave();renderStudy();showScreen("study");});
-    deckListEl.appendChild(row);
-  });
-}
-
-/* staging / import */
-var stagingArea=el("stagingArea"),previewBox=el("previewBox"),previewCount=el("previewCount");
-var previewRows=el("previewRows"),previewMore=el("previewMore"),destinationBlock=el("destinationBlock");
-var newDeckNameInput=el("newDeckName"),updateExistingBlock=el("updateExistingBlock"),updateDetail=el("updateDetail");
-var createDeckBtn=el("createDeckBtn"),appendBtn=el("appendBtn"),replaceBtn=el("replaceBtn");
-
-function readFileAsText(file){
-  return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(r.result);};r.onerror=reject;r.readAsText(file);});
-}
-el("csvFileInput").addEventListener("change",function(e){
-  var file=e.target.files[0];if(!file)return;
-  if(!newDeckNameInput.value.trim())newDeckNameInput.value=file.name.replace(/\.csv$/i,"");
-  readFileAsText(file).then(function(text){stagingArea.value=text;updatePreview();});
-  e.target.value="";
-});
+/* settings */
+function renderSettings(){renderDeckList();renderDestinationBlock();el("thisDeckSection").hidden=!activeDeck();}
+function renderDeckList(){var dl=el("deckList");dl.innerHTML="";el("noDeckHint").hidden=library.decks.length>0;library.decks.forEach(function(d){var row=document.createElement("div");row.className="deckRow"+(d.id===library.activeDeckId?" active":"");row.innerHTML='<span class="name">'+escapeHtml(d.name)+'</span><span class="count">'+knownCountOf(d)+'/'+d.cards.length+'</span>';row.addEventListener("click",function(){library.activeDeckId=d.id;scheduleSave();renderStudy();showScreen("study");});dl.appendChild(row);});}
+var stagingArea=el("stagingArea"),previewBox=el("previewBox"),previewCount=el("previewCount"),previewRows=el("previewRows"),previewMore=el("previewMore"),destinationBlock=el("destinationBlock"),newDeckNameInput=el("newDeckName"),updateExistingBlock=el("updateExistingBlock"),updateDetail=el("updateDetail"),createDeckBtn=el("createDeckBtn"),appendBtn=el("appendBtn"),replaceBtn=el("replaceBtn");
+function readFileAsText(file){return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(r.result);};r.onerror=reject;r.readAsText(file);});}
+el("csvFileInput").addEventListener("change",function(e){var file=e.target.files[0];if(!file)return;if(!newDeckNameInput.value.trim())newDeckNameInput.value=file.name.replace(/\.csv$/i,"");readFileAsText(file).then(function(text){stagingArea.value=text;updatePreview();});e.target.value="";});
 stagingArea.addEventListener("input",updatePreview);
-
-function updatePreview(){
-  var text=stagingArea.value;
-  if(!text.trim()){previewBox.hidden=true;stagedCards=[];renderDestinationBlock();return;}
-  var rows=parseCSV(text),cards=rowsToCards(rows);stagedCards=cards;previewBox.hidden=false;
-  if(cards.length===0){
-    previewBox.classList.add("error");previewCount.textContent="No valid rows found";
-    previewRows.textContent="Make sure each line has two values separated by a comma.";previewMore.textContent="";
-  } else {
-    previewBox.classList.remove("error");previewCount.textContent=cards.length+(cards.length===1?" card found":" cards found");
-    previewRows.textContent=cards.slice(0,5).map(function(c){return c.front+" → "+c.back;}).join("\n");
-    previewMore.textContent=cards.length>5?"…and "+(cards.length-5)+" more":"";
-  }
-  renderDestinationBlock();
-}
-function renderDestinationBlock(){
-  var hasCards=stagedCards.length>0;
-  destinationBlock.classList.toggle("disabled",!hasCards);createDeckBtn.disabled=!hasCards;
-  createDeckBtn.textContent=hasCards?("Create new deck — "+stagedCards.length+" card"+(stagedCards.length===1?"":"s")):"Create new deck";
-  var deck=activeDeck();updateExistingBlock.hidden=!deck;
-  if(deck&&hasCards){
-    var existingByKey={};deck.cards.forEach(function(c){existingByKey[cardKey(c)]=true;});
-    var newOnes=stagedCards.filter(function(c){return!existingByKey[cardKey(c)];}).length;
-    var dupes=stagedCards.length-newOnes;
-    var matching=stagedCards.filter(function(c){return existingByKey[cardKey(c)];}).length;
-    var removed=deck.cards.length-matching;
-    appendBtn.disabled=false;replaceBtn.disabled=false;
-    appendBtn.textContent="Add "+newOnes+" new card"+(newOnes===1?"":"s");
-    replaceBtn.textContent="Replace deck ("+stagedCards.length+" total)";
-    updateDetail.textContent="Adding: skips "+dupes+" already in \u201c"+deck.name+"\u201d. Replacing: keeps progress for "+matching+" matching card"+(matching===1?"":"s")+", removes "+removed+" no longer in the file.";
-  } else if(deck){
-    appendBtn.disabled=true;replaceBtn.disabled=true;appendBtn.textContent="Add new cards";replaceBtn.textContent="Replace deck";updateDetail.textContent="";
-  }
-}
+function updatePreview(){var text=stagingArea.value;if(!text.trim()){previewBox.hidden=true;stagedCards=[];renderDestinationBlock();return;}var rows=parseCSV(text),cards=rowsToCards(rows);stagedCards=cards;previewBox.hidden=false;if(cards.length===0){previewBox.classList.add("error");previewCount.textContent="No valid rows found";previewRows.textContent="Make sure each line has two values separated by a comma.";previewMore.textContent="";}else{previewBox.classList.remove("error");previewCount.textContent=cards.length+(cards.length===1?" card found":" cards found");previewRows.textContent=cards.slice(0,5).map(function(c){return c.front+" → "+c.back;}).join("\n");previewMore.textContent=cards.length>5?"…and "+(cards.length-5)+" more":"";}renderDestinationBlock();}
+function renderDestinationBlock(){var hC=stagedCards.length>0;destinationBlock.classList.toggle("disabled",!hC);createDeckBtn.disabled=!hC;createDeckBtn.textContent=hC?"Create new deck — "+stagedCards.length+" card"+(stagedCards.length===1?"":"s"):"Create new deck";var deck=activeDeck();updateExistingBlock.hidden=!deck;if(deck&&hC){var ebk={};deck.cards.forEach(function(c){ebk[cardKey(c)]=true;});var nO=stagedCards.filter(function(c){return!ebk[cardKey(c)];}).length;var du=stagedCards.length-nO,ma=stagedCards.filter(function(c){return ebk[cardKey(c)];}).length;appendBtn.disabled=false;replaceBtn.disabled=false;appendBtn.textContent="Add "+nO+" new card"+(nO===1?"":"s");replaceBtn.textContent="Replace deck ("+stagedCards.length+" total)";updateDetail.textContent="Adding: skips "+du+" already in \u201c"+deck.name+"\u201d. Replacing: keeps progress for "+ma+" matching card"+(ma===1?"":"s")+".";}else if(deck){appendBtn.disabled=true;replaceBtn.disabled=true;appendBtn.textContent="Add new cards";replaceBtn.textContent="Replace deck";updateDetail.textContent="";}}
 function resetStaging(){stagingArea.value="";stagedCards=[];previewBox.hidden=true;newDeckNameInput.value="";renderDestinationBlock();}
+createDeckBtn.addEventListener("click",function(){if(stagedCards.length===0)return;var id=nextDeckId(),cards=stagedCards.map(function(c,i){return{id:i+1,front:c.front,back:c.back};});library.decks.push({id:id,name:newDeckNameInput.value.trim()||("Deck "+id),cards:cards,progress:{}});library.activeDeckId=id;scheduleSave();resetStaging();renderStudy();showScreen("study");});
+appendBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||stagedCards.length===0)return;var r=mergeCards(deck.cards,deck.progress,stagedCards,"append");deck.cards=r.cards;deck.progress=r.progress;scheduleSave();resetStaging();renderSettings();renderProgress();});
+replaceBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||stagedCards.length===0)return;var r=mergeCards(deck.cards,deck.progress,stagedCards,"replace");deck.cards=r.cards;deck.progress=r.progress;scheduleSave();resetStaging();renderSettings();renderProgress();});
+function twoStep(btn,fn){var ok=false,t=null,orig=btn.textContent;btn.addEventListener("click",function(){if(!ok){ok=true;btn.textContent="Click again to confirm";btn.classList.add("confirming");t=setTimeout(function(){ok=false;btn.textContent=orig;btn.classList.remove("confirming");},3000);}else{clearTimeout(t);ok=false;btn.textContent=orig;btn.classList.remove("confirming");fn();}});}
+twoStep(el("resetProgressBtn"),function(){var deck=activeDeck();if(!deck)return;deck.progress={};scheduleSave();renderSettings();updateModeAvailability();});
+twoStep(el("deleteDeckBtn"),function(){var deck=activeDeck();if(!deck)return;library.decks=library.decks.filter(function(d){return d.id!==deck.id;});library.activeDeckId=library.decks.length?library.decks[0].id:null;scheduleSave();renderSettings();renderStudy();});
+twoStep(el("clearHistoryBtn"),function(){var deck=activeDeck();if(!deck)return;library.history=(library.history||[]).filter(function(h){return h.deckId!==deck.id;});scheduleSave();renderSettings();});
 
-createDeckBtn.addEventListener("click",function(){
-  if(stagedCards.length===0)return;
-  var id=nextDeckId(),cards=stagedCards.map(function(c,i){return{id:i+1,front:c.front,back:c.back};});
-  var name=newDeckNameInput.value.trim()||("Deck "+id);
-  library.decks.push({id:id,name:name,cards:cards,progress:{}});library.activeDeckId=id;
-  scheduleSave();resetStaging();renderStudy();showScreen("study");
-});
-appendBtn.addEventListener("click",function(){
-  var deck=activeDeck();if(!deck||stagedCards.length===0)return;
-  var result=mergeCards(deck.cards,deck.progress,stagedCards,"append");
-  deck.cards=result.cards;deck.progress=result.progress;scheduleSave();resetStaging();renderSettings();renderProgress();
-});
-replaceBtn.addEventListener("click",function(){
-  var deck=activeDeck();if(!deck||stagedCards.length===0)return;
-  var result=mergeCards(deck.cards,deck.progress,stagedCards,"replace");
-  deck.cards=result.cards;deck.progress=result.progress;scheduleSave();resetStaging();renderSettings();renderProgress();
-});
-
-function twoStepConfirm(btn,onConfirm){
-  var confirming=false,timer=null,original=btn.textContent;
-  btn.addEventListener("click",function(){
-    if(!confirming){confirming=true;btn.textContent="Click again to confirm";btn.classList.add("confirming");timer=setTimeout(function(){confirming=false;btn.textContent=original;btn.classList.remove("confirming");},3000);}
-    else{clearTimeout(timer);confirming=false;btn.textContent=original;btn.classList.remove("confirming");onConfirm();}
-  });
-}
-twoStepConfirm(el("resetProgressBtn"),function(){var deck=activeDeck();if(!deck)return;deck.progress={};scheduleSave();renderSettings();});
-twoStepConfirm(el("deleteDeckBtn"),function(){
-  var deck=activeDeck();if(!deck)return;
-  library.decks=library.decks.filter(function(d){return d.id!==deck.id;});
-  library.activeDeckId=library.decks.length?library.decks[0].id:null;
-  scheduleSave();renderSettings();renderStudy();
-});
-twoStepConfirm(el("clearHistoryBtn"),function(){
-  var deck=activeDeck();if(!deck)return;
-  library.history=(library.history||[]).filter(function(h){return h.deckId!==deck.id;});
-  scheduleSave();renderSettings();
-});
-
-/* ================= boot ================= */
-Promise.all([storageGet(LIB_KEY),storageGet(THEME_KEY),storageGet(FONT_KEY)]).then(function(results){
-  var data=results[0],theme=results[1],savedScale=results[2];
-  if(data&&data.decks&&data.decks.length){
-    library=data;
-    if(!library.history)library.history=[];
-    if(!library.decks.some(function(d){return d.id===library.activeDeckId;}))library.activeDeckId=library.decks[0].id;
-  }
-  applyTheme(theme==="dark"?"dark":"light");
-  applyTextScale(typeof savedScale==="number"?savedScale:1);
-  renderStudy();
-});
-
+/* boot */
+Promise.all([storageGet(LIB_KEY),storageGet(THEME_KEY),storageGet(FONT_KEY)]).then(function(res){var data=res[0],theme=res[1],scale=res[2];if(data&&data.decks&&data.decks.length){library=data;if(!library.history)library.history=[];if(!library.decks.some(function(d){return d.id===library.activeDeckId;}))library.activeDeckId=library.decks[0].id;}applyTheme(theme==="amoled"?"amoled":theme==="dark"?"dark":"light");applyTextScale(typeof scale==="number"?scale:1);renderStudy();});
 })();
 </script>
 </body>
