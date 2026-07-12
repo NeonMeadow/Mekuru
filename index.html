@@ -77,7 +77,7 @@
   .deckPill .chev{font-size:11px;opacity:.7;}
 
   .screen{display:none;flex-direction:column;}.screen.active{display:flex;flex-direction:column;flex:1;min-height:0;}
-  #settingsScreen,#historyScreen{overflow-y:auto;}
+  #settingsScreen,#historyScreen{overflow-y:auto;-webkit-overflow-scrolling:touch;padding-left:8px;padding-right:8px;margin-left:-8px;margin-right:-8px;}
   .subview{display:none;}.subview.active{display:flex;flex-direction:column;}
   #emptyView.active{align-items:center;text-align:center;gap:18px;padding:56px 0;}
   #emptyView h1{font-size:20px;margin:0;font-weight:600;}
@@ -131,7 +131,7 @@
   .skipLink{background:none;border:1px solid var(--line);color:var(--ink-soft);font-size:13px;font-weight:500;border-radius:12px;padding:11px;margin-top:8px;width:100%;cursor:pointer;font-family:inherit;}
   .skipLink:hover{border-color:var(--ink-soft);color:var(--ink);}
 
-#liveView.active{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+#liveView.active{flex:1;min-height:0;}
     #completeView.active{gap:14px;padding:16px 0;}
   #completeView h2{margin:0;font-size:19px;font-weight:600;}
   .sessionSummaryCard{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;}
@@ -589,7 +589,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.7.3</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.7.4</span></div>
   </div>
 
   <!-- HISTORY -->
