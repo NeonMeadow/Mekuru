@@ -97,7 +97,7 @@
   .modeBtn.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 
   .cardStage{display:flex;align-items:center;justify-content:center;margin:2px 0;perspective:1200px;flex:1;min-height:150px;}
-  .card{position:relative;aspect-ratio:3/4;width:min(240px,100%);max-height:min(100%,33dvh,280px);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;}
+  .card{position:relative;width:min(240px,100%);height:min(320px,100%,33dvh,280px);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;}
   .card:focus{outline:none;}
   .cardInner{position:relative;width:100%;height:100%;transition:transform .35s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d;}
   .card.flipped .cardInner{transform:rotateY(180deg);}
@@ -589,7 +589,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.7.2</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.7.3</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -890,10 +890,11 @@ function triggerThwack(){
 
 function updateComboDisplay(){
   var bar=el("comboBar");if(!bar)return;
-  if(!comboEnabled||comboCount<3){bar.hidden=true;return;}
+  if(!comboEnabled||comboCount<3){bar.hidden=true;fitCardToStage();return;}
   el("comboNum").textContent=comboCount;
   el("comboFire").textContent=comboCount>=10?"🔥🔥":comboCount>=6?"🔥":"✨";
   bar.hidden=false;
+  fitCardToStage();
 }
 
 function updateCombo(status){
@@ -923,7 +924,25 @@ function updateStudyUi(){
   actionRow.hidden=isQuiz;skipBtn.hidden=isQuiz;quizGrid.hidden=!isQuiz;tapHint.hidden=isQuiz;
   hintRow.textContent=isQuiz?"select the correct reading":"tap to flip · swipe ← / → to mark";
   el("freshConfig").hidden=!isFresh;
+  fitCardToStage();
 }
+
+/* Bulletproof card sizing: CSS aspect-ratio + max-height can disagree across
+   browsers when the flex container shrinks (notably iOS Safari). Measure the
+   real available space and set the card's height directly so it can never
+   exceed what's actually left, regardless of CSS quirks. */
+function fitCardToStage(){
+  requestAnimationFrame(function(){
+    var stage=document.querySelector(".cardStage");
+    if(!stage||!cardEl)return;
+    var stageH=stage.clientHeight;
+    if(stageH<=0)return;
+    var pad=8; /* small breathing room so the card never touches the stage edge */
+    var target=Math.max(120,Math.min(320,stageH-pad));
+    cardEl.style.height=target+"px";
+  });
+}
+window.addEventListener("resize",fitCardToStage,{passive:true});
 
 function startSession(mode,overrideIds){var deck=activeDeck();if(!deck){showSubview("empty");return;}session.mode=mode||"all";session.results={};session.startTime=Date.now();session.reviseIds=null;flipped=false;marking=false;
 comboCount=0;sessionBestCombo=0;updateComboDisplay();if(session.mode!=="wild")applyFontFace(currentFontFace);session.order=overrideIds?shuffle(overrideIds):shuffle(buildPool(session.mode));session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
