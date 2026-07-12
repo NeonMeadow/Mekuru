@@ -93,11 +93,11 @@
   .progressRight{flex-shrink:0;white-space:nowrap;}
 
   .modeRow{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:8px;}
-  .modeBtn{flex:1;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);border-radius:999px;padding:7px 4px;font-size:11px;font-weight:500;}
+  .modeBtn{flex:1;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);border-radius:999px;padding:7px 4px;font-size:10.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .modeBtn.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
 
-  .cardStage{display:flex;align-items:center;justify-content:center;margin:2px 0;perspective:1200px;flex:1;min-height:0;}
-  .card{position:relative;aspect-ratio:3/4;width:min(240px,100%);max-height:min(100%,38dvh,300px);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;}
+  .cardStage{display:flex;align-items:center;justify-content:center;margin:2px 0;perspective:1200px;flex:1;min-height:150px;}
+  .card{position:relative;aspect-ratio:3/4;width:min(240px,100%);max-height:min(100%,33dvh,280px);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;}
   .card:focus{outline:none;}
   .cardInner{position:relative;width:100%;height:100%;transition:transform .35s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d;}
   .card.flipped .cardInner{transform:rotateY(180deg);}
@@ -131,7 +131,7 @@
   .skipLink{background:none;border:1px solid var(--line);color:var(--ink-soft);font-size:13px;font-weight:500;border-radius:12px;padding:11px;margin-top:8px;width:100%;cursor:pointer;font-family:inherit;}
   .skipLink:hover{border-color:var(--ink-soft);color:var(--ink);}
 
-#liveView.active{flex:1;min-height:0;}
+#liveView.active{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
     #completeView.active{gap:14px;padding:16px 0;}
   #completeView h2{margin:0;font-size:19px;font-weight:600;}
   .sessionSummaryCard{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;}
@@ -256,10 +256,10 @@
   .histBarUnknown{height:100%;background:var(--accent);}
   .noHistHint{font-size:13px;color:var(--ink-soft);padding:20px 0;}
   /* ---- fresh config row ---- */
-  .freshCfgRow{display:flex;align-items:center;gap:8px;padding:4px 0 8px;justify-content:center;flex-wrap:wrap;}
+  .freshCfgRow{display:flex;align-items:center;gap:6px;padding:4px 4px 8px;justify-content:center;flex-wrap:nowrap;overflow-x:auto;}
   .freshCfgLbl{font-size:11px;color:var(--ink-soft);}
   .freshCfgN{font-size:15px;font-weight:700;color:var(--known);min-width:22px;text-align:center;}
-  .freshNSlider{width:110px;height:4px;-webkit-appearance:none;appearance:none;background:var(--line);border-radius:2px;cursor:pointer;outline:none;}
+  .freshNSlider{width:90px;height:4px;-webkit-appearance:none;appearance:none;background:var(--line);border-radius:2px;cursor:pointer;outline:none;flex-shrink:0;}
   .freshNSlider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ink);}
   /* ---- theme swatches ---- */
   .themeGroup{margin-top:10px;}
@@ -589,7 +589,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.7.1</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.7.2</span></div>
   </div>
 
   <!-- HISTORY -->
