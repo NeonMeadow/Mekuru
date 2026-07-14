@@ -54,7 +54,7 @@
   header{position:sticky;top:0;z-index:100;background:var(--bg);padding:max(12px,env(safe-area-inset-top)) 0 10px;border-bottom:1px solid var(--line);margin:0 0 12px;display:flex;flex-direction:column;transition:background-color .2s ease;}
   .headerMain{display:flex;align-items:center;justify-content:space-between;gap:10px;}
   #headerLabel{display:flex;align-items:center;min-width:0;overflow:hidden;flex:1;cursor:pointer;}
-  #headerLabel:hover{opacity:.8;}
+  @media (hover:hover){#headerLabel:hover{opacity:.8;}}
   .ico-moon{display:block;}
   .ico-sun{display:none;}
   .iconCircleBtn .ico-sun{display:none;}
@@ -71,10 +71,10 @@
   .headerShowLogo #headerText{display:none;}
   .headerIcons{display:flex;gap:8px;flex-shrink:0;}
   .iconCircleBtn{background:none;border:1px solid var(--line);color:var(--ink-soft);border-radius:999px;width:34px;height:34px;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .iconCircleBtn:hover{border-color:var(--ink-soft);color:var(--ink);}
+  @media (hover:hover){.iconCircleBtn:hover{border-color:var(--ink-soft);color:var(--ink);}}
   .iconCircleBtn.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
   .deckPill{display:flex;align-items:center;gap:4px;background:none;border:none;color:var(--ink-soft);font-size:12px;padding:7px 0 0;cursor:pointer;}
-  .deckPill:hover{color:var(--ink);}
+  @media (hover:hover){.deckPill:hover{color:var(--ink);}}
   .deckPill .chev{font-size:11px;opacity:.7;}
 
   .screen{display:none;flex-direction:column;}.screen.active{display:flex;flex-direction:column;flex:1;min-height:0;}
@@ -120,7 +120,7 @@
   .quizBtnX,.quizBtnCheck{position:absolute;width:26px;height:26px;opacity:0;pointer-events:none;}
   .quizBtnX{color:var(--accent);}
   .quizBtnCheck{color:#fff;}
-  .quizBtn:hover:not(.qbtnDisabled){border-color:var(--ink-soft);}
+  @media (hover:hover){.quizBtn:hover:not(.qbtnDisabled){border-color:var(--ink-soft);}}
   @keyframes quizCorrectPop{
     0%{background:var(--paper);border-color:var(--line);transform:scale(1);}
     35%{background:var(--known);border-color:var(--known);transform:scale(1.08);}
@@ -151,12 +151,12 @@
   .actionRow{display:flex;gap:10px;margin-top:10px;}
   .actionBtn{flex:1;border-radius:18px;border:none;background:var(--paper);padding:0;display:flex;align-items:center;justify-content:center;height:clamp(70px,9dvh,84px);}
   .actionBtn.dontknow{background:var(--btn-x-bg);color:var(--btn-x-fg);}
-  .actionBtn.dontknow:hover{opacity:.85;}
+  @media (hover:hover){.actionBtn.dontknow:hover{opacity:.85;}}
   .actionBtn.know{background:var(--btn-v-bg);color:var(--btn-v-fg);}
-  .actionBtn.know:hover{opacity:.85;}
+  @media (hover:hover){.actionBtn.know:hover{opacity:.85;}}
   .hintRow{text-align:center;font-size:11px;color:var(--ink-soft);margin-top:8px;opacity:.75;}
   .skipLink{background:none;border:1px solid var(--line);color:var(--ink-soft);font-size:13px;font-weight:500;border-radius:12px;padding:11px;margin-top:8px;width:100%;cursor:pointer;font-family:inherit;}
-  .skipLink:hover{border-color:var(--ink-soft);color:var(--ink);}
+  @media (hover:hover){.skipLink:hover{border-color:var(--ink-soft);color:var(--ink);}}
 
 #liveView.active{flex:1;min-height:0;}
     #completeView.active{gap:14px;padding:16px 0;}
@@ -179,12 +179,12 @@
   .nextLabel{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);margin-bottom:6px;font-weight:600;}
   .primaryBtn{background:var(--ink);color:var(--paper);border:none;border-radius:12px;padding:13px 22px;font-size:14.5px;font-weight:600;text-align:center;}
   .outlineBtn{background:none;border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:13px 22px;font-size:14.5px;font-weight:600;text-align:center;}
-  .outlineBtn:hover{border-color:var(--ink-soft);}
+  @media (hover:hover){.outlineBtn:hover{border-color:var(--ink-soft);}}
   .btnStack{display:flex;flex-direction:column;gap:8px;}
 
   .settingsTopRow{display:flex;align-items:center;gap:8px;margin-bottom:20px;}
   .backLink{background:none;border:none;color:var(--ink-soft);font-size:14px;padding:4px 0;display:flex;align-items:center;gap:4px;}
-  .backLink:hover{color:var(--ink);}
+  @media (hover:hover){.backLink:hover{color:var(--ink);}}
   /* toggle switches */
   .switchLabel{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:6px 0;gap:12px;}
   .switchLabel span{font-size:14px;color:var(--ink);}
@@ -345,9 +345,9 @@
   .actionBtn{flex:1;border-radius:18px;border:none;background:var(--paper);padding:0;display:flex;align-items:center;justify-content:center;height:clamp(70px,9dvh,84px);transition:transform .1s ease;}
   .actionBtn:active{transform:scale(.93);}
   .actionBtn.dontknow{background:var(--btn-x-bg);color:var(--btn-x-fg);}
-  .actionBtn.dontknow:hover{opacity:.85;}
+  @media (hover:hover){.actionBtn.dontknow:hover{opacity:.85;}}
   .actionBtn.know{background:var(--btn-v-bg);color:var(--btn-v-fg);}
-  .actionBtn.know:hover{opacity:.85;}
+  @media (hover:hover){.actionBtn.know:hover{opacity:.85;}}
   /* ---- splash screen ---- */
   #splashScreen{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:max(56px,env(safe-area-inset-top)) 28px max(40px,env(safe-area-inset-bottom));transition:opacity .4s ease;overflow-y:auto;}
   .splashMark{position:fixed;top:50%;left:50%;transform:translate(-50%,-58%);font-family:var(--font-display);font-size:clamp(220px,55vw,340px);font-weight:700;color:var(--ink);opacity:.04;line-height:1;pointer-events:none;user-select:none;-webkit-user-select:none;}
@@ -373,7 +373,7 @@
   .splashStartBtn:active{transform:scale(.98);}
   .splashStartBtn:disabled{opacity:.35;cursor:default;}
   .splashSettingsBtn{background:none;border:none;color:var(--ink-soft);font-size:13px;cursor:pointer;font-family:var(--font-ui);padding:4px 0;}
-  .splashSettingsBtn:hover{color:var(--ink);}
+  @media (hover:hover){.splashSettingsBtn:hover{color:var(--ink);}}
 
   /* ---- exit popup ---- */
   #exitBlur{position:fixed;inset:0;z-index:900;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:opacity .2s ease;}
@@ -550,7 +550,6 @@
         <div class="quizBtn" id="qBtn0" role="button" tabindex="0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg><svg class="quizBtnCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9,18 20,7"/></svg></div><div class="quizBtn" id="qBtn1" role="button" tabindex="0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg><svg class="quizBtnCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9,18 20,7"/></svg></div>
         <div class="quizBtn" id="qBtn2" role="button" tabindex="0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg><svg class="quizBtnCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9,18 20,7"/></svg></div><div class="quizBtn" id="qBtn3" role="button" tabindex="0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg><svg class="quizBtnCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9,18 20,7"/></svg></div>
       </div>
-      <div id="quizDebugPanel" style="font-size:9px;color:#999;padding:6px 2px;word-break:break-all;line-height:1.5;font-family:monospace;"></div>
       <div class="actionRow" id="actionRow">
         <button class="actionBtn dontknow" id="btnDontKnow"><svg class="actionIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
         <button class="actionBtn know" id="btnKnow"><svg class="actionIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="4,13 9,18 20,7"/></svg></button>
@@ -723,7 +722,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.9.4-debug</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.9.5</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1152,19 +1151,6 @@ function renderCard(){
 /* quiz */
 var quizWrongAttempt=false;
 function buildQuizOptions(card){var deck=activeDeck();var others=deck.cards.filter(function(c){return c.id!==card.id;}).map(function(c){return c.back;});var unique=[];others.forEach(function(v){if(unique.indexOf(v)===-1)unique.push(v);});return shuffle([card.back].concat(shuffle(unique).slice(0,3)));}
-function updateQuizDebug(){
-  var panel=el("quizDebugPanel");
-  if(!panel||session.mode!=="quiz")return;
-  var lines=["qBtn0","qBtn1","qBtn2","qBtn3"].map(function(id){
-    var b=el(id);
-    if(!b)return id+": missing";
-    var s=getComputedStyle(b);
-    return id+" val="+b.dataset.value+" cls=["+b.className+"] border="+s.borderColor+" bw="+s.borderWidth+" bg="+s.backgroundColor+" outline="+s.outlineStyle+" anim="+s.animationName;
-  });
-  panel.textContent=lines.join(" | ");
-}
-setInterval(updateQuizDebug,400);
-
 function renderQuizOptions(card){
   quizWrongAttempt=false;
   var opts=buildQuizOptions(card);
