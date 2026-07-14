@@ -550,6 +550,7 @@
         <div class="quizBtn" id="qBtn0" role="button" tabindex="0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg><svg class="quizBtnCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9,18 20,7"/></svg></div><div class="quizBtn" id="qBtn1" role="button" tabindex="0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg><svg class="quizBtnCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9,18 20,7"/></svg></div>
         <div class="quizBtn" id="qBtn2" role="button" tabindex="0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg><svg class="quizBtnCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9,18 20,7"/></svg></div><div class="quizBtn" id="qBtn3" role="button" tabindex="0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg><svg class="quizBtnCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9,18 20,7"/></svg></div>
       </div>
+      <div id="quizDebugPanel" style="font-size:9px;color:#999;padding:6px 2px;word-break:break-all;line-height:1.5;font-family:monospace;"></div>
       <div class="actionRow" id="actionRow">
         <button class="actionBtn dontknow" id="btnDontKnow"><svg class="actionIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
         <button class="actionBtn know" id="btnKnow"><svg class="actionIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="4,13 9,18 20,7"/></svg></button>
@@ -722,7 +723,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.9.4</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.9.4-debug</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1151,6 +1152,19 @@ function renderCard(){
 /* quiz */
 var quizWrongAttempt=false;
 function buildQuizOptions(card){var deck=activeDeck();var others=deck.cards.filter(function(c){return c.id!==card.id;}).map(function(c){return c.back;});var unique=[];others.forEach(function(v){if(unique.indexOf(v)===-1)unique.push(v);});return shuffle([card.back].concat(shuffle(unique).slice(0,3)));}
+function updateQuizDebug(){
+  var panel=el("quizDebugPanel");
+  if(!panel||session.mode!=="quiz")return;
+  var lines=["qBtn0","qBtn1","qBtn2","qBtn3"].map(function(id){
+    var b=el(id);
+    if(!b)return id+": missing";
+    var s=getComputedStyle(b);
+    return id+" val="+b.dataset.value+" cls=["+b.className+"] border="+s.borderColor+" bw="+s.borderWidth+" bg="+s.backgroundColor+" outline="+s.outlineStyle+" anim="+s.animationName;
+  });
+  panel.textContent=lines.join(" | ");
+}
+setInterval(updateQuizDebug,400);
+
 function renderQuizOptions(card){
   quizWrongAttempt=false;
   var opts=buildQuizOptions(card);
