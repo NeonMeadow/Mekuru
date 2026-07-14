@@ -27,10 +27,11 @@
     --btn-v-bg:#C5E8C5;--btn-v-fg:#2E6E2E;
   }
   /* ---- light theme variants ---- */
-  [data-theme="matcha"]{--bg:#ECF3EC;--paper:#F5FAF5;--line:#C8DCC6;--ink:#1C2B1E;--ink-soft:#5C7060;}
-  [data-theme="sakura"]{--bg:#F5EDEE;--paper:#FDF6F7;--line:#E8CDD4;--ink:#2A1E20;--ink-soft:#806070;}
-  [data-theme="mist"]{--bg:#EDF0F5;--paper:#F5F8FC;--line:#C8D4E2;--ink:#1E2328;--ink-soft:#607078;}
-  [data-theme="linen"]{--bg:#F0F0EC;--paper:#FAFAF6;--line:#D8D4CC;--ink:#222020;--ink-soft:#757070;}
+  [data-theme="matcha"]{--bg:#DCEAD5;--paper:#F1F8ED;--line:#A8CC9A;--ink:#16260F;--ink-soft:#4A6B42;}
+  [data-theme="sakura"]{--bg:#F6DCE3;--paper:#FCF0F3;--line:#E8A8BC;--ink:#2E1420;--ink-soft:#8C4A5E;}
+  [data-theme="mist"]{--bg:#D8E4F0;--paper:#EFF5FB;--line:#9FBFDA;--ink:#0F1E2E;--ink-soft:#42607A;}
+  [data-theme="linen"]{--bg:#EDE3D0;--paper:#FAF6EC;--line:#CDBB98;--ink:#241D10;--ink-soft:#6B5C42;}
+  [data-theme="tropical"]{--bg:#AEEAE0;--paper:#EAFBF7;--line:#F293C4;--ink:#1B1035;--ink-soft:#6B5A94;}
   [data-theme="dark"],[data-theme="amoled"]{
     --ink:#ECE6DA;--ink-soft:#9C9284;
     --line:#4A4A4A;--accent:#E0857B;--accent-soft:rgba(224,133,123,0.14);
@@ -41,7 +42,7 @@
   }
   [data-theme="dark"]{--bg:#303030;--paper:#3C3C3C;}
   [data-theme="amoled"]{--bg:#000000;--paper:#111111;}
-  *{box-sizing:border-box;}html,body{margin:0;padding:0;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}html,body{margin:0;padding:0;}
   html{min-height:100vh;min-height:100dvh;background:var(--bg);}
   [hidden]{display:none !important;}
   html{height:100vh;height:100svh;}/* svh = small viewport, correct in iframes */
@@ -114,7 +115,7 @@
 
 
   .quizGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
-  .quizBtn{padding:15px 8px;border:1px solid var(--line);background:var(--paper);border-radius:12px;font-size:14.5px;font-weight:500;color:var(--ink);text-align:center;cursor:pointer;min-height:52px;line-height:1.3;word-break:break-word;transition:background .12s,border-color .12s,color .12s;}
+  .quizBtn{-webkit-appearance:none;appearance:none;padding:15px 8px;border:1px solid var(--line);background:var(--paper);border-radius:12px;font-size:14.5px;font-weight:500;color:var(--ink);text-align:center;cursor:pointer;min-height:52px;line-height:1.3;word-break:break-word;transition:background .12s,border-color .12s,color .12s;}
   .quizBtn:hover:not(:disabled){border-color:var(--ink-soft);}
   .quizBtn.correct{background:var(--known);border-color:var(--known);color:#fff;}
   .quizBtn.wrong{background:transparent;border:1.5px solid var(--ink-soft);color:transparent;}
@@ -242,9 +243,9 @@
   .bestBarUnknown{height:100%;background:var(--accent);}
   .bubblesSection{margin-bottom:20px;}
   .bubblesLabel{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);font-weight:600;margin-bottom:10px;}
-  .bubblesWrap{display:flex;flex-wrap:wrap;gap:8px;}
+  .bubblesWrap{display:flex;flex-wrap:wrap;gap:8px;max-height:190px;overflow-y:auto;padding:6px;margin:-6px;}
   .bubble{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:#fff;flex-shrink:0;}
-  .bubble.best{outline:2.5px solid var(--ink);outline-offset:2px;}
+  .bubble.newest{box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--known);}
   .histList{display:flex;flex-direction:column;}
   .histEntry{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);}
   .histEntry:last-child{border-bottom:none;}
@@ -260,8 +261,41 @@
   .freshCfgRow{display:flex;align-items:center;gap:6px;padding:4px 4px 8px;justify-content:center;flex-wrap:nowrap;overflow-x:auto;}
   .freshCfgLbl{font-size:11px;color:var(--ink-soft);}
   .freshCfgN{font-size:15px;font-weight:700;color:var(--known);min-width:22px;text-align:center;}
-  .freshNSlider{width:90px;height:4px;-webkit-appearance:none;appearance:none;background:var(--line);border-radius:2px;cursor:pointer;outline:none;flex-shrink:0;}
-  .freshNSlider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ink);}
+  /* ---- fresh popup stepper ---- */
+  #freshPopup{position:fixed;z-index:950;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:30px 24px 24px;width:min(300px,calc(100% - 40px));box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
+  #freshPopup.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
+  .freshPopupTitle{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+  .freshPopupSub{font-size:13px;color:var(--ink-soft);margin-bottom:22px;line-height:1.4;}
+  .stepperRow{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:24px;}
+  .stepperBtn{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:20px;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+  .stepperBtn:active{transform:scale(.92);}
+  .stepperBtn:disabled{opacity:.35;cursor:default;}
+  .stepperNum{font-size:32px;font-weight:700;color:var(--ink);min-width:64px;}
+
+  /* ---- card insights accordion ---- */
+  .insightsToggle{width:100%;display:flex;align-items:center;justify-content:space-between;background:none;border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;margin-bottom:12px;}
+  .insightsToggleLbl{font-size:13.5px;font-weight:600;color:var(--ink);}
+  .insightsChevron{color:var(--ink-soft);font-size:12px;transition:transform .2s ease;}
+  .insightsToggle.open .insightsChevron{transform:rotate(180deg);}
+  .insightsPanel{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+  .insightsPanel.open{max-height:2000px;}
+
+  /* ---- card detail modal ---- */
+  #cardDetailBlur{position:fixed;inset:0;z-index:900;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s ease;}
+  #cardDetailBlur.show{opacity:1;pointer-events:auto;}
+  #cardDetailPanel{position:fixed;z-index:950;left:50%;bottom:0;transform:translate(-50%,100%);background:var(--bg);border-radius:22px 22px 0 0;padding:24px 20px max(22px,env(safe-area-inset-bottom));width:min(440px,100%);max-height:75vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.24);transition:transform .28s cubic-bezier(.22,.9,.4,1);text-align:center;}
+  #cardDetailPanel.show{transform:translate(-50%,0);}
+  .cdTopRow{display:flex;align-items:center;justify-content:flex-end;margin-bottom:4px;}
+  .cdChar{font-family:var(--font-display);font-size:52px;font-weight:600;color:var(--ink);line-height:1;}
+  .cdReading{font-family:var(--font-back);font-style:italic;font-size:16px;color:var(--ink-soft);margin-top:6px;margin-bottom:18px;}
+  .cdAccRow{display:flex;justify-content:center;gap:24px;margin-bottom:22px;}
+  .cdAccStat{text-align:center;}
+  .cdAccN{font-size:20px;font-weight:700;}
+  .cdAccL{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-top:1px;}
+  .cdTimelineLabel{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);font-weight:600;margin-bottom:10px;text-align:left;}
+  .cdTimeline{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-start;}
+  .cdDot{width:16px;height:16px;border-radius:5px;flex-shrink:0;}
+  .cdEmptyTimeline{font-size:13px;color:var(--ink-soft);text-align:left;}
   /* ---- theme swatches ---- */
   .themeGroup{margin-top:10px;}
   .themeGroupLbl{font-size:11px;color:var(--ink-soft);font-weight:600;margin-bottom:8px;letter-spacing:.05em;text-transform:uppercase;}
@@ -298,7 +332,7 @@
   .splashLogoImgD{height:26px;display:none;}
   [data-theme="dark"] .splashLogoImg,[data-theme="amoled"] .splashLogoImg{display:none;}
   [data-theme="dark"] .splashLogoImgD,[data-theme="amoled"] .splashLogoImgD{display:block;}
-  [data-theme="matcha"] .splashLogoImg,[data-theme="sakura"] .splashLogoImg,[data-theme="mist"] .splashLogoImg,[data-theme="linen"] .splashLogoImg{display:block;}
+  [data-theme="matcha"] .splashLogoImg,[data-theme="sakura"] .splashLogoImg,[data-theme="mist"] .splashLogoImg,[data-theme="linen"] .splashLogoImg,[data-theme="tropical"] .splashLogoImg{display:block;}
   .splashMiddle{width:100%;margin-bottom:28px;}
   .splashSectionLabel{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-weight:600;margin-bottom:10px;}
   .splashDeckList{display:flex;flex-direction:column;gap:8px;}
@@ -393,6 +427,35 @@
   <div id="sdMissedList"></div>
 </div>
 
+<!-- ========== FRESH MODE POPUP ========== -->
+<div id="freshPopup">
+  <div class="freshPopupTitle">Fresh mode</div>
+  <div class="freshPopupSub">Focus on your most recently added cards</div>
+  <div class="stepperRow">
+    <button class="stepperBtn" id="freshMinusBtn">−</button>
+    <span class="stepperNum" id="freshPopupNum">15</span>
+    <button class="stepperBtn" id="freshPlusBtn">+</button>
+  </div>
+  <div class="btnStack">
+    <button class="primaryBtn" id="freshStartBtn" style="width:100%">Start</button>
+    <button class="outlineBtn" id="freshCancelBtn" style="width:100%">Cancel</button>
+  </div>
+</div>
+
+<!-- ========== CARD DETAIL MODAL ========== -->
+<div id="cardDetailBlur"></div>
+<div id="cardDetailPanel">
+  <div class="cdTopRow"><button class="sdCloseBtn" id="cdCloseBtn">✕</button></div>
+  <div class="cdChar" id="cdChar">あ</div>
+  <div class="cdReading" id="cdReading">a</div>
+  <div class="cdAccRow">
+    <div class="cdAccStat"><div class="cdAccN" id="cdAccPct">—</div><div class="cdAccL">Accuracy</div></div>
+    <div class="cdAccStat"><div class="cdAccN" id="cdAccSeen">—</div><div class="cdAccL">Times seen</div></div>
+  </div>
+  <div class="cdTimelineLabel">History (oldest → newest)</div>
+  <div class="cdTimeline" id="cdTimeline"></div>
+</div>
+
 <!-- ========== SPLASH SCREEN ========== -->
 <div id="splashScreen">
   <div class="splashMark" aria-hidden="true">め</div>
@@ -446,9 +509,6 @@
         <button class="modeBtn" id="modeQuiz" title="Multiple-choice quiz">Quiz</button>
         <button class="modeBtn" id="modeWild" title="Random font each card">Wild</button>
         <button class="modeBtn" id="modeFresh" title="Focus on newest cards">Fresh</button>
-      </div>
-      <div id="freshConfig" hidden>
-        <div class="freshCfgRow"><span class="freshCfgLbl">Focus on last</span><strong class="freshCfgN" id="freshNDisplay">15</strong><input type="range" id="freshNSlider" class="freshNSlider" min="5" max="30" step="5" value="15"><span class="freshCfgLbl">cards</span></div>
       </div>
       <div id="comboBar" class="comboBar" hidden><span class="comboNum" id="comboNum">3</span><span class="comboLbl">in a row</span><span class="comboFire" id="comboFire">🔥</span></div>
       <div class="cardStage">
@@ -519,6 +579,7 @@
           <button class="themeSwatch" data-tv="sakura"><span class="swatchDot" style="background:#F5EDEE"></span><span class="swatchLbl">Sakura</span></button>
           <button class="themeSwatch" data-tv="mist"><span class="swatchDot" style="background:#EDF0F5"></span><span class="swatchLbl">Mist</span></button>
           <button class="themeSwatch" data-tv="linen"><span class="swatchDot" style="background:#F0F0EC"></span><span class="swatchLbl">Linen</span></button>
+          <button class="themeSwatch" data-tv="tropical"><span class="swatchDot" style="background:linear-gradient(135deg,#AEEAE0 50%,#F293C4 50%)"></span><span class="swatchLbl">Tropical</span></button>
         </div>
       </div>
       <div class="themeGroup">
@@ -637,7 +698,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.8.2</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.9</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -885,6 +946,27 @@ function hideExitPopup(){
   el("exitPopup").classList.remove("show");
 }
 
+/* ---- fresh mode popup ---- */
+var freshStaging=15;
+function freshMaxN(){var deck=activeDeck();return deck?Math.max(5,Math.min(50,deck.cards.length)):50;}
+function updateFreshPopupNum(){
+  var max=freshMaxN();
+  freshStaging=Math.max(5,Math.min(max,freshStaging));
+  el("freshPopupNum").textContent=freshStaging;
+  el("freshMinusBtn").disabled=freshStaging<=5;
+  el("freshPlusBtn").disabled=freshStaging>=max;
+}
+function openFreshPopup(){
+  freshStaging=freshN;
+  updateFreshPopupNum();
+  el("exitBlur").classList.add("show");
+  el("freshPopup").classList.add("show");
+}
+function hideFreshPopup(){
+  el("exitBlur").classList.remove("show");
+  el("freshPopup").classList.remove("show");
+}
+
 /* ---- feedback functions ---- */
 function haptic(t){if(navigator.vibrate){if(t==="light")navigator.vibrate(10);else if(t==="medium")navigator.vibrate(22);else if(t==="success")navigator.vibrate([10,0,28]);else if(t==="error")navigator.vibrate([28,10,14]);}}
 
@@ -963,15 +1045,14 @@ function showSubview(w){emptyView.classList.toggle("active",w==="empty");liveVie
 
 function buildPool(mode){var deck=activeDeck();if(!deck)return[];if(mode==="focus"){return deck.cards.filter(function(c){return deck.progress[c.id]!=="known";}).map(function(c){return c.id;});}else if(mode==="mixed"){var un=deck.cards.filter(function(c){return deck.progress[c.id]!=="known";});var kn=deck.cards.filter(function(c){return deck.progress[c.id]==="known";});var tk=Math.min(kn.length,Math.max(2,Math.round(un.length*0.25)));return un.map(function(c){return c.id;}).concat(shuffle(kn.map(function(c){return c.id;})).slice(0,tk));}else if(mode==="fresh"){var all=deck.cards.map(function(c){return c.id;});var newIds=all.slice(Math.max(0,all.length-freshN));var oldIds=all.slice(0,Math.max(0,all.length-freshN));var oldSample=shuffle(oldIds).slice(0,Math.max(0,Math.round(newIds.length*0.2)));return shuffle(newIds.concat(oldSample));}else{return deck.cards.map(function(c){return c.id;});}}
 
-function setModeBtns(mode){["all","focus","mixed","quiz"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.classList.toggle("active",m===mode);});}
+function setModeBtns(mode){["all","focus","mixed","quiz","wild","fresh"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.classList.toggle("active",m===mode);});}
 
 function updateModeAvailability(){var deck=activeDeck();var focusOk=deck&&knownCountOf(deck)>0&&buildPool("focus").length>0;el("modeFocus").hidden=!focusOk;el("nextFocus").hidden=!focusOk;}
 
 function updateStudyUi(){
-  var isQuiz=session.mode==="quiz";var isFresh=session.mode==="fresh";
+  var isQuiz=session.mode==="quiz";
   actionRow.hidden=isQuiz;skipBtn.hidden=isQuiz;quizGrid.hidden=!isQuiz;tapHint.hidden=isQuiz;
   hintRow.textContent=isQuiz?"select the correct reading":"tap to flip · swipe ← / → to mark";
-  el("freshConfig").hidden=!isFresh;
   fitCardToStage();
 }
 
@@ -1004,9 +1085,12 @@ function recordResult(card,deck,status){
   deck.progress[card.id]=status;
   if(!deck.cardStats)deck.cardStats={};
   var cs=deck.cardStats[card.id];
-  if(!cs){cs={seen:0,correct:0,wrong:0};deck.cardStats[card.id]=cs;}
+  if(!cs){cs={seen:0,correct:0,wrong:0,log:[]};deck.cardStats[card.id]=cs;}
+  if(!cs.log)cs.log=[];
   cs.seen++;
   if(status==="known")cs.correct++;else cs.wrong++;
+  cs.log.push({ts:Date.now(),status:status});
+  if(cs.log.length>60)cs.log=cs.log.slice(-60);
 }
 
 function saveSessionToHistory(){var deck=activeDeck();if(!deck)return;var ids=Object.keys(session.results);var kN=ids.filter(function(id){return session.results[id]==="known";}).length;var uN=ids.filter(function(id){return session.results[id]==="unknown";}).length;var seen=kN+uN;if(seen===0)return;var dur=Date.now()-session.startTime;var wrongCards=ids.filter(function(id){return session.results[id]==="unknown";}).map(function(id){var c=deck.cards.find(function(cc){return String(cc.id)===String(id);});return c?{front:c.front,back:c.back}:null;}).filter(Boolean);if(!library.history)library.history=[];library.history.push({id:Date.now(),deckId:deck.id,deckName:deck.name,mode:session.mode,total:session.order.length,seen:seen,known:kN,unknown:uN,pct:Math.round(kN/seen*100),duration:dur,ts:Date.now(),wrongCards:wrongCards});if(library.history.length>200)library.history=library.history.slice(-200);scheduleSave();}
@@ -1151,8 +1235,8 @@ cardEl.addEventListener("click",function(){if(Date.now()-lastSwipeTime<300||swip
 el("btnKnow").addEventListener("click",function(e){e.stopPropagation();markCard("known");});
 el("btnDontKnow").addEventListener("click",function(e){e.stopPropagation();markCard("unknown");});
 el("skipBtn").addEventListener("click",function(e){e.stopPropagation();advance();});
-["all","focus","mixed","quiz","wild","fresh"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.addEventListener("click",function(){if(session.mode!==m)startSession(m);});});
-el("freshNSlider").addEventListener("input",function(){freshN=parseInt(el("freshNSlider").value);el("freshNDisplay").textContent=freshN;storageSet(FRESH_N_KEY,freshN);});
+["all","focus","mixed","quiz","wild"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.addEventListener("click",function(){if(session.mode!==m)startSession(m);});});
+el("modeFresh").addEventListener("click",function(){openFreshPopup();});
 
 document.addEventListener("keydown",function(e){if(currentScreen!=="study")return;if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;if(!liveView.classList.contains("active")||session.mode==="quiz")return;if(e.code==="Space"||e.code==="Enter"){e.preventDefault();flipCard();}else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}});
 
@@ -1193,6 +1277,7 @@ function hideSessionDetail(){
 }
 
 /* ---- aggregate trouble spots / mastered ---- */
+var insightsOpen=false;
 function renderTroubleSpots(container,deck){
   var stats=deck.cardStats||{};
   var rows=Object.keys(stats).map(function(id){
@@ -1200,39 +1285,85 @@ function renderTroubleSpots(container,deck){
     if(!c)return null;
     var s=stats[id];
     if(s.seen<2)return null;
-    return{front:c.front,back:c.back,seen:s.seen,correct:s.correct,acc:s.correct/s.seen};
+    return{id:c.id,front:c.front,back:c.back,seen:s.seen,correct:s.correct,acc:s.correct/s.seen};
   }).filter(Boolean);
   if(rows.length===0)return;
 
-  var worst=rows.slice().sort(function(a,b){return a.acc-b.acc||b.seen-a.seen;}).slice(0,6).filter(function(r){return r.acc<1;});
-  var best=rows.slice().sort(function(a,b){return b.acc-a.acc||b.seen-a.seen;}).slice(0,6).filter(function(r){return r.acc===1&&r.seen>=2;});
+  var worst=rows.slice().sort(function(a,b){return a.acc-b.acc||b.seen-a.seen;}).slice(0,8).filter(function(r){return r.acc<1;});
+  var best=rows.slice().sort(function(a,b){return b.acc-a.acc||b.seen-a.seen;}).slice(0,8).filter(function(r){return r.acc===1&&r.seen>=2;});
 
   function buildRow(r){
     var pct=Math.round(r.acc*100);
     var color=pctColor(pct);
     var row=document.createElement("div");
     row.className="troubleRow";
+    row.style.cursor="pointer";
     row.innerHTML='<span class="troubleChar">'+escapeHtml(r.front)+'</span><span class="troubleReading">'+escapeHtml(r.back)+'</span><span class="troubleBarWrap"><span class="troubleBarFill" style="width:'+pct+'%;background:'+color+'"></span></span><span class="troublePct" style="color:'+color+'">'+pct+'%</span>';
+    row.addEventListener("click",function(){showCardDetail(r.id,deck);});
     return row;
   }
 
+  var toggle=document.createElement("button");
+  toggle.className="insightsToggle"+(insightsOpen?" open":"");
+  toggle.innerHTML='<span class="insightsToggleLbl">Card Insights</span><span class="insightsChevron">▾</span>';
+  var panel=document.createElement("div");
+  panel.className="insightsPanel"+(insightsOpen?" open":"");
   if(worst.length>0){
     var wSec=document.createElement("div");wSec.className="troubleSection";
     wSec.innerHTML='<div class="bubblesLabel">Needs practice</div>';
     worst.forEach(function(r){wSec.appendChild(buildRow(r));});
-    container.appendChild(wSec);
+    panel.appendChild(wSec);
   }
   if(best.length>0){
     var bSec2=document.createElement("div");bSec2.className="troubleSection";
     bSec2.innerHTML='<div class="bubblesLabel">Mastered</div>';
     best.forEach(function(r){bSec2.appendChild(buildRow(r));});
-    container.appendChild(bSec2);
+    panel.appendChild(bSec2);
   }
+  toggle.addEventListener("click",function(){
+    insightsOpen=!insightsOpen;
+    toggle.classList.toggle("open",insightsOpen);
+    panel.classList.toggle("open",insightsOpen);
+  });
+  container.appendChild(toggle);
+  container.appendChild(panel);
+}
+
+/* ---- card detail modal ---- */
+function showCardDetail(cardId,deck){
+  var c=deck.cards.find(function(cc){return String(cc.id)===String(cardId);});
+  if(!c)return;
+  var cs=(deck.cardStats||{})[cardId]||{seen:0,correct:0,log:[]};
+  el("cdChar").textContent=c.front;
+  el("cdReading").textContent=c.back;
+  var pct=cs.seen>0?Math.round(cs.correct/cs.seen*100):0;
+  el("cdAccPct").textContent=cs.seen>0?pct+"%":"—";
+  el("cdAccPct").style.color=cs.seen>0?pctColor(pct):"";
+  el("cdAccSeen").textContent=cs.seen;
+  var tl=el("cdTimeline");tl.innerHTML="";
+  var log=cs.log||[];
+  if(log.length===0){
+    tl.innerHTML='<p class="cdEmptyTimeline">No history yet.</p>';
+  } else {
+    log.forEach(function(entry){
+      var dot=document.createElement("span");
+      dot.className="cdDot";
+      dot.style.background=entry.status==="known"?"var(--known)":"var(--accent)";
+      dot.title=fmtDate(entry.ts)+" · "+(entry.status==="known"?"Got it":"Missed");
+      tl.appendChild(dot);
+    });
+  }
+  el("cardDetailBlur").classList.add("show");
+  el("cardDetailPanel").classList.add("show");
+}
+function hideCardDetail(){
+  el("cardDetailBlur").classList.remove("show");
+  el("cardDetailPanel").classList.remove("show");
 }
 
 function renderHistory(){var deck=activeDeck();var hist=deckHistory();var container=el("historyContent");container.innerHTML="";if(!deck){container.innerHTML='<p class="noHistHint">Select a deck to see its history.</p>';return;}if(hist.length===0){container.innerHTML='<p class="noHistHint">No sessions yet.</p>';return;}var totalSeen=hist.reduce(function(s,h){return s+h.seen;},0);var avgPct=Math.round(hist.reduce(function(s,h){return s+h.pct;},0)/hist.length);var sDiv=document.createElement("div");sDiv.className="histStats";var bestStr=bestCombo>0?bestCombo+"✓":"—";sDiv.innerHTML='<div class="histStat"><div class="histStatN">'+hist.length+'</div><div class="histStatL">Sessions</div></div><div class="histStat"><div class="histStatN">'+totalSeen+'</div><div class="histStatL">Cards seen</div></div><div class="histStat"><div class="histStatN">'+avgPct+'%</div><div class="histStatL">Avg score</div></div><div class="histStat"><div class="histStatN">'+bestStr+'</div><div class="histStatL">Best streak</div></div>';container.appendChild(sDiv);
 renderTroubleSpots(container,deck);
-var best=hist.slice().sort(function(a,b){return b.pct!==a.pct?b.pct-a.pct:b.seen-a.seen;})[0];var bKP=best.seen>0?Math.round(best.known/best.seen*100):0,bUP=best.seen>0?Math.round(best.unknown/best.seen*100):0;var bestDiv=document.createElement("div");bestDiv.className="bestSessionCard";bestDiv.style.cursor="pointer";bestDiv.innerHTML='<div class="bestLabel">Best session</div><div class="bestRow"><span class="bestPct" style="color:'+pctColor(best.pct)+'">'+best.pct+'%</span><div class="bestMeta">'+best.known+' got it · '+best.unknown+' to review<br>'+fmtDate(best.ts)+' · '+best.mode+'</div></div><div class="bestBar"><div class="bestBarKnown" style="width:'+bKP+'%"></div><div class="bestBarUnknown" style="width:'+bUP+'%"></div></div>';bestDiv.addEventListener("click",function(){showSessionDetail(best);});container.appendChild(bestDiv);var bSec=document.createElement("div");bSec.className="bubblesSection";bSec.innerHTML='<div class="bubblesLabel">All sessions</div>';var bWrap=document.createElement("div");bWrap.className="bubblesWrap";hist.slice(-40).forEach(function(h){var b=document.createElement("div");b.className="bubble"+(h===best?" best":"");b.style.background=pctColor(h.pct);b.textContent=h.pct+"%";b.title=fmtDate(h.ts)+"\n"+h.known+" got it · "+h.unknown+" · "+h.mode;b.addEventListener("click",function(){showSessionDetail(h);});bWrap.appendChild(b);});bSec.appendChild(bWrap);container.appendChild(bSec);var lLabel=document.createElement("div");lLabel.className="bubblesLabel";lLabel.textContent="Recent sessions";container.appendChild(lLabel);var lDiv=document.createElement("div");lDiv.className="histList";hist.slice().reverse().slice(0,20).forEach(function(h){var entry=document.createElement("div");entry.className="histEntry";var kP=h.seen>0?Math.round(h.known/h.seen*100):0,uP=h.seen>0?Math.round(h.unknown/h.seen*100):0;entry.innerHTML='<div class="histPctBadge" style="background:'+pctColor(h.pct)+'">'+h.pct+'%</div><div class="histMeta"><div class="histDate">'+fmtDate(h.ts)+'</div><div class="histSub">'+h.known+' got it · '+h.unknown+' to review · '+h.seen+' cards · '+h.mode+(h.duration?' · '+fmtDuration(h.duration):'')+'</div><div class="histBar"><div class="histBarKnown" style="width:'+kP+'%"></div><div class="histBarUnknown" style="width:'+uP+'%"></div></div></div>';entry.addEventListener("click",function(){showSessionDetail(h);});lDiv.appendChild(entry);});container.appendChild(lDiv);}
+var best=hist.slice().sort(function(a,b){return b.pct!==a.pct?b.pct-a.pct:b.seen-a.seen;})[0];var bKP=best.seen>0?Math.round(best.known/best.seen*100):0,bUP=best.seen>0?Math.round(best.unknown/best.seen*100):0;var bestDiv=document.createElement("div");bestDiv.className="bestSessionCard";bestDiv.style.cursor="pointer";bestDiv.innerHTML='<div class="bestLabel">Best session</div><div class="bestRow"><span class="bestPct" style="color:'+pctColor(best.pct)+'">'+best.pct+'%</span><div class="bestMeta">'+best.known+' got it · '+best.unknown+' to review<br>'+fmtDate(best.ts)+' · '+best.mode+'</div></div><div class="bestBar"><div class="bestBarKnown" style="width:'+bKP+'%"></div><div class="bestBarUnknown" style="width:'+bUP+'%"></div></div>';bestDiv.addEventListener("click",function(){showSessionDetail(best);});container.appendChild(bestDiv);var bSec=document.createElement("div");bSec.className="bubblesSection";bSec.innerHTML='<div class="bubblesLabel">All sessions · newest first</div>';var bWrap=document.createElement("div");bWrap.className="bubblesWrap";var histNewestFirst=hist.slice().reverse();histNewestFirst.forEach(function(h,i){var b=document.createElement("div");b.className="bubble"+(i===0?" newest":"");b.style.background=pctColor(h.pct);b.textContent=h.pct+"%";b.title=fmtDate(h.ts)+(i===0?" · Most recent":"")+"\n"+h.known+" got it · "+h.unknown+" · "+h.mode;b.addEventListener("click",function(){showSessionDetail(h);});bWrap.appendChild(b);});bSec.appendChild(bWrap);container.appendChild(bSec);var lLabel=document.createElement("div");lLabel.className="bubblesLabel";lLabel.textContent="Recent sessions";container.appendChild(lLabel);var lDiv=document.createElement("div");lDiv.className="histList";hist.slice().reverse().slice(0,20).forEach(function(h){var entry=document.createElement("div");entry.className="histEntry";var kP=h.seen>0?Math.round(h.known/h.seen*100):0,uP=h.seen>0?Math.round(h.unknown/h.seen*100):0;entry.innerHTML='<div class="histPctBadge" style="background:'+pctColor(h.pct)+'">'+h.pct+'%</div><div class="histMeta"><div class="histDate">'+fmtDate(h.ts)+'</div><div class="histSub">'+h.known+' got it · '+h.unknown+' to review · '+h.seen+' cards · '+h.mode+(h.duration?' · '+fmtDuration(h.duration):'')+'</div><div class="histBar"><div class="histBarKnown" style="width:'+kP+'%"></div><div class="histBarUnknown" style="width:'+uP+'%"></div></div></div>';entry.addEventListener("click",function(){showSessionDetail(h);});lDiv.appendChild(entry);});container.appendChild(lDiv);}
 
 /* settings */
 function renderSettings(){
@@ -1270,15 +1401,26 @@ el("splashSettingsBtn").addEventListener("click",function(){
   hideSplash();
   setTimeout(function(){showScreen("settings");},220);
 });
-el("exitBlur").addEventListener("click",hideExitPopup);
+el("exitBlur").addEventListener("click",function(){hideExitPopup();hideFreshPopup();});
 el("sdCloseBtn").addEventListener("click",hideSessionDetail);
 el("sessionDetailBlur").addEventListener("click",hideSessionDetail);
+el("cdCloseBtn").addEventListener("click",hideCardDetail);
+el("cardDetailBlur").addEventListener("click",hideCardDetail);
 el("exitConfirmBtn").addEventListener("click",function(){
   hideExitPopup();
   saveSessionToHistory();
   setTimeout(showSplash,100);
 });
 el("exitCancelBtn").addEventListener("click",hideExitPopup);
+el("freshMinusBtn").addEventListener("click",function(){freshStaging-=1;updateFreshPopupNum();});
+el("freshPlusBtn").addEventListener("click",function(){freshStaging+=1;updateFreshPopupNum();});
+el("freshStartBtn").addEventListener("click",function(){
+  freshN=freshStaging;
+  storageSet(FRESH_N_KEY,freshN);
+  hideFreshPopup();
+  startSession("fresh");
+});
+el("freshCancelBtn").addEventListener("click",hideFreshPopup);
 /* boot */
 Promise.all([storageGet(LIB_KEY),storageGet(THEME_KEY),storageGet(FONT_KEY),storageGet(FONT_FACE_KEY),storageGet(SWIPE_REVEAL_KEY),storageGet(COMBO_KEY),storageGet(BEST_COMBO_KEY),storageGet(LIGHT_THEME_KEY),storageGet(DARK_THEME_KEY),storageGet(FRESH_N_KEY)]).then(function(res){var data=res[0],theme=res[1],scale=res[2],fontFace=res[3],swipeRevealPref=res[4],comboPref=res[5],bestComboPref=res[6],savedLight=res[7],savedDark=res[8],savedFreshN=res[9];if(data&&data.decks&&data.decks.length){library=data;if(!library.history)library.history=[];if(!library.decks.some(function(d){return d.id===library.activeDeckId;}))library.activeDeckId=library.decks[0].id;}
 if(swipeRevealPref===false){swipeRevealEnabled=false;if(el("swipeRevealCheck"))el("swipeRevealCheck").checked=false;}
@@ -1286,9 +1428,9 @@ if(comboPref===false){comboEnabled=false;if(el("comboCheck"))el("comboCheck").ch
 if(typeof bestComboPref==="number")bestCombo=bestComboPref;
 if(savedLight)lightTheme=savedLight;
 if(savedDark)darkTheme=savedDark;
-if(typeof savedFreshN==="number"){freshN=savedFreshN;if(el("freshNSlider"))el("freshNSlider").value=freshN;if(el("freshNDisplay"))el("freshNDisplay").textContent=freshN;}
+if(typeof savedFreshN==="number")freshN=savedFreshN;
 /* Resolve which theme to apply — handles old 'light' format */
-var allThemes=["washi","matcha","sakura","mist","linen","dark","amoled"];
+var allThemes=["washi","matcha","sakura","mist","linen","tropical","dark","amoled"];
 var resolvedTheme=theme==="light"?lightTheme:theme==="amoled"||theme==="dark"?theme:allThemes.indexOf(theme)!==-1?theme:null;
 if(!resolvedTheme){resolvedTheme=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)?darkTheme:lightTheme;}
 applyTheme(resolvedTheme);applyTextScale(typeof scale==="number"?scale:1);if(fontFace&&FONTS[fontFace])applyFontFace(fontFace);
