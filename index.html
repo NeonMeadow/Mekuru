@@ -327,6 +327,36 @@
   /* ---- action icon SVG ---- */
   .actionIcon{width:32px;height:32px;display:block;flex-shrink:0;}
 
+  /* ---- session detail modal ---- */
+  #sessionDetailBlur{position:fixed;inset:0;z-index:900;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s ease;}
+  #sessionDetailBlur.show{opacity:1;pointer-events:auto;}
+  #sessionDetailPanel{position:fixed;z-index:950;left:50%;bottom:0;transform:translate(-50%,100%);background:var(--bg);border-radius:22px 22px 0 0;padding:22px 20px max(22px,env(safe-area-inset-bottom));width:min(440px,100%);max-height:80vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.24);transition:transform .28s cubic-bezier(.22,.9,.4,1);}
+  #sessionDetailPanel.show{transform:translate(-50%,0);}
+  .sdTopRow{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .sdTitle{font-size:16px;font-weight:700;color:var(--ink);}
+  .sdCloseBtn{background:none;border:none;color:var(--ink-soft);font-size:20px;line-height:1;padding:4px 6px;cursor:pointer;}
+  .sdStatsRow{display:flex;gap:18px;margin-bottom:18px;flex-wrap:wrap;}
+  .sdStat{flex:1;min-width:70px;}
+  .sdStatN{font-size:20px;font-weight:700;color:var(--ink);}
+  .sdStatL{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-top:1px;}
+  .sdMissedLabel{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);font-weight:600;margin:6px 0 8px;}
+  .sdMissedRow{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--paper);}
+  .sdMissedFront{font-family:var(--font-display);font-size:17px;font-weight:600;color:var(--ink);}
+  .sdMissedBack{font-family:var(--font-back);font-style:italic;font-size:13px;color:var(--ink-soft);}
+  .sdEmptyMissed{font-size:13px;color:var(--ink-soft);padding:8px 0;}
+  .histEntry,.bubble{cursor:pointer;}
+
+  /* ---- trouble spots / mastered aggregate stats ---- */
+  .troubleSection{margin-bottom:20px;}
+  .troubleRow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
+  .troubleRow:last-child{border-bottom:none;}
+  .troubleChar{font-family:var(--font-display);font-size:19px;font-weight:600;color:var(--ink);width:32px;flex-shrink:0;}
+  .troubleReading{font-family:var(--font-back);font-style:italic;font-size:12.5px;color:var(--ink-soft);flex-shrink:0;width:50px;}
+  .troubleBarWrap{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden;}
+  .troubleBarFill{height:100%;}
+  .troublePct{font-size:12px;font-weight:600;width:38px;text-align:right;flex-shrink:0;}
+  .troubleEmptyHint{font-size:13px;color:var(--ink-soft);padding:6px 0;}
+
   @media(prefers-reduced-motion:reduce){.cardInner,body,header,.quizBtn{transition:none !important;}#progressKnown,#progressUnknown{transition:none !important;}}
 </style>
 </head>
@@ -343,6 +373,23 @@
     <button class="primaryBtn" id="exitConfirmBtn" style="width:100%">End round</button>
     <button class="outlineBtn" id="exitCancelBtn" style="width:100%">Keep studying</button>
   </div>
+</div>
+
+<!-- ========== SESSION DETAIL MODAL ========== -->
+<div id="sessionDetailBlur"></div>
+<div id="sessionDetailPanel">
+  <div class="sdTopRow">
+    <span class="sdTitle" id="sdTitle">Session</span>
+    <button class="sdCloseBtn" id="sdCloseBtn">✕</button>
+  </div>
+  <div class="sdStatsRow">
+    <div class="sdStat"><div class="sdStatN" id="sdScore">—</div><div class="sdStatL">Score</div></div>
+    <div class="sdStat"><div class="sdStatN" id="sdCounts">—</div><div class="sdStatL">Got it / Review</div></div>
+    <div class="sdStat"><div class="sdStatN" id="sdTime">—</div><div class="sdStatL">Time</div></div>
+    <div class="sdStat"><div class="sdStatN" id="sdMode">—</div><div class="sdStatL">Mode</div></div>
+  </div>
+  <div class="sdMissedLabel">Missed cards</div>
+  <div id="sdMissedList"></div>
 </div>
 
 <!-- ========== SPLASH SCREEN ========== -->
@@ -589,7 +636,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.7.4</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.8</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -951,7 +998,17 @@ function renderProgress(){var deck=activeDeck();if(!deck)return;var tot=session.
 
 function currentCard(){var deck=activeDeck();if(!deck||session.pos>=session.order.length)return null;var id=session.order[session.pos];return deck.cards.find(function(c){return c.id===id;})||null;}
 
-function saveSessionToHistory(){var deck=activeDeck();if(!deck)return;var kN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;var uN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;var seen=kN+uN;if(seen===0)return;var dur=Date.now()-session.startTime;if(!library.history)library.history=[];library.history.push({id:Date.now(),deckId:deck.id,deckName:deck.name,mode:session.mode,total:session.order.length,seen:seen,known:kN,unknown:uN,pct:Math.round(kN/seen*100),duration:dur,ts:Date.now()});if(library.history.length>200)library.history=library.history.slice(-200);scheduleSave();}
+function recordResult(card,deck,status){
+  session.results[card.id]=status;
+  deck.progress[card.id]=status;
+  if(!deck.cardStats)deck.cardStats={};
+  var cs=deck.cardStats[card.id];
+  if(!cs){cs={seen:0,correct:0,wrong:0};deck.cardStats[card.id]=cs;}
+  cs.seen++;
+  if(status==="known")cs.correct++;else cs.wrong++;
+}
+
+function saveSessionToHistory(){var deck=activeDeck();if(!deck)return;var ids=Object.keys(session.results);var kN=ids.filter(function(id){return session.results[id]==="known";}).length;var uN=ids.filter(function(id){return session.results[id]==="unknown";}).length;var seen=kN+uN;if(seen===0)return;var dur=Date.now()-session.startTime;var wrongCards=ids.filter(function(id){return session.results[id]==="unknown";}).map(function(id){var c=deck.cards.find(function(cc){return String(cc.id)===String(id);});return c?{front:c.front,back:c.back}:null;}).filter(Boolean);if(!library.history)library.history=[];library.history.push({id:Date.now(),deckId:deck.id,deckName:deck.name,mode:session.mode,total:session.order.length,seen:seen,known:kN,unknown:uN,pct:Math.round(kN/seen*100),duration:dur,ts:Date.now(),wrongCards:wrongCards});if(library.history.length>200)library.history=library.history.slice(-200);scheduleSave();}
 
 function renderCard(){
   var card=currentCard();
@@ -973,7 +1030,7 @@ function renderCard(){
     el("sessionBarUnknown").style.width=seen>0?Math.round(uN/seen*100)+"%":"0%";
     el("sessionTime").textContent=seen>0?"Completed in "+fmtDuration(dur):"";
     var wIds=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).map(Number);
-    el("reviseBtn").hidden=wIds.length===0;session.reviseIds=wIds;
+    el("reviseBtn").hidden=wIds.length===0;session.reviseIds=wIds;session.reviseMode=session.mode;
     el("perfectBadge").hidden=!(seen>0&&uN===0);if(seen>0&&uN===0)setTimeout(launchConfetti,250);
     setNextModeBtns(uN>0?"focus":"all");showSubview("complete");return;
   }
@@ -983,16 +1040,50 @@ function renderCard(){
 }
 
 /* quiz */
+var quizWrongAttempt=false;
 function buildQuizOptions(card){var deck=activeDeck();var others=deck.cards.filter(function(c){return c.id!==card.id;}).map(function(c){return c.back;});var unique=[];others.forEach(function(v){if(unique.indexOf(v)===-1)unique.push(v);});return shuffle([card.back].concat(shuffle(unique).slice(0,3)));}
-function renderQuizOptions(card){var opts=buildQuizOptions(card);["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id,i){var btn=el(id);btn.textContent=opts[i]||"";btn.dataset.value=opts[i]||"";btn.classList.remove("correct","wrong","reveal");btn.disabled=!opts[i];btn.hidden=!opts[i];});}
-function handleQuizAnswer(value,card){if(marking)return;marking=true;var isCorrect=(value===card.back);var status=isCorrect?"known":"unknown";["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id){var btn=el(id);btn.disabled=true;if(btn.dataset.value===card.back)btn.classList.add(isCorrect?"correct":"reveal");if(btn.dataset.value===value&&!isCorrect)btn.classList.add("wrong");});session.results[card.id]=status;activeDeck().progress[card.id]=status;scheduleSave();renderProgress();
-haptic(isCorrect?"success":"error");flashScreen(status);if(isCorrect)spawnParticles();updateCombo(status);
-setTimeout(advance,900);}
-["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id){el(id).addEventListener("click",function(){var card=currentCard();if(card)handleQuizAnswer(el(id).dataset.value,card);});});
+function renderQuizOptions(card){
+  quizWrongAttempt=false;
+  var opts=buildQuizOptions(card);
+  ["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id,i){
+    var btn=el(id);
+    btn.textContent=opts[i]||"";
+    btn.dataset.value=opts[i]||"";
+    btn.classList.remove("correct","wrong","reveal");
+    btn.disabled=!opts[i];
+    btn.hidden=!opts[i];
+    btn.blur();
+  });
+}
+function handleQuizAnswer(value,card,btnEl){
+  if(marking)return;
+  if(btnEl&&btnEl.disabled)return;
+  var isCorrect=(value===card.back);
+  if(!isCorrect){
+    if(btnEl){btnEl.disabled=true;btnEl.classList.add("wrong");btnEl.blur();}
+    quizWrongAttempt=true;
+    haptic("error");
+    flashScreen("unknown");
+    return;
+  }
+  marking=true;
+  var status=quizWrongAttempt?"unknown":"known";
+  ["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id){var b=el(id);b.disabled=true;});
+  if(btnEl){btnEl.classList.add("correct");btnEl.blur();}
+  var deck=activeDeck();
+  recordResult(card,deck,status);
+  scheduleSave();renderProgress();
+  haptic(status==="known"?"success":"medium");
+  flashScreen(status);
+  if(status==="known")spawnParticles();
+  updateCombo(status);
+  setTimeout(advance,900);
+}
+["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id){el(id).addEventListener("click",function(){var card=currentCard();if(card)handleQuizAnswer(el(id).dataset.value,card,el(id));});});
 
 /* flip / mark */
 function flipCard(){if(!currentCard()||session.mode==="quiz")return;flipped=!flipped;cardEl.classList.toggle("flipped",flipped);haptic("light");}
-function markCard(status){if(marking)return;var card=currentCard(),deck=activeDeck();if(!card||!deck)return;marking=true;session.results[card.id]=status;deck.progress[card.id]=status;scheduleSave();renderProgress();
+function markCard(status){if(marking)return;var card=currentCard(),deck=activeDeck();if(!card||!deck)return;marking=true;recordResult(card,deck,status);scheduleSave();renderProgress();
 haptic(status==="known"?"success":"medium");flashScreen(status);triggerThwack();if(status==="known")spawnParticles();updateCombo(status);var go=function(){setTimeout(advance,650);};if(!flipped){flipped=true;cardEl.classList.add("flipped");setTimeout(go,370);}else{go();}}
 function advance(){marking=false;session.pos++;renderCard();}
 
@@ -1024,7 +1115,7 @@ cardEl.addEventListener("touchend",function(e){
     lastSwipeTime=Date.now();
     var status=dx>0?"known":"unknown";
     var card=currentCard(),deck=activeDeck();if(!card||!deck)return;
-    marking=true;session.results[card.id]=status;deck.progress[card.id]=status;scheduleSave();renderProgress();
+    marking=true;recordResult(card,deck,status);scheduleSave();renderProgress();
 haptic(status==="known"?"success":"medium");flashScreen(status);triggerThwack();if(status==="known")spawnParticles();updateCombo(status);
     /* fly all the way off → reset invisible → flip to back → fade in → flash → advance */
     var dir=dx>0?1:-1;
@@ -1067,12 +1158,79 @@ document.addEventListener("keydown",function(e){if(currentScreen!=="study")retur
 function setNextModeBtns(mode){nextMode=mode;["all","focus","mixed","quiz","wild","fresh"].forEach(function(m){var btn=el("next"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.classList.toggle("active",m===mode);});}
 ["all","focus","mixed","quiz","wild","fresh"].forEach(function(m){var btn=el("next"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.addEventListener("click",function(){setNextModeBtns(m);});});
 el("studyAgainBtn").addEventListener("click",function(){startSession(nextMode);});
-el("reviseBtn").addEventListener("click",function(){if(session.reviseIds&&session.reviseIds.length>0)startSession("focus",session.reviseIds);});
+el("reviseBtn").addEventListener("click",function(){if(session.reviseIds&&session.reviseIds.length>0)startSession(session.reviseMode||"focus",session.reviseIds);});
 function renderStudy(){currentScreen="study";el("studyScreen").classList.add("active");el("studyScreen").style.display="flex";el("settingsScreen").classList.remove("active");el("settingsScreen").style.display="none";el("historyScreen").classList.remove("active");el("historyScreen").style.display="none";headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";updateDeckPill();if(!activeDeck()){showSubview("empty");return;}startSession("all");}
 
 /* history */
 function deckHistory(){var deck=activeDeck();if(!deck||!library.history)return[];return library.history.filter(function(h){return h.deckId===deck.id;});}
-function renderHistory(){var deck=activeDeck();var hist=deckHistory();var container=el("historyContent");container.innerHTML="";if(!deck){container.innerHTML='<p class="noHistHint">Select a deck to see its history.</p>';return;}if(hist.length===0){container.innerHTML='<p class="noHistHint">No sessions yet.</p>';return;}var totalSeen=hist.reduce(function(s,h){return s+h.seen;},0);var avgPct=Math.round(hist.reduce(function(s,h){return s+h.pct;},0)/hist.length);var sDiv=document.createElement("div");sDiv.className="histStats";var bestStr=bestCombo>0?bestCombo+"✓":"—";sDiv.innerHTML='<div class="histStat"><div class="histStatN">'+hist.length+'</div><div class="histStatL">Sessions</div></div><div class="histStat"><div class="histStatN">'+totalSeen+'</div><div class="histStatL">Cards seen</div></div><div class="histStat"><div class="histStatN">'+avgPct+'%</div><div class="histStatL">Avg score</div></div><div class="histStat"><div class="histStatN">'+bestStr+'</div><div class="histStatL">Best streak</div></div>';container.appendChild(sDiv);var best=hist.slice().sort(function(a,b){return b.pct!==a.pct?b.pct-a.pct:b.seen-a.seen;})[0];var bKP=best.seen>0?Math.round(best.known/best.seen*100):0,bUP=best.seen>0?Math.round(best.unknown/best.seen*100):0;var bestDiv=document.createElement("div");bestDiv.className="bestSessionCard";bestDiv.innerHTML='<div class="bestLabel">Best session</div><div class="bestRow"><span class="bestPct" style="color:'+pctColor(best.pct)+'">'+best.pct+'%</span><div class="bestMeta">'+best.known+' got it · '+best.unknown+' to review<br>'+fmtDate(best.ts)+' · '+best.mode+'</div></div><div class="bestBar"><div class="bestBarKnown" style="width:'+bKP+'%"></div><div class="bestBarUnknown" style="width:'+bUP+'%"></div></div>';container.appendChild(bestDiv);var bSec=document.createElement("div");bSec.className="bubblesSection";bSec.innerHTML='<div class="bubblesLabel">All sessions</div>';var bWrap=document.createElement("div");bWrap.className="bubblesWrap";hist.slice(-40).forEach(function(h){var b=document.createElement("div");b.className="bubble"+(h===best?" best":"");b.style.background=pctColor(h.pct);b.textContent=h.pct+"%";b.title=fmtDate(h.ts)+"\n"+h.known+" got it · "+h.unknown+" · "+h.mode;bWrap.appendChild(b);});bSec.appendChild(bWrap);container.appendChild(bSec);var lLabel=document.createElement("div");lLabel.className="bubblesLabel";lLabel.textContent="Recent sessions";container.appendChild(lLabel);var lDiv=document.createElement("div");lDiv.className="histList";hist.slice().reverse().slice(0,20).forEach(function(h){var entry=document.createElement("div");entry.className="histEntry";var kP=h.seen>0?Math.round(h.known/h.seen*100):0,uP=h.seen>0?Math.round(h.unknown/h.seen*100):0;entry.innerHTML='<div class="histPctBadge" style="background:'+pctColor(h.pct)+'">'+h.pct+'%</div><div class="histMeta"><div class="histDate">'+fmtDate(h.ts)+'</div><div class="histSub">'+h.known+' got it · '+h.unknown+' to review · '+h.seen+' cards · '+h.mode+(h.duration?' · '+fmtDuration(h.duration):'')+'</div><div class="histBar"><div class="histBarKnown" style="width:'+kP+'%"></div><div class="histBarUnknown" style="width:'+uP+'%"></div></div></div>';lDiv.appendChild(entry);});container.appendChild(lDiv);}
+
+/* ---- session detail modal ---- */
+function showSessionDetail(h){
+  el("sdTitle").textContent=fmtDate(h.ts);
+  el("sdScore").textContent=h.pct+"%";
+  el("sdCounts").textContent=h.known+" / "+h.unknown;
+  el("sdTime").textContent=h.duration?fmtDuration(h.duration):"—";
+  el("sdMode").textContent=h.mode.charAt(0).toUpperCase()+h.mode.slice(1);
+  var list=el("sdMissedList");list.innerHTML="";
+  if(!h.wrongCards||h.wrongCards.length===0){
+    list.innerHTML='<p class="sdEmptyMissed">No mistakes — clean sweep.</p>';
+  } else {
+    h.wrongCards.forEach(function(c){
+      var row=document.createElement("div");
+      row.className="sdMissedRow";
+      row.innerHTML='<span class="sdMissedFront">'+escapeHtml(c.front)+'</span><span class="sdMissedBack">'+escapeHtml(c.back)+'</span>';
+      list.appendChild(row);
+    });
+  }
+  el("sessionDetailBlur").classList.add("show");
+  el("sessionDetailPanel").classList.add("show");
+}
+function hideSessionDetail(){
+  el("sessionDetailBlur").classList.remove("show");
+  el("sessionDetailPanel").classList.remove("show");
+}
+
+/* ---- aggregate trouble spots / mastered ---- */
+function renderTroubleSpots(container,deck){
+  var stats=deck.cardStats||{};
+  var rows=Object.keys(stats).map(function(id){
+    var c=deck.cards.find(function(cc){return String(cc.id)===String(id);});
+    if(!c)return null;
+    var s=stats[id];
+    if(s.seen<2)return null;
+    return{front:c.front,back:c.back,seen:s.seen,correct:s.correct,acc:s.correct/s.seen};
+  }).filter(Boolean);
+  if(rows.length===0)return;
+
+  var worst=rows.slice().sort(function(a,b){return a.acc-b.acc||b.seen-a.seen;}).slice(0,6).filter(function(r){return r.acc<1;});
+  var best=rows.slice().sort(function(a,b){return b.acc-a.acc||b.seen-a.seen;}).slice(0,6).filter(function(r){return r.acc===1&&r.seen>=2;});
+
+  function buildRow(r){
+    var pct=Math.round(r.acc*100);
+    var color=pctColor(pct);
+    var row=document.createElement("div");
+    row.className="troubleRow";
+    row.innerHTML='<span class="troubleChar">'+escapeHtml(r.front)+'</span><span class="troubleReading">'+escapeHtml(r.back)+'</span><span class="troubleBarWrap"><span class="troubleBarFill" style="width:'+pct+'%;background:'+color+'"></span></span><span class="troublePct" style="color:'+color+'">'+pct+'%</span>';
+    return row;
+  }
+
+  if(worst.length>0){
+    var wSec=document.createElement("div");wSec.className="troubleSection";
+    wSec.innerHTML='<div class="bubblesLabel">Needs practice</div>';
+    worst.forEach(function(r){wSec.appendChild(buildRow(r));});
+    container.appendChild(wSec);
+  }
+  if(best.length>0){
+    var bSec2=document.createElement("div");bSec2.className="troubleSection";
+    bSec2.innerHTML='<div class="bubblesLabel">Mastered</div>';
+    best.forEach(function(r){bSec2.appendChild(buildRow(r));});
+    container.appendChild(bSec2);
+  }
+}
+
+function renderHistory(){var deck=activeDeck();var hist=deckHistory();var container=el("historyContent");container.innerHTML="";if(!deck){container.innerHTML='<p class="noHistHint">Select a deck to see its history.</p>';return;}if(hist.length===0){container.innerHTML='<p class="noHistHint">No sessions yet.</p>';return;}var totalSeen=hist.reduce(function(s,h){return s+h.seen;},0);var avgPct=Math.round(hist.reduce(function(s,h){return s+h.pct;},0)/hist.length);var sDiv=document.createElement("div");sDiv.className="histStats";var bestStr=bestCombo>0?bestCombo+"✓":"—";sDiv.innerHTML='<div class="histStat"><div class="histStatN">'+hist.length+'</div><div class="histStatL">Sessions</div></div><div class="histStat"><div class="histStatN">'+totalSeen+'</div><div class="histStatL">Cards seen</div></div><div class="histStat"><div class="histStatN">'+avgPct+'%</div><div class="histStatL">Avg score</div></div><div class="histStat"><div class="histStatN">'+bestStr+'</div><div class="histStatL">Best streak</div></div>';container.appendChild(sDiv);
+renderTroubleSpots(container,deck);
+var best=hist.slice().sort(function(a,b){return b.pct!==a.pct?b.pct-a.pct:b.seen-a.seen;})[0];var bKP=best.seen>0?Math.round(best.known/best.seen*100):0,bUP=best.seen>0?Math.round(best.unknown/best.seen*100):0;var bestDiv=document.createElement("div");bestDiv.className="bestSessionCard";bestDiv.style.cursor="pointer";bestDiv.innerHTML='<div class="bestLabel">Best session</div><div class="bestRow"><span class="bestPct" style="color:'+pctColor(best.pct)+'">'+best.pct+'%</span><div class="bestMeta">'+best.known+' got it · '+best.unknown+' to review<br>'+fmtDate(best.ts)+' · '+best.mode+'</div></div><div class="bestBar"><div class="bestBarKnown" style="width:'+bKP+'%"></div><div class="bestBarUnknown" style="width:'+bUP+'%"></div></div>';bestDiv.addEventListener("click",function(){showSessionDetail(best);});container.appendChild(bestDiv);var bSec=document.createElement("div");bSec.className="bubblesSection";bSec.innerHTML='<div class="bubblesLabel">All sessions</div>';var bWrap=document.createElement("div");bWrap.className="bubblesWrap";hist.slice(-40).forEach(function(h){var b=document.createElement("div");b.className="bubble"+(h===best?" best":"");b.style.background=pctColor(h.pct);b.textContent=h.pct+"%";b.title=fmtDate(h.ts)+"\n"+h.known+" got it · "+h.unknown+" · "+h.mode;b.addEventListener("click",function(){showSessionDetail(h);});bWrap.appendChild(b);});bSec.appendChild(bWrap);container.appendChild(bSec);var lLabel=document.createElement("div");lLabel.className="bubblesLabel";lLabel.textContent="Recent sessions";container.appendChild(lLabel);var lDiv=document.createElement("div");lDiv.className="histList";hist.slice().reverse().slice(0,20).forEach(function(h){var entry=document.createElement("div");entry.className="histEntry";var kP=h.seen>0?Math.round(h.known/h.seen*100):0,uP=h.seen>0?Math.round(h.unknown/h.seen*100):0;entry.innerHTML='<div class="histPctBadge" style="background:'+pctColor(h.pct)+'">'+h.pct+'%</div><div class="histMeta"><div class="histDate">'+fmtDate(h.ts)+'</div><div class="histSub">'+h.known+' got it · '+h.unknown+' to review · '+h.seen+' cards · '+h.mode+(h.duration?' · '+fmtDuration(h.duration):'')+'</div><div class="histBar"><div class="histBarKnown" style="width:'+kP+'%"></div><div class="histBarUnknown" style="width:'+uP+'%"></div></div></div>';entry.addEventListener("click",function(){showSessionDetail(h);});lDiv.appendChild(entry);});container.appendChild(lDiv);}
 
 /* settings */
 function renderSettings(){
@@ -1093,7 +1251,7 @@ replaceBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||s
 function twoStep(btn,fn){var ok=false,t=null,orig=btn.textContent;btn.addEventListener("click",function(){if(!ok){ok=true;btn.textContent="Click again to confirm";btn.classList.add("confirming");t=setTimeout(function(){ok=false;btn.textContent=orig;btn.classList.remove("confirming");},3000);}else{clearTimeout(t);ok=false;btn.textContent=orig;btn.classList.remove("confirming");fn();}});}
 twoStep(el("resetProgressBtn"),function(){var deck=activeDeck();if(!deck)return;deck.progress={};scheduleSave();renderSettings();updateModeAvailability();});
 twoStep(el("deleteDeckBtn"),function(){var deck=activeDeck();if(!deck)return;library.decks=library.decks.filter(function(d){return d.id!==deck.id;});library.activeDeckId=library.decks.length?library.decks[0].id:null;scheduleSave();renderSettings();renderStudy();});
-twoStep(el("clearHistoryBtn"),function(){var deck=activeDeck();if(!deck)return;library.history=(library.history||[]).filter(function(h){return h.deckId!==deck.id;});scheduleSave();renderSettings();});
+twoStep(el("clearHistoryBtn"),function(){var deck=activeDeck();if(!deck)return;library.history=(library.history||[]).filter(function(h){return h.deckId!==deck.id;});deck.cardStats={};scheduleSave();renderSettings();});
 
 /* clear cache */
 el("clearCacheBtn").addEventListener("click",function(){
@@ -1111,6 +1269,8 @@ el("splashSettingsBtn").addEventListener("click",function(){
   setTimeout(function(){showScreen("settings");},220);
 });
 el("exitBlur").addEventListener("click",hideExitPopup);
+el("sdCloseBtn").addEventListener("click",hideSessionDetail);
+el("sessionDetailBlur").addEventListener("click",hideSessionDetail);
 el("exitConfirmBtn").addEventListener("click",function(){
   hideExitPopup();
   saveSessionToHistory();
