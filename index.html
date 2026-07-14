@@ -48,7 +48,8 @@
   body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);height:100%;overflow:hidden;display:flex;justify-content:center;transition:background-color .2s ease,color .2s ease;}
   #app{width:100%;max-width:440px;height:100%;display:flex;flex-direction:column;padding:0 20px max(16px,env(safe-area-inset-bottom));background:var(--bg);}
   button{font-family:inherit;cursor:pointer;}input,textarea,select{font-family:inherit;}
-  button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  button,button:active,button:focus,button:focus-visible,button:hover{outline:none !important;-webkit-tap-highlight-color:transparent !important;}
 
   header{position:sticky;top:0;z-index:100;background:var(--bg);padding:max(12px,env(safe-area-inset-top)) 0 10px;border-bottom:1px solid var(--line);margin:0 0 12px;display:flex;flex-direction:column;transition:background-color .2s ease;}
   .headerMain{display:flex;align-items:center;justify-content:space-between;gap:10px;}
@@ -114,11 +115,21 @@
 
 
   .quizGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
-  .quizBtn{position:relative;-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;padding:15px 8px;border:1px solid var(--line);background:var(--paper);border-radius:12px;font-size:14.5px;font-weight:500;color:var(--ink);text-align:center;cursor:pointer;min-height:52px;line-height:1.3;display:flex;align-items:center;justify-content:center;transition:background .12s,border-color .12s,color .12s;}
+  .quizBtn{position:relative;-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;padding:15px 8px;border:1px solid var(--line);background:var(--paper);border-radius:12px;font-size:14.5px;font-weight:500;color:var(--ink);text-align:center;cursor:pointer;min-height:52px;line-height:1.3;display:flex;align-items:center;justify-content:center;transition:background .12s,border-color .12s,color .12s;}
   .quizBtnLabel{word-break:break-word;transition:opacity .1s ease;}
-  .quizBtnX{position:absolute;width:26px;height:26px;color:var(--accent);opacity:0;pointer-events:none;}
-  .quizBtn:hover:not(:disabled){border-color:var(--ink-soft);}
-  .quizBtn.correct{background:var(--known);border-color:var(--known);color:#fff;}
+  .quizBtnX,.quizBtnCheck{position:absolute;width:26px;height:26px;opacity:0;pointer-events:none;}
+  .quizBtnX{color:var(--accent);}
+  .quizBtnCheck{color:#fff;}
+  .quizBtn:hover:not(.qbtnDisabled){border-color:var(--ink-soft);}
+  @keyframes quizCorrectPop{
+    0%{background:var(--paper);border-color:var(--line);transform:scale(1);}
+    35%{background:var(--known);border-color:var(--known);transform:scale(1.08);}
+    60%{transform:scale(.97);}
+    100%{background:var(--known);border-color:var(--known);transform:scale(1);}
+  }
+  .quizBtn.correct{background:var(--known);border-color:var(--known);color:#fff;animation:quizCorrectPop .4s cubic-bezier(.34,1.56,.64,1);}
+  .quizBtn.correct .quizBtnLabel{opacity:0;}
+  .quizBtn.correct .quizBtnCheck{opacity:1;}
   @keyframes quizWrongShake{
     0%{background:var(--accent);border-color:var(--accent);transform:translateX(0);}
     15%{transform:translateX(-7px);}
@@ -132,8 +143,9 @@
   .quizBtn.wrong .quizBtnLabel{opacity:0;}
   .quizBtn.wrong .quizBtnX{opacity:1;}
   .quizBtn.reveal{background:var(--known-soft);border-color:var(--known);color:var(--known);}
-  .quizBtn:disabled{cursor:default;}
+  .quizBtn.qbtnDisabled{cursor:default;pointer-events:none;}
   .quizBtn:active,.quizBtn:focus,.quizBtn:focus-visible,.quizBtn:hover{outline:none;-webkit-tap-highlight-color:transparent;}
+  [role="button"]{outline:none;-webkit-tap-highlight-color:transparent;}
   .quizBtn:not(.correct):not(.wrong):active{border-color:var(--line);background:var(--paper);}
 
   .actionRow{display:flex;gap:10px;margin-top:10px;}
@@ -535,8 +547,8 @@
         </div>
       </div>
       <div class="quizGrid" id="quizGrid" hidden>
-        <button class="quizBtn" id="qBtn0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button><button class="quizBtn" id="qBtn1"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
-        <button class="quizBtn" id="qBtn2"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button><button class="quizBtn" id="qBtn3"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
+        <div class="quizBtn" id="qBtn0" role="button" tabindex="0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg><svg class="quizBtnCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9,18 20,7"/></svg></div><div class="quizBtn" id="qBtn1" role="button" tabindex="0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg><svg class="quizBtnCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9,18 20,7"/></svg></div>
+        <div class="quizBtn" id="qBtn2" role="button" tabindex="0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg><svg class="quizBtnCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9,18 20,7"/></svg></div><div class="quizBtn" id="qBtn3" role="button" tabindex="0"><span class="quizBtnLabel"></span><svg class="quizBtnX" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg><svg class="quizBtnCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9,18 20,7"/></svg></div>
       </div>
       <div class="actionRow" id="actionRow">
         <button class="actionBtn dontknow" id="btnDontKnow"><svg class="actionIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
@@ -710,7 +722,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.9.1</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.9.4</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1148,17 +1160,28 @@ function renderQuizOptions(card){
     if(label)label.textContent=opts[i]||"";
     btn.dataset.value=opts[i]||"";
     btn.classList.remove("correct","wrong","reveal");
-    btn.disabled=!opts[i];
+    btn.classList.toggle("qbtnDisabled",!opts[i]);
     btn.hidden=!opts[i];
     btn.blur();
+    /* hard reset — clears any leftover animation/compositing artifact from
+       the previous card's shake animation that CSS cascade alone won't force */
+    btn.style.animation="none";
+    btn.style.transition="none";
+    btn.style.transform="none";
+    btn.style.borderColor="";
+    btn.style.background="";
+    btn.style.willChange="auto";
+    void btn.offsetWidth; /* force reflow/repaint before re-enabling transitions */
+    btn.style.transition="";
+    btn.style.animation="";
   });
 }
 function handleQuizAnswer(value,card,btnEl){
   if(marking)return;
-  if(btnEl&&btnEl.disabled)return;
+  if(btnEl&&btnEl.classList.contains("qbtnDisabled"))return;
   var isCorrect=(value===card.back);
   if(!isCorrect){
-    if(btnEl){btnEl.disabled=true;btnEl.classList.add("wrong");btnEl.blur();}
+    if(btnEl){btnEl.classList.add("qbtnDisabled","wrong");btnEl.blur();}
     quizWrongAttempt=true;
     haptic("error");
     flashScreen("unknown");
@@ -1166,7 +1189,7 @@ function handleQuizAnswer(value,card,btnEl){
   }
   marking=true;
   var status=quizWrongAttempt?"unknown":"known";
-  ["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id){var b=el(id);b.disabled=true;});
+  ["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id){el(id).classList.add("qbtnDisabled");});
   if(btnEl){btnEl.classList.add("correct");btnEl.blur();}
   var deck=activeDeck();
   recordResult(card,deck,status);
@@ -1179,6 +1202,7 @@ function handleQuizAnswer(value,card,btnEl){
   setTimeout(advance,900);
 }
 ["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id){el(id).addEventListener("click",function(){var card=currentCard();if(card)handleQuizAnswer(el(id).dataset.value,card,el(id));});});
+["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id){el(id).addEventListener("keydown",function(e){if(e.code==="Enter"||e.code==="Space"){e.preventDefault();el(id).click();}});});
 
 /* flip / mark */
 function flipCard(){if(!currentCard()||session.mode==="quiz")return;flipped=!flipped;cardEl.classList.toggle("flipped",flipped);haptic("light");}
