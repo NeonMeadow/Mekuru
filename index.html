@@ -104,8 +104,8 @@
   .card.flipped .cardInner{transform:rotateY(180deg);}
   .face{position:absolute;inset:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;padding:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden;text-align:center;overflow:hidden;}
   .face-back{transform:rotateY(180deg);}
-  .face-front .text{font-family:var(--font-display);font-weight:600;line-height:1.2;word-break:break-word;max-width:100%;}
-  .face-back .text{font-family:var(--font-back);font-style:italic;line-height:1.4;color:var(--ink);max-width:100%;}
+  .face-front .text{font-family:var(--font-display);font-size:calc(clamp(38px,11vw,58px)*var(--text-scale));font-weight:600;line-height:1.2;word-break:break-word;max-width:100%;min-width:0;}
+  .face-back .text{font-family:var(--font-back);font-style:italic;font-size:calc(clamp(18px,6vw,24px)*var(--text-scale));line-height:1.4;color:var(--ink);max-width:100%;min-width:0;}
   .tapHint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
 
   /* subtle circular swipe hints */
@@ -722,7 +722,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.9.7</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.10</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -753,30 +753,49 @@ function scheduleSave(){clearTimeout(saveTimer);el("saveNote").textContent="Savi
 function el(id){return document.getElementById(id);}
 function escapeHtml(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML;}
 
-/* Card text auto-sizing: a single kana should stay large and bold, but a full
-   phrase like "だいじょうぶですか。" needs to shrink to actually fit the card
-   instead of overflowing it. Sized by character count, not a fixed clamp. */
-function charLen(s){return s?Array.from(s).length:0;}
-function frontFontClamp(text){
-  var len=charLen(text);
-  if(len<=2)return"clamp(38px,11vw,60px)";
-  if(len<=4)return"clamp(28px,8.5vw,46px)";
-  if(len<=7)return"clamp(20px,6.5vw,34px)";
-  if(len<=12)return"clamp(15px,5vw,25px)";
-  return"clamp(12px,4vw,19px)";
+/* Card text auto-fit: measure the ACTUAL rendered width against the ACTUAL
+   available card space, then shrink until it fits on one line. Only wraps
+   to multiple lines if it still doesn't fit even at the readable floor.
+   The user's text-size slider sets the ceiling each card may reach. */
+function innerBox(faceEl){
+  var cs=getComputedStyle(faceEl);
+  return{
+    w:faceEl.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),
+    h:faceEl.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom)
+  };
 }
-function backFontClamp(text){
-  var len=charLen(text);
-  if(len<=6)return"clamp(18px,6vw,26px)";
-  if(len<=14)return"clamp(15px,5vw,21px)";
-  if(len<=28)return"clamp(12.5px,4vw,17px)";
-  return"clamp(11px,3.2vw,14px)";
+function fitTextToFace(textEl,faceEl,maxFontPx,minFontPx){
+  if(!textEl.textContent)return;
+  var box=innerBox(faceEl);
+  if(box.w<=0||box.h<=0)return; /* not laid out yet */
+  textEl.style.whiteSpace="nowrap";
+  var fontSize=maxFontPx;
+  textEl.style.fontSize=fontSize+"px";
+  var w=textEl.scrollWidth;
+  if(w>box.w){
+    var estimate=Math.floor(maxFontPx*(box.w/w)*0.96);
+    fontSize=Math.max(minFontPx,Math.min(maxFontPx,estimate));
+    textEl.style.fontSize=fontSize+"px";
+    var tries=0;
+    while(textEl.scrollWidth>box.w&&fontSize>minFontPx&&tries<6){
+      fontSize-=1;textEl.style.fontSize=fontSize+"px";tries++;
+    }
+  }
+  if(textEl.scrollWidth>box.w){
+    /* still doesn't fit as one line even at the floor — allow wrapping */
+    textEl.style.whiteSpace="normal";
+    var tries2=0;
+    while(textEl.scrollHeight>box.h&&fontSize>minFontPx&&tries2<12){
+      fontSize-=1;textEl.style.fontSize=fontSize+"px";tries2++;
+    }
+  }
 }
 function setCardText(front,back){
   frontText.textContent=front;
   backText.textContent=back;
-  frontText.style.fontSize="calc("+frontFontClamp(front)+"*var(--text-scale))";
-  backText.style.fontSize="calc("+backFontClamp(back)+"*var(--text-scale))";
+  var scale=textScale||1;
+  fitTextToFace(frontText,frontText.parentElement,Math.round(58*scale),Math.max(11,Math.round(15*scale)));
+  fitTextToFace(backText,backText.parentElement,Math.round(24*scale),Math.max(10,Math.round(12*scale)));
 }
 function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function pctColor(p){return "hsl("+Math.round(p*1.2)+",65%,46%)";}
@@ -803,7 +822,9 @@ var headerLabel=el("headerLabel");
 /* headerConfirm removed — replaced by exit popup */
 function updateDeckPill(){var deck=activeDeck();var show=deck&&currentScreen==="study";el("deckPill").hidden=!show;if(show)el("deckPillName").textContent=deck.name;}
 el("deckPill").addEventListener("click",function(){showScreen("settings");});
-function showScreen(name){currentScreen=name;var screens={studyScreen:"study",settingsScreen:"settings",historyScreen:"history"};Object.keys(screens).forEach(function(id){var isActive=screens[id]===name;el(id).classList.toggle("active",isActive);el(id).style.display=isActive?"flex":"none";});el("settingsToggle").classList.toggle("active",name==="settings");el("historyToggle").classList.toggle("active",name==="history");if(name==="study"){headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";}else{headerLabel.classList.remove("headerShowLogo");el("headerText").textContent=name==="settings"?"Settings":"History";}updateDeckPill();if(name==="settings")renderSettings();if(name==="history")renderHistory();}
+function showScreen(name){currentScreen=name;var screens={studyScreen:"study",settingsScreen:"settings",historyScreen:"history"};Object.keys(screens).forEach(function(id){var isActive=screens[id]===name;el(id).classList.toggle("active",isActive);el(id).style.display=isActive?"flex":"none";});el("settingsToggle").classList.toggle("active",name==="settings");el("historyToggle").classList.toggle("active",name==="history");if(name==="study"){headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";}else{headerLabel.classList.remove("headerShowLogo");el("headerText").textContent=name==="settings"?"Settings":"History";}updateDeckPill();if(name==="settings")renderSettings();if(name==="history")renderHistory();
+  if(name==="study"){var c=currentCard();if(c)setCardText(c.front,c.back);}
+}
 el("settingsToggle").addEventListener("click",function(){showScreen(currentScreen==="settings"?"study":"settings");});
 el("historyToggle").addEventListener("click",function(){showScreen(currentScreen==="history"?"study":"history");});
 el("backBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}});
@@ -863,7 +884,12 @@ el("comboCheck").addEventListener("change",function(){
 /* font slider */
 var fontSlider=el("fontSlider"),textScale=1;
 function applyTextScale(v){textScale=Math.round(v*100)/100;document.documentElement.style.setProperty("--text-scale",textScale);if(fontSlider)fontSlider.value=Math.round(textScale*100);var pct=Math.round(textScale*100);var pctEl=el("fontPreviewPct"),frontEl=el("fontPreviewFront"),backEl=el("fontPreviewBack");if(pctEl)pctEl.textContent=pct+"%";if(frontEl)frontEl.style.fontSize=Math.round(44*textScale)+"px";if(backEl)backEl.style.fontSize=Math.round(20*textScale)+"px";}
-fontSlider.addEventListener("input",function(){applyTextScale(parseInt(fontSlider.value)/100);storageSet(FONT_KEY,textScale);});
+fontSlider.addEventListener("input",function(){
+  applyTextScale(parseInt(fontSlider.value)/100);
+  storageSet(FONT_KEY,textScale);
+  var card=currentCard();
+  if(card)setCardText(card.front,card.back);
+});
 
 /* font face */
 var FONTS={
