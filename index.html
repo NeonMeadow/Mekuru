@@ -102,10 +102,10 @@
   .card:focus{outline:none;}
   .cardInner{position:relative;width:100%;height:100%;transition:transform .35s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d;}
   .card.flipped .cardInner{transform:rotateY(180deg);}
-  .face{position:absolute;inset:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;padding:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden;text-align:center;}
+  .face{position:absolute;inset:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;padding:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden;text-align:center;overflow:hidden;}
   .face-back{transform:rotateY(180deg);}
-  .face-front .text{font-family:var(--font-display);font-size:calc(clamp(38px,11vw,60px)*var(--text-scale));font-weight:600;line-height:1.2;word-break:break-word;}
-  .face-back .text{font-family:var(--font-back);font-style:italic;font-size:calc(clamp(18px,6vw,26px)*var(--text-scale));line-height:1.4;color:var(--ink);}
+  .face-front .text{font-family:var(--font-display);font-weight:600;line-height:1.2;word-break:break-word;max-width:100%;}
+  .face-back .text{font-family:var(--font-back);font-style:italic;line-height:1.4;color:var(--ink);max-width:100%;}
   .tapHint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
 
   /* subtle circular swipe hints */
@@ -308,8 +308,8 @@
   /* ---- card detail modal ---- */
   #cardDetailBlur{position:fixed;inset:0;z-index:900;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s ease;}
   #cardDetailBlur.show{opacity:1;pointer-events:auto;}
-  #cardDetailPanel{position:fixed;z-index:950;left:50%;bottom:0;transform:translate(-50%,100%);background:var(--bg);border-radius:22px 22px 0 0;padding:24px 20px max(22px,env(safe-area-inset-bottom));width:min(440px,100%);max-height:75vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.24);transition:transform .28s cubic-bezier(.22,.9,.4,1);text-align:center;}
-  #cardDetailPanel.show{transform:translate(-50%,0);}
+  #cardDetailPanel{position:fixed;z-index:950;left:50%;bottom:0;transform:translate(-50%,100%);background:var(--bg);border-radius:22px 22px 0 0;padding:24px 20px max(22px,env(safe-area-inset-bottom));width:min(440px,100%);max-height:75vh;overflow-y:auto;transition:transform .28s cubic-bezier(.22,.9,.4,1);text-align:center;}
+  #cardDetailPanel.show{transform:translate(-50%,0);box-shadow:0 -8px 40px rgba(0,0,0,.24);}
   .cdTopRow{display:flex;align-items:center;justify-content:flex-end;margin-bottom:4px;}
   .cdChar{font-family:var(--font-display);font-size:52px;font-weight:600;color:var(--ink);line-height:1;}
   .cdReading{font-family:var(--font-back);font-style:italic;font-size:16px;color:var(--ink-soft);margin-top:6px;margin-bottom:18px;}
@@ -390,8 +390,8 @@
   /* ---- session detail modal ---- */
   #sessionDetailBlur{position:fixed;inset:0;z-index:900;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s ease;}
   #sessionDetailBlur.show{opacity:1;pointer-events:auto;}
-  #sessionDetailPanel{position:fixed;z-index:950;left:50%;bottom:0;transform:translate(-50%,100%);background:var(--bg);border-radius:22px 22px 0 0;padding:22px 20px max(22px,env(safe-area-inset-bottom));width:min(440px,100%);max-height:80vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.24);transition:transform .28s cubic-bezier(.22,.9,.4,1);}
-  #sessionDetailPanel.show{transform:translate(-50%,0);}
+  #sessionDetailPanel{position:fixed;z-index:950;left:50%;bottom:0;transform:translate(-50%,100%);background:var(--bg);border-radius:22px 22px 0 0;padding:22px 20px max(22px,env(safe-area-inset-bottom));width:min(440px,100%);max-height:80vh;overflow-y:auto;transition:transform .28s cubic-bezier(.22,.9,.4,1);}
+  #sessionDetailPanel.show{transform:translate(-50%,0);box-shadow:0 -8px 40px rgba(0,0,0,.24);}
   .sdTopRow{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
   .sdTitle{font-size:16px;font-weight:700;color:var(--ink);}
   .sdCloseBtn{background:none;border:none;color:var(--ink-soft);font-size:20px;line-height:1;padding:4px 6px;cursor:pointer;}
@@ -722,7 +722,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.9.5</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.9.7</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -752,6 +752,32 @@ function scheduleSave(){clearTimeout(saveTimer);el("saveNote").textContent="Savi
 /* helpers */
 function el(id){return document.getElementById(id);}
 function escapeHtml(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML;}
+
+/* Card text auto-sizing: a single kana should stay large and bold, but a full
+   phrase like "だいじょうぶですか。" needs to shrink to actually fit the card
+   instead of overflowing it. Sized by character count, not a fixed clamp. */
+function charLen(s){return s?Array.from(s).length:0;}
+function frontFontClamp(text){
+  var len=charLen(text);
+  if(len<=2)return"clamp(38px,11vw,60px)";
+  if(len<=4)return"clamp(28px,8.5vw,46px)";
+  if(len<=7)return"clamp(20px,6.5vw,34px)";
+  if(len<=12)return"clamp(15px,5vw,25px)";
+  return"clamp(12px,4vw,19px)";
+}
+function backFontClamp(text){
+  var len=charLen(text);
+  if(len<=6)return"clamp(18px,6vw,26px)";
+  if(len<=14)return"clamp(15px,5vw,21px)";
+  if(len<=28)return"clamp(12.5px,4vw,17px)";
+  return"clamp(11px,3.2vw,14px)";
+}
+function setCardText(front,back){
+  frontText.textContent=front;
+  backText.textContent=back;
+  frontText.style.fontSize="calc("+frontFontClamp(front)+"*var(--text-scale))";
+  backText.style.fontSize="calc("+backFontClamp(back)+"*var(--text-scale))";
+}
 function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function pctColor(p){return "hsl("+Math.round(p*1.2)+",65%,46%)";}
 function fmtDate(ts){var d=new Date(ts);return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" "+d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});}
@@ -1143,7 +1169,7 @@ function renderCard(){
     el("perfectBadge").hidden=!(seen>0&&uN===0);if(seen>0&&uN===0)setTimeout(launchConfetti,250);
     setNextModeBtns(uN>0?"focus":"all");showSubview("complete");return;
   }
-  showSubview("live");frontText.textContent=card.front;backText.textContent=card.back;
+  showSubview("live");setCardText(card.front,card.back);
   if(session.mode==="quiz")renderQuizOptions(card);
   if(session.mode==="wild"){var wKeys=Object.keys(FONTS);var wKey=wKeys[Math.floor(Math.random()*wKeys.length)];var wFont=FONTS[wKey];if(wFont.gf&&!document.getElementById("gf_"+wKey)){var wLk=document.createElement("link");wLk.id="gf_"+wKey;wLk.rel="stylesheet";wLk.href=wFont.gf;document.head.appendChild(wLk);}document.documentElement.style.setProperty("--font-display",wFont.family);}
 }
