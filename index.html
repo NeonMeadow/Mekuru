@@ -155,6 +155,24 @@
   .actionBtn.know{background:var(--btn-v-bg);color:var(--btn-v-fg);}
   @media (hover:hover){.actionBtn.know:hover{opacity:.85;}}
   .hintRow{text-align:center;font-size:11px;color:var(--ink-soft);margin-top:8px;opacity:.75;}
+
+  /* ---- undo ---- */
+  .undoBtn{-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;flex-shrink:0;width:46px;border:1px solid var(--line);background:var(--paper);border-radius:14px;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .undoBtn svg{width:19px;height:19px;}
+  .undoBtn:active{transform:scale(.92);}
+  @media(hover:hover){.undoBtn:hover{border-color:var(--ink-soft);color:var(--ink);}}
+  .undoConfirmMsg{text-align:center;font-size:12px;color:var(--ink-soft);margin-top:8px;min-height:15px;opacity:0;transition:opacity .25s ease;}
+  .undoConfirmMsg.show{opacity:1;}
+
+  @keyframes urSlideIn{0%{transform:translate(46%,-50%) rotate(11deg) scale(.85);opacity:0;}100%{transform:translate(0,0) rotate(-4deg) scale(1);opacity:1;}}
+  @keyframes urSlideOut{0%{transform:translate(0,0) rotate(-4deg) scale(1);opacity:1;}100%{transform:translate(-46%,10%) rotate(-14deg) scale(.85);opacity:0;}}
+  .undoResolveCard{position:absolute;inset:0;z-index:250;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 14px 40px rgba(0,0,0,.22);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;}
+  .undoResolveCard.show{display:flex;animation:urSlideIn .32s cubic-bezier(.22,.9,.32,1.1) forwards;}
+  .undoResolveCard.hide{display:flex;animation:urSlideOut .26s ease-in forwards;}
+  .urTop .text{font-family:var(--font-display);font-weight:600;font-size:clamp(30px,9vw,46px);line-height:1.15;word-break:break-word;}
+  .urDivider{width:44px;height:1px;background:var(--line);margin:14px 0;}
+  .urBottom .text{font-family:var(--font-back);font-style:italic;font-size:clamp(15px,4.5vw,20px);color:var(--ink-soft);line-height:1.35;word-break:break-word;}
+  .urHint{margin-top:16px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
   .skipLink{background:none;border:1px solid var(--line);color:var(--ink-soft);font-size:13px;font-weight:500;border-radius:12px;padding:11px;margin-top:8px;width:100%;cursor:pointer;font-family:inherit;}
   @media (hover:hover){.skipLink:hover{border-color:var(--ink-soft);color:var(--ink);}}
 
@@ -544,6 +562,12 @@
             <div class="face face-front"><span class="text" id="frontText"></span><span class="tapHint" id="tapHint">tap to reveal</span></div>
             <div class="face face-back"><span class="text" id="backText"></span></div>
           </div>
+          <div class="undoResolveCard" id="undoResolveCard">
+            <div class="urTop"><span class="text" id="urFront"></span></div>
+            <div class="urDivider"></div>
+            <div class="urBottom"><span class="text" id="urBack"></span></div>
+            <div class="urHint">did you know it?</div>
+          </div>
         </div>
       </div>
       <div class="quizGrid" id="quizGrid" hidden>
@@ -552,9 +576,11 @@
       </div>
       <div class="actionRow" id="actionRow">
         <button class="actionBtn dontknow" id="btnDontKnow"><svg class="actionIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button>
+        <button class="undoBtn" id="undoBtn" hidden title="Undo last mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h9a5 5 0 0 1 0 10h-2"/><polyline points="8,5 4,10 8,15"/></svg></button>
         <button class="actionBtn know" id="btnKnow"><svg class="actionIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="4,13 9,18 20,7"/></svg></button>
       </div>
       <button class="skipLink" id="skipBtn">Skip</button>
+      <p class="undoConfirmMsg" id="undoConfirmMsg" hidden></p>
       <p class="hintRow" id="hintRow">tap to flip · swipe ← / → to mark</p>
     </div>
 
@@ -722,7 +748,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.10</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.11</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -741,6 +767,7 @@ var hasCS=(typeof window.storage!=="undefined"&&window.storage&&typeof window.st
 var LIB_KEY="flashcards:library",THEME_KEY="flashcards:theme",FONT_KEY="flashcards:textScale",FONT_FACE_KEY="flashcards:fontFace",SWIPE_REVEAL_KEY="flashcards:swipeReveal",COMBO_KEY="flashcards:comboEnabled",BEST_COMBO_KEY="flashcards:bestCombo",LIGHT_THEME_KEY="flashcards:lightTheme",DARK_THEME_KEY="flashcards:darkTheme",FRESH_N_KEY="flashcards:freshN";
 var swipeRevealEnabled=true,comboEnabled=true;
 var comboCount=0,bestCombo=0,sessionBestCombo=0;
+var lastMark=null,undoResolveActive=false,undoResolveOriginalStatus=null;
 var DARK_THEMES=["dark","amoled"],lightTheme="washi",darkTheme="dark",colorMode="light";
 var freshN=15,currentFontFace="system";
 var fromSplash=false; /* tracks if settings was opened from splash */
@@ -1150,6 +1177,7 @@ function fitCardToStage(){
 window.addEventListener("resize",fitCardToStage,{passive:true});
 
 function startSession(mode,overrideIds){var deck=activeDeck();if(!deck){showSubview("empty");return;}session.mode=mode||"all";session.results={};session.startTime=Date.now();session.reviseIds=null;flipped=false;marking=false;
+lastMark=null;undoResolveActive=false;undoResolveOriginalStatus=null;el("undoBtn").hidden=true;el("undoConfirmMsg").hidden=true;el("undoConfirmMsg").classList.remove("show");el("undoResolveCard").classList.remove("show","hide");
 comboCount=0;sessionBestCombo=0;updateComboDisplay();if(session.mode!=="wild")applyFontFace(currentFontFace);session.order=overrideIds?shuffle(overrideIds):shuffle(buildPool(session.mode));session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
 
 function renderProgress(){var deck=activeDeck();if(!deck)return;var tot=session.order.length;var kN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;var uN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;el("scoreKnown").textContent="✓ "+kN;el("scoreUnknown").textContent="✗ "+uN;el("progressRight").textContent=(kN+uN)+" / "+tot;var kP=tot?Math.round(kN/tot*100):0,uP=tot?Math.round(uN/tot*100):0;el("progressKnown").style.width=kP+"%";el("progressUnknown").style.left=kP+"%";el("progressUnknown").style.width=uP+"%";}
@@ -1167,6 +1195,90 @@ function recordResult(card,deck,status){
   if(status==="known")cs.correct++;else cs.wrong++;
   cs.log.push({ts:Date.now(),status:status});
   if(cs.log.length>60)cs.log=cs.log.slice(-60);
+}
+
+/* ---- undo: true rewind, not a correction layered on top ----
+   A single mark touches progress, cardStats (seen/correct/wrong/log),
+   combo streak, and session position. Undo must reverse ALL of it back
+   to the instant before the mark, then let the redo mark be the only
+   thing that ever gets recorded — so right→wrong→undo→right ends up
+   identical in the data to having just marked it right the first time. */
+function recordResultWithUndo(card,deck,status){
+  var prevCs=deck.cardStats&&deck.cardStats[card.id];
+  var snap={
+    cardId:card.id,deck:deck,status:status,
+    prevProgress:deck.progress[card.id],
+    hadProgress:Object.prototype.hasOwnProperty.call(deck.progress,card.id),
+    prevSeen:prevCs?prevCs.seen:0,
+    prevCorrect:prevCs?prevCs.correct:0,
+    prevWrong:prevCs?prevCs.wrong:0,
+    prevLogLen:prevCs&&prevCs.log?prevCs.log.length:0,
+    prevComboCount:comboCount,
+    prevSessionBestCombo:sessionBestCombo,
+    prevBestCombo:bestCombo,
+    prevSessionPos:session.pos
+  };
+  recordResult(card,deck,status);
+  lastMark=snap;
+  el("undoBtn").hidden=false;
+}
+
+function performUndo(){
+  if(!lastMark||undoResolveActive)return;
+  var m=lastMark,deck=m.deck;
+  var card=deck.cards.find(function(c){return c.id===m.cardId;});
+  if(!card){lastMark=null;el("undoBtn").hidden=true;return;}
+
+  if(m.hadProgress)deck.progress[m.cardId]=m.prevProgress;else delete deck.progress[m.cardId];
+  var cs=deck.cardStats&&deck.cardStats[m.cardId];
+  if(cs){
+    cs.seen=m.prevSeen;cs.correct=m.prevCorrect;cs.wrong=m.prevWrong;
+    if(cs.log)cs.log=cs.log.slice(0,m.prevLogLen);
+  }
+  delete session.results[m.cardId];
+  comboCount=m.prevComboCount;sessionBestCombo=m.prevSessionBestCombo;
+  if(bestCombo!==m.prevBestCombo){bestCombo=m.prevBestCombo;storageSet(BEST_COMBO_KEY,bestCombo);}
+  session.pos=m.prevSessionPos;
+
+  scheduleSave();renderProgress();updateComboDisplay();
+
+  undoResolveActive=true;undoResolveOriginalStatus=m.status;
+  lastMark=null;el("undoBtn").hidden=true;
+  el("undoConfirmMsg").classList.remove("show");el("undoConfirmMsg").hidden=true;
+
+  el("urFront").textContent=card.front;
+  el("urBack").textContent=card.back;
+  var ur=el("undoResolveCard");
+  ur.classList.remove("hide");void ur.offsetWidth;ur.classList.add("show");
+  haptic("light");
+}
+
+function resolveUndoCard(status){
+  if(!undoResolveActive)return;
+  var card=currentCard(),deck=activeDeck();
+  if(!card||!deck){undoResolveActive=false;return;}
+  recordResultWithUndo(card,deck,status);
+  scheduleSave();renderProgress();
+  haptic(status==="known"?"success":"medium");
+  flashScreen(status);triggerThwack();
+  if(status==="known")spawnParticles();
+  updateCombo(status);
+
+  var changed=status!==undoResolveOriginalStatus;
+  var msg=el("undoConfirmMsg");
+  if(changed){
+    msg.textContent="→ moved to "+(status==="known"?"Got it":"Don't know");
+    msg.hidden=false;void msg.offsetWidth;msg.classList.add("show");
+    setTimeout(function(){msg.classList.remove("show");setTimeout(function(){msg.hidden=true;},250);},1600);
+  }
+
+  var ur=el("undoResolveCard");
+  ur.classList.remove("show");void ur.offsetWidth;ur.classList.add("hide");
+  setTimeout(function(){
+    ur.classList.remove("hide");ur.style.display="none";void ur.offsetWidth;ur.style.display="";
+    session.pos++; /* return to wherever we were before undo, without re-rendering the frozen card underneath */
+    undoResolveActive=false;undoResolveOriginalStatus=null;
+  },260);
 }
 
 function saveSessionToHistory(){var deck=activeDeck();if(!deck)return;var ids=Object.keys(session.results);var kN=ids.filter(function(id){return session.results[id]==="known";}).length;var uN=ids.filter(function(id){return session.results[id]==="unknown";}).length;var seen=kN+uN;if(seen===0)return;var dur=Date.now()-session.startTime;var wrongCards=ids.filter(function(id){return session.results[id]==="unknown";}).map(function(id){var c=deck.cards.find(function(cc){return String(cc.id)===String(id);});return c?{front:c.front,back:c.back}:null;}).filter(Boolean);if(!library.history)library.history=[];library.history.push({id:Date.now(),deckId:deck.id,deckName:deck.name,mode:session.mode,total:session.order.length,seen:seen,known:kN,unknown:uN,pct:Math.round(kN/seen*100),duration:dur,ts:Date.now(),wrongCards:wrongCards});if(library.history.length>200)library.history=library.history.slice(-200);scheduleSave();}
@@ -1258,20 +1370,20 @@ function handleQuizAnswer(value,card,btnEl){
 
 /* flip / mark */
 function flipCard(){if(!currentCard()||session.mode==="quiz")return;flipped=!flipped;cardEl.classList.toggle("flipped",flipped);haptic("light");}
-function markCard(status){if(marking)return;var card=currentCard(),deck=activeDeck();if(!card||!deck)return;marking=true;recordResult(card,deck,status);scheduleSave();renderProgress();
+function markCard(status){if(undoResolveActive){resolveUndoCard(status);return;}if(marking)return;var card=currentCard(),deck=activeDeck();if(!card||!deck)return;marking=true;recordResultWithUndo(card,deck,status);scheduleSave();renderProgress();
 haptic(status==="known"?"success":"medium");flashScreen(status);triggerThwack();if(status==="known")spawnParticles();updateCombo(status);var go=function(){setTimeout(advance,650);};if(!flipped){flipped=true;cardEl.classList.add("flipped");setTimeout(go,370);}else{go();}}
 function advance(){marking=false;session.pos++;renderCard();}
 
 /* smooth swipe — snap back then flip to reveal answer */
 var tStartX=0,tStartY=0,swipeMode=false,lastSwipeTime=0,SWIPE_THRESH=72;
 cardEl.addEventListener("touchstart",function(e){
-  if(e.touches.length!==1||marking||session.mode==="quiz")return;
+  if(e.touches.length!==1||marking||session.mode==="quiz"||undoResolveActive)return;
   tStartX=e.touches[0].clientX;tStartY=e.touches[0].clientY;swipeMode=false;
   cardEl.style.transition="none";cardEl.style.zIndex="200";
   if(!flipped){backFace.style.transform="none";backFace.style.zIndex="2";backFace.style.opacity="0";}
 },{passive:true});
 cardEl.addEventListener("touchmove",function(e){
-  if(marking||session.mode==="quiz"||!currentCard())return;
+  if(marking||session.mode==="quiz"||!currentCard()||undoResolveActive)return;
   var dx=e.touches[0].clientX-tStartX,dy=e.touches[0].clientY-tStartY;
   if(!swipeMode){if(Math.abs(dx)<8&&Math.abs(dy)<8)return;if(Math.abs(dy)>Math.abs(dx))return;swipeMode=true;}
   e.preventDefault();
@@ -1290,7 +1402,7 @@ cardEl.addEventListener("touchend",function(e){
     lastSwipeTime=Date.now();
     var status=dx>0?"known":"unknown";
     var card=currentCard(),deck=activeDeck();if(!card||!deck)return;
-    marking=true;recordResult(card,deck,status);scheduleSave();renderProgress();
+    marking=true;recordResultWithUndo(card,deck,status);scheduleSave();renderProgress();
 haptic(status==="known"?"success":"medium");flashScreen(status);triggerThwack();if(status==="known")spawnParticles();updateCombo(status);
     /* fly all the way off → reset invisible → flip to back → fade in → flash → advance */
     var dir=dx>0?1:-1;
@@ -1320,14 +1432,16 @@ haptic(status==="known"?"success":"medium");flashScreen(status);triggerThwack();
   }
 },{passive:true});
 
-cardEl.addEventListener("click",function(){if(Date.now()-lastSwipeTime<300||swipeMode)return;if(session.mode!=="quiz")flipCard();});
+cardEl.addEventListener("click",function(){if(Date.now()-lastSwipeTime<300||swipeMode||undoResolveActive)return;if(session.mode!=="quiz")flipCard();});
 el("btnKnow").addEventListener("click",function(e){e.stopPropagation();markCard("known");});
 el("btnDontKnow").addEventListener("click",function(e){e.stopPropagation();markCard("unknown");});
 el("skipBtn").addEventListener("click",function(e){e.stopPropagation();advance();});
 ["all","focus","mixed","quiz","wild"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.addEventListener("click",function(){if(session.mode!==m)startSession(m);});});
 el("modeFresh").addEventListener("click",function(){openFreshPopup();});
 
-document.addEventListener("keydown",function(e){if(currentScreen!=="study")return;if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;if(!liveView.classList.contains("active")||session.mode==="quiz")return;if(e.code==="Space"||e.code==="Enter"){e.preventDefault();flipCard();}else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}});
+el("undoBtn").addEventListener("click",function(e){e.stopPropagation();performUndo();});
+
+document.addEventListener("keydown",function(e){if(currentScreen!=="study")return;if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;if(!liveView.classList.contains("active")||session.mode==="quiz")return;if(e.code==="Space"||e.code==="Enter"){e.preventDefault();flipCard();}else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}else if(e.code==="ArrowDown"){e.preventDefault();if(lastMark&&!undoResolveActive)performUndo();}});
 
 /* complete screen */
 function setNextModeBtns(mode){nextMode=mode;["all","focus","mixed","quiz","wild","fresh"].forEach(function(m){var btn=el("next"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.classList.toggle("active",m===mode);});}
