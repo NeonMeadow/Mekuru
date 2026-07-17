@@ -769,7 +769,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.13.3</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.13.4</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1469,7 +1469,7 @@ el("modeFresh").addEventListener("click",function(){openFreshPopup();});
 
 el("undoBtn").addEventListener("click",function(e){e.stopPropagation();performUndo();});
 
-document.addEventListener("keydown",function(e){if(currentScreen!=="study")return;if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;if(!liveView.classList.contains("active")||session.mode==="quiz")return;if(e.code==="Space"||e.code==="Enter"){e.preventDefault();flipCard();}else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}else if(e.code==="ArrowDown"){e.preventDefault();if(lastMark&&!undoResolveActive)performUndo();}});
+document.addEventListener("keydown",function(e){if(currentScreen!=="study")return;if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;if(!liveView.classList.contains("active")||session.mode==="quiz")return;if(e.code==="Space"||e.code==="Enter"){e.preventDefault();if(!undoResolveActive)flipCard();}else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}else if(e.code==="ArrowDown"){e.preventDefault();if(lastMark&&!undoResolveActive)performUndo();}});
 
 /* complete screen */
 function setNextModeBtns(mode){nextMode=mode;["all","focus","mixed","quiz","wild","fresh"].forEach(function(m){var btn=el("next"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.classList.toggle("active",m===mode);});}
