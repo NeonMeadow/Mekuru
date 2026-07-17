@@ -155,6 +155,10 @@
   .actionBtn.know{background:var(--btn-v-bg);color:var(--btn-v-fg);}
   @media (hover:hover){.actionBtn.know:hover{opacity:.85;}}
   .hintRow{text-align:center;font-size:11px;color:var(--ink-soft);margin-top:8px;opacity:.75;}
+  .controlRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .controlRow:last-child{border-bottom:none;}
+  .controlKey{font-weight:600;color:var(--ink);flex-shrink:0;}
+  .controlDesc{color:var(--ink-soft);text-align:right;}
 
   /* ---- undo ---- */
   .undoBtn{-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;flex-shrink:0;width:46px;border:1px solid var(--line);background:var(--paper);border-radius:14px;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;}
@@ -390,8 +394,12 @@
   .splashStartBtn{width:100%;padding:16px;border-radius:16px;border:none;background:var(--ink);color:var(--paper);font-size:17px;font-weight:700;cursor:pointer;font-family:var(--font-ui);transition:opacity .15s,transform .1s;letter-spacing:.02em;}
   .splashStartBtn:active{transform:scale(.98);}
   .splashStartBtn:disabled{opacity:.35;cursor:default;}
-  .splashSettingsBtn{background:none;border:none;color:var(--ink-soft);font-size:13px;cursor:pointer;font-family:var(--font-ui);padding:4px 0;}
-  @media (hover:hover){.splashSettingsBtn:hover{color:var(--ink);}}
+  .splashSecondaryRow{display:flex;gap:10px;width:100%;}
+  .splashSecondaryBtn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:none;border:1px solid var(--line);border-radius:14px;padding:12px;color:var(--ink-soft);font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font-ui);transition:border-color .15s,color .15s;}
+  .splashSecondaryBtn svg{width:15px;height:15px;flex-shrink:0;}
+  .splashSecondaryBtn:active{transform:scale(.97);}
+  .splashSecondaryBtn:disabled{opacity:.35;cursor:default;}
+  @media (hover:hover){.splashSecondaryBtn:hover:not(:disabled){border-color:var(--ink-soft);color:var(--ink);}}
 
   /* ---- exit popup ---- */
   #exitBlur{position:fixed;inset:0;z-index:900;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:opacity .2s ease;}
@@ -513,7 +521,10 @@
     </div>
     <div class="splashBottom">
       <button class="splashStartBtn" id="splashStartBtn">Start</button>
-      <button class="splashSettingsBtn" id="splashSettingsBtn">Settings & import decks →</button>
+      <div class="splashSecondaryRow">
+        <button class="splashSecondaryBtn" id="splashStatsBtn"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="10" width="3.5" height="5" rx="0.8"/><rect x="6.25" y="6.5" width="3.5" height="8.5" rx="0.8"/><rect x="11.5" y="2.5" width="3.5" height="12.5" rx="0.8"/></svg>Stats</button>
+        <button class="splashSecondaryBtn" id="splashSettingsBtn"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"><polygon points="15,8 13.1,10.1 13,13 10.1,13.1 8,15 5.9,13.1 3,13 2.9,10.1 1,8 2.9,5.9 3,3 5.9,2.9 8,1 10.1,2.9 13,3 13.1,5.9"/><circle cx="8" cy="8" r="2.8"/></svg>Settings</button>
+      </div>
     </div>
   </div>
 </div>
@@ -581,7 +592,7 @@
       </div>
       <button class="skipLink" id="skipBtn">Skip</button>
       <p class="undoConfirmMsg" id="undoConfirmMsg" hidden></p>
-      <p class="hintRow" id="hintRow">tap to flip · swipe ← / → to mark</p>
+      <p class="hintRow" id="hintRow"></p>
     </div>
 
     <div class="subview" id="completeView">
@@ -742,13 +753,22 @@
     </div>
     <p class="saveNote" id="saveNote"></p>
     <div class="panelSection">
+      <h3>Controls</h3>
+      <div class="controlRow"><span class="controlKey">Tap card</span><span class="controlDesc">Flip to reveal answer</span></div>
+      <div class="controlRow"><span class="controlKey">Swipe → / ✓</span><span class="controlDesc">Mark as known</span></div>
+      <div class="controlRow"><span class="controlKey">Swipe ← / ✕</span><span class="controlDesc">Mark as unknown</span></div>
+      <div class="controlRow"><span class="controlKey">↓ / ↺</span><span class="controlDesc">Undo last mark</span></div>
+      <div class="controlRow"><span class="controlKey">Space / Enter</span><span class="controlDesc">Flip (keyboard)</span></div>
+      <div class="controlRow"><span class="controlKey">Skip</span><span class="controlDesc">Move on, no mark</span></div>
+    </div>
+    <div class="panelSection">
       <h3>App</h3>
       <p class="muted">Force a fresh reload to pick up the latest version from the server — useful after an update.</p>
       <div class="btnRow">
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.11</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.12</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -855,7 +875,7 @@ function showScreen(name){currentScreen=name;var screens={studyScreen:"study",se
 el("settingsToggle").addEventListener("click",function(){showScreen(currentScreen==="settings"?"study":"settings");});
 el("historyToggle").addEventListener("click",function(){showScreen(currentScreen==="history"?"study":"history");});
 el("backBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}});
-el("histBackBtn").addEventListener("click",function(){showScreen("study");});
+el("histBackBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}});
 el("emptyImportBtn").addEventListener("click",function(){showScreen("settings");});
 
 /* header click — exit popup */
@@ -999,10 +1019,11 @@ function initSplashLogos(){
 function renderSplash(){
   var list=el("splashDeckList");
   var startBtn=el("splashStartBtn");
+  var statsBtn=el("splashStatsBtn");
   list.innerHTML="";
   if(!library.decks||library.decks.length===0){
     list.innerHTML="<p class='splashNoDeck'>No decks yet.<br>Import cards from Settings to get started.</p>";
-    startBtn.disabled=true;return;
+    startBtn.disabled=true;statsBtn.disabled=true;return;
   }
   if(!library.decks.some(function(d){return d.id===library.activeDeckId;})){library.activeDeckId=library.decks[0].id;}
   library.decks.forEach(function(deck){
@@ -1019,7 +1040,7 @@ function renderSplash(){
     });
     list.appendChild(btn);
   });
-  startBtn.disabled=false;
+  startBtn.disabled=false;statsBtn.disabled=false;
 }
 
 function showSplash(){
@@ -1155,7 +1176,8 @@ function updateModeAvailability(){var deck=activeDeck();var focusOk=deck&&knownC
 function updateStudyUi(){
   var isQuiz=session.mode==="quiz";
   actionRow.hidden=isQuiz;skipBtn.hidden=isQuiz;quizGrid.hidden=!isQuiz;tapHint.hidden=isQuiz;
-  hintRow.textContent=isQuiz?"select the correct reading":"tap to flip · swipe ← / → to mark";
+  hintRow.textContent=isQuiz?"select the correct reading":"";
+  hintRow.hidden=!isQuiz;
   fitCardToStage();
 }
 
@@ -1176,7 +1198,7 @@ function fitCardToStage(){
 }
 window.addEventListener("resize",fitCardToStage,{passive:true});
 
-function startSession(mode,overrideIds){var deck=activeDeck();if(!deck){showSubview("empty");return;}session.mode=mode||"all";session.results={};session.startTime=Date.now();session.reviseIds=null;flipped=false;marking=false;
+function startSession(mode,overrideIds,isRevise){var deck=activeDeck();if(!deck){showSubview("empty");return;}session.mode=mode||"all";session.isRevise=!!isRevise;session.results={};session.startTime=Date.now();session.reviseIds=null;flipped=false;marking=false;
 lastMark=null;undoResolveActive=false;undoResolveOriginalStatus=null;el("undoBtn").hidden=true;el("undoConfirmMsg").hidden=true;el("undoConfirmMsg").classList.remove("show");el("undoResolveCard").classList.remove("show","hide");
 comboCount=0;sessionBestCombo=0;updateComboDisplay();if(session.mode!=="wild")applyFontFace(currentFontFace);session.order=overrideIds?shuffle(overrideIds):shuffle(buildPool(session.mode));session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
 
@@ -1281,7 +1303,7 @@ function resolveUndoCard(status){
   },260);
 }
 
-function saveSessionToHistory(){var deck=activeDeck();if(!deck)return;var ids=Object.keys(session.results);var kN=ids.filter(function(id){return session.results[id]==="known";}).length;var uN=ids.filter(function(id){return session.results[id]==="unknown";}).length;var seen=kN+uN;if(seen===0)return;var dur=Date.now()-session.startTime;var wrongCards=ids.filter(function(id){return session.results[id]==="unknown";}).map(function(id){var c=deck.cards.find(function(cc){return String(cc.id)===String(id);});return c?{front:c.front,back:c.back}:null;}).filter(Boolean);if(!library.history)library.history=[];library.history.push({id:Date.now(),deckId:deck.id,deckName:deck.name,mode:session.mode,total:session.order.length,seen:seen,known:kN,unknown:uN,pct:Math.round(kN/seen*100),duration:dur,ts:Date.now(),wrongCards:wrongCards});if(library.history.length>200)library.history=library.history.slice(-200);scheduleSave();}
+function saveSessionToHistory(){var deck=activeDeck();if(!deck)return;var ids=Object.keys(session.results);var kN=ids.filter(function(id){return session.results[id]==="known";}).length;var uN=ids.filter(function(id){return session.results[id]==="unknown";}).length;var seen=kN+uN;if(seen===0)return;var dur=Date.now()-session.startTime;var wrongCards=ids.filter(function(id){return session.results[id]==="unknown";}).map(function(id){var c=deck.cards.find(function(cc){return String(cc.id)===String(id);});return c?{front:c.front,back:c.back}:null;}).filter(Boolean);var modeLabel=session.isRevise?"revise":session.mode;if(!library.history)library.history=[];library.history.push({id:Date.now(),deckId:deck.id,deckName:deck.name,mode:modeLabel,total:session.order.length,seen:seen,known:kN,unknown:uN,pct:Math.round(kN/seen*100),duration:dur,ts:Date.now(),wrongCards:wrongCards});if(library.history.length>200)library.history=library.history.slice(-200);scheduleSave();}
 
 function renderCard(){
   var card=currentCard();
@@ -1447,7 +1469,7 @@ document.addEventListener("keydown",function(e){if(currentScreen!=="study")retur
 function setNextModeBtns(mode){nextMode=mode;["all","focus","mixed","quiz","wild","fresh"].forEach(function(m){var btn=el("next"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.classList.toggle("active",m===mode);});}
 ["all","focus","mixed","quiz","wild","fresh"].forEach(function(m){var btn=el("next"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.addEventListener("click",function(){setNextModeBtns(m);});});
 el("studyAgainBtn").addEventListener("click",function(){startSession(nextMode);});
-el("reviseBtn").addEventListener("click",function(){if(session.reviseIds&&session.reviseIds.length>0)startSession(session.reviseMode||"focus",session.reviseIds);});
+el("reviseBtn").addEventListener("click",function(){if(session.reviseIds&&session.reviseIds.length>0)startSession(session.reviseMode||"focus",session.reviseIds,true);});
 function renderStudy(){currentScreen="study";el("studyScreen").classList.add("active");el("studyScreen").style.display="flex";el("settingsScreen").classList.remove("active");el("settingsScreen").style.display="none";el("historyScreen").classList.remove("active");el("historyScreen").style.display="none";headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";updateDeckPill();if(!activeDeck()){showSubview("empty");return;}startSession("all");}
 
 /* history */
@@ -1603,6 +1625,12 @@ el("splashSettingsBtn").addEventListener("click",function(){
   fromSplash=true;
   hideSplash();
   setTimeout(function(){showScreen("settings");},220);
+});
+el("splashStatsBtn").addEventListener("click",function(){
+  if(el("splashStatsBtn").disabled)return;
+  fromSplash=true;
+  hideSplash();
+  setTimeout(function(){showScreen("history");},220);
 });
 el("exitBlur").addEventListener("click",function(){hideExitPopup();hideFreshPopup();});
 el("sdCloseBtn").addEventListener("click",hideSessionDetail);
