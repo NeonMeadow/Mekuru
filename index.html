@@ -79,7 +79,7 @@
   .deckPill .chev{font-size:11px;opacity:.7;}
 
   .screen{display:none;flex-direction:column;}.screen.active{display:flex;flex-direction:column;flex:1;min-height:0;}
-  #settingsScreen,#historyScreen{overflow-y:auto;-webkit-overflow-scrolling:touch;padding-left:8px;padding-right:8px;margin-left:-8px;margin-right:-8px;}
+  #settingsScreen,#historyScreen,#browseScreen{overflow-y:auto;-webkit-overflow-scrolling:touch;padding-left:8px;padding-right:8px;margin-left:-8px;margin-right:-8px;}
   .subview{display:none;}.subview.active{display:flex;flex-direction:column;}
   #emptyView.active{align-items:center;text-align:center;gap:18px;padding:56px 0;}
   #emptyView h1{font-size:20px;margin:0;font-weight:600;}
@@ -168,6 +168,9 @@
   @media(hover:hover){.undoBtn:hover{border-color:var(--ink-soft);color:var(--ink);}}
   .undoConfirmMsg{text-align:center;font-size:12px;color:var(--ink-soft);margin-top:8px;min-height:15px;opacity:0;transition:opacity .25s ease;}
   .undoConfirmMsg.show{opacity:1;}
+  .completeUndoLink{-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;background:none;border:none;color:var(--ink-soft);font-size:12.5px;font-weight:500;cursor:pointer;font-family:var(--font-ui);margin-top:10px;padding:4px 8px;outline:none;}
+  .completeUndoLink:active{opacity:.6;}
+  @media(hover:hover){.completeUndoLink:hover{color:var(--ink);}}
 
   @keyframes urSlideIn{0%{transform:translate(46%,-50%) rotate(11deg) scale(.85);opacity:0;}100%{transform:translate(0,0) rotate(-4deg) scale(1);opacity:1;}}
   @keyframes urSlideOut{0%{transform:translate(0,0) rotate(-4deg) scale(1);opacity:1;}100%{transform:translate(-46%,10%) rotate(-14deg) scale(.85);opacity:0;}}
@@ -230,6 +233,14 @@
   .panelSection h3{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);margin:0 0 10px;font-weight:600;}
   .deckList{display:flex;flex-direction:column;gap:6px;}
   .deckRow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--paper);font-size:14px;cursor:pointer;}
+  .browseRow{display:flex;align-items:center;gap:12px;padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer;}
+  .browseRow:last-child{border-bottom:none;}
+  .browseDot{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--line);}
+  .browseDot.known{background:var(--known);border-color:var(--known);}
+  .browseFront{font-family:var(--font-display);font-size:19px;font-weight:600;color:var(--ink);flex-shrink:0;min-width:44px;}
+  .browseBack{font-family:var(--font-back);font-style:italic;font-size:13.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .browseEmptyHint{font-size:13px;color:var(--ink-soft);text-align:center;padding:24px 0;}
+  .browseCount{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
   .deckRow.active{border-color:var(--accent);}
   .deckRow .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .deckRow .count{color:var(--ink-soft);font-size:12px;flex-shrink:0;}
@@ -527,6 +538,7 @@
     <div class="splashBottom">
       <button class="splashStartBtn" id="splashStartBtn">Start</button>
       <div class="splashSecondaryRow">
+        <button class="splashSecondaryBtn" id="splashBrowseBtn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3.5C2 3 2.5 2.5 3.5 2.5H7C7.5 2.5 8 3 8 3.5V13.5C8 13 7.5 12.5 7 12.5H3.5C2.5 12.5 2 13 2 13.5V3.5Z"/><path d="M14 3.5C14 3 13.5 2.5 12.5 2.5H9C8.5 2.5 8 3 8 3.5V13.5C8 13 8.5 12.5 9 12.5H12.5C13.5 12.5 14 13 14 13.5V3.5Z"/></svg>Browse</button>
         <button class="splashSecondaryBtn" id="splashStatsBtn"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="10" width="3.5" height="5" rx="0.8"/><rect x="6.25" y="6.5" width="3.5" height="8.5" rx="0.8"/><rect x="11.5" y="2.5" width="3.5" height="12.5" rx="0.8"/></svg>Stats</button>
         <button class="splashSecondaryBtn" id="splashSettingsBtn"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"><polygon points="15,8 13.1,10.1 13,13 10.1,13.1 8,15 5.9,13.1 3,13 2.9,10.1 1,8 2.9,5.9 3,3 5.9,2.9 8,1 10.1,2.9 13,3 13.1,5.9"/><circle cx="8" cy="8" r="2.8"/></svg>Settings</button>
       </div>
@@ -612,6 +624,7 @@
         </div>
         <div class="sessionBarWrap"><div class="sessionBarKnown" id="sessionBarKnown"></div><div class="sessionBarUnknown" id="sessionBarUnknown"></div></div>
         <div class="sessionTime" id="sessionTime"></div>
+        <button class="completeUndoLink" id="completeUndoBtn" hidden>↺ Undo last mark</button>
       </div>
       <div class="perfectBadge" id="perfectBadge" hidden>🎯 Perfect session!</div>
       <div class="btnStack">
@@ -769,13 +782,24 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.13.4</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.15.1</span></div>
   </div>
 
   <!-- HISTORY -->
   <div class="screen" id="historyScreen">
     <div class="settingsTopRow"><button class="backLink" id="histBackBtn">‹ Back to cards</button></div>
     <div id="historyContent"></div>
+  </div>
+
+  <!-- BROWSE -->
+  <div class="screen" id="browseScreen">
+    <div class="settingsTopRow"><button class="backLink" id="browseBackBtn">‹ Back to cards</button></div>
+    <input type="text" class="textInput" id="browseSearch" placeholder="Search this deck…" style="margin-bottom:12px;">
+    <label class="switchLabel" style="margin-bottom:16px;">
+      <span class="sub">Show only what I don't know yet</span>
+      <label class="switch"><input type="checkbox" id="browseUnknownOnly"><span class="switchTrack"></span></label>
+    </label>
+    <div id="browseList"></div>
   </div>
 </div>
 
@@ -878,13 +902,16 @@ var headerLabel=el("headerLabel");
 /* headerConfirm removed — replaced by exit popup */
 function updateDeckPill(){var deck=activeDeck();var show=deck&&currentScreen==="study";el("deckPill").hidden=!show;if(show)el("deckPillName").textContent=deck.name;}
 el("deckPill").addEventListener("click",function(){showScreen("settings");});
-function showScreen(name){currentScreen=name;var screens={studyScreen:"study",settingsScreen:"settings",historyScreen:"history"};Object.keys(screens).forEach(function(id){var isActive=screens[id]===name;el(id).classList.toggle("active",isActive);el(id).style.display=isActive?"flex":"none";});el("settingsToggle").classList.toggle("active",name==="settings");el("historyToggle").classList.toggle("active",name==="history");if(name==="study"){headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";}else{headerLabel.classList.remove("headerShowLogo");el("headerText").textContent=name==="settings"?"Settings":"History";}updateDeckPill();if(name==="settings")renderSettings();if(name==="history")renderHistory();
+function showScreen(name){currentScreen=name;var screens={studyScreen:"study",settingsScreen:"settings",historyScreen:"history",browseScreen:"browse"};Object.keys(screens).forEach(function(id){var isActive=screens[id]===name;el(id).classList.toggle("active",isActive);el(id).style.display=isActive?"flex":"none";});el("settingsToggle").classList.toggle("active",name==="settings");el("historyToggle").classList.toggle("active",name==="history");if(name==="study"){headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";}else{headerLabel.classList.remove("headerShowLogo");el("headerText").textContent=name==="settings"?"Settings":name==="browse"?"Browse":"History";}updateDeckPill();if(name==="settings")renderSettings();if(name==="history")renderHistory();if(name==="browse")renderBrowse();
   if(name==="study"){var c=currentCard();if(c)setCardText(c.front,c.back);}
 }
 el("settingsToggle").addEventListener("click",function(){if(currentScreen==="settings"){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}}else{showScreen("settings");}});
 el("historyToggle").addEventListener("click",function(){if(currentScreen==="history"){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}}else{showScreen("history");}});
 el("backBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}});
 el("histBackBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}});
+el("browseBackBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}});
+el("browseSearch").addEventListener("input",renderBrowse);
+el("browseUnknownOnly").addEventListener("change",renderBrowse);
 el("emptyImportBtn").addEventListener("click",function(){showScreen("settings");});
 
 /* header click — exit popup */
@@ -1026,10 +1053,11 @@ function renderSplash(){
   var list=el("splashDeckList");
   var startBtn=el("splashStartBtn");
   var statsBtn=el("splashStatsBtn");
+  var browseBtn=el("splashBrowseBtn");
   list.innerHTML="";
   if(!library.decks||library.decks.length===0){
     list.innerHTML="<p class='splashNoDeck'>No decks yet.<br>Import cards from Settings to get started.</p>";
-    startBtn.disabled=true;statsBtn.disabled=true;return;
+    startBtn.disabled=true;statsBtn.disabled=true;browseBtn.disabled=true;return;
   }
   if(!library.decks.some(function(d){return d.id===library.activeDeckId;})){library.activeDeckId=library.decks[0].id;}
   library.decks.forEach(function(deck){
@@ -1046,7 +1074,7 @@ function renderSplash(){
     });
     list.appendChild(btn);
   });
-  startBtn.disabled=false;statsBtn.disabled=false;
+  startBtn.disabled=false;statsBtn.disabled=false;browseBtn.disabled=false;
 }
 
 function showSplash(){
@@ -1205,7 +1233,7 @@ function fitCardToStage(){
 window.addEventListener("resize",fitCardToStage,{passive:true});
 
 function startSession(mode,overrideIds,isRevise){var deck=activeDeck();if(!deck){showSubview("empty");return;}session.mode=mode||"all";session.isRevise=!!isRevise;session.results={};session.startTime=Date.now();session.reviseIds=null;flipped=false;marking=false;
-lastMark=null;undoResolveActive=false;undoResolveOriginalStatus=null;el("undoBtn").hidden=true;el("undoConfirmMsg").hidden=true;el("undoConfirmMsg").classList.remove("show");el("undoResolveCard").classList.remove("show","hide");
+lastMark=null;undoResolveActive=false;undoResolveOriginalStatus=null;el("undoBtn").hidden=true;el("undoConfirmMsg").hidden=true;el("undoConfirmMsg").classList.remove("show");el("undoResolveCard").classList.remove("show","hide");session.savedHistoryEntry=null;
 comboCount=0;sessionBestCombo=0;updateComboDisplay();if(session.mode!=="wild")applyFontFace(currentFontFace);session.order=overrideIds?shuffle(overrideIds):shuffle(buildPool(session.mode));session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
 
 function renderProgress(){var deck=activeDeck();if(!deck)return;var tot=session.order.length;var kN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;var uN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;el("scoreKnown").textContent="✓ "+kN;el("scoreUnknown").textContent="✗ "+uN;el("progressRight").textContent=(kN+uN)+" / "+tot;var kP=tot?Math.round(kN/tot*100):0,uP=tot?Math.round(uN/tot*100):0;el("progressKnown").style.width=kP+"%";el("progressUnknown").style.left=kP+"%";el("progressUnknown").style.width=uP+"%";}
@@ -1257,6 +1285,7 @@ function performUndo(){
   var card=deck.cards.find(function(c){return c.id===m.cardId;});
   if(!card){lastMark=null;el("undoBtn").hidden=true;return;}
 
+  showSubview("live");
   if(m.hadProgress)deck.progress[m.cardId]=m.prevProgress;else delete deck.progress[m.cardId];
   var cs=deck.cardStats&&deck.cardStats[m.cardId];
   if(cs){
@@ -1304,12 +1333,21 @@ function resolveUndoCard(status){
   ur.classList.remove("show");void ur.offsetWidth;ur.classList.add("hide");
   setTimeout(function(){
     ur.classList.remove("hide");ur.style.display="none";void ur.offsetWidth;ur.style.display="";
-    session.pos++; /* return to wherever we were before undo, without re-rendering the frozen card underneath */
+    session.pos++;
     undoResolveActive=false;undoResolveOriginalStatus=null;
+    if(session.pos>=session.order.length){
+      renderCard(); /* was the last card — recompute and re-show the complete screen */
+    }
   },260);
 }
 
-function saveSessionToHistory(){var deck=activeDeck();if(!deck)return;var ids=Object.keys(session.results);var kN=ids.filter(function(id){return session.results[id]==="known";}).length;var uN=ids.filter(function(id){return session.results[id]==="unknown";}).length;var seen=kN+uN;if(seen===0)return;var dur=Date.now()-session.startTime;var wrongCards=ids.filter(function(id){return session.results[id]==="unknown";}).map(function(id){var c=deck.cards.find(function(cc){return String(cc.id)===String(id);});return c?{front:c.front,back:c.back}:null;}).filter(Boolean);var modeLabel=session.isRevise?"revise":session.mode;if(!library.history)library.history=[];library.history.push({id:Date.now(),deckId:deck.id,deckName:deck.name,mode:modeLabel,total:session.order.length,seen:seen,known:kN,unknown:uN,pct:Math.round(kN/seen*100),duration:dur,ts:Date.now(),wrongCards:wrongCards});if(library.history.length>200)library.history=library.history.slice(-200);scheduleSave();}
+function saveSessionToHistory(){var deck=activeDeck();if(!deck)return;var ids=Object.keys(session.results);var kN=ids.filter(function(id){return session.results[id]==="known";}).length;var uN=ids.filter(function(id){return session.results[id]==="unknown";}).length;var seen=kN+uN;if(seen===0)return;var dur=Date.now()-session.startTime;var wrongCards=ids.filter(function(id){return session.results[id]==="unknown";}).map(function(id){var c=deck.cards.find(function(cc){return String(cc.id)===String(id);});return c?{front:c.front,back:c.back}:null;}).filter(Boolean);var modeLabel=session.isRevise?"revise":session.mode;var pct=Math.round(kN/seen*100);
+if(session.savedHistoryEntry){
+  var e=session.savedHistoryEntry;
+  e.seen=seen;e.known=kN;e.unknown=uN;e.pct=pct;e.duration=dur;e.wrongCards=wrongCards;e.ts=Date.now();
+  scheduleSave();return;
+}
+if(!library.history)library.history=[];var entry={id:Date.now(),deckId:deck.id,deckName:deck.name,mode:modeLabel,total:session.order.length,seen:seen,known:kN,unknown:uN,pct:pct,duration:dur,ts:Date.now(),wrongCards:wrongCards};library.history.push(entry);session.savedHistoryEntry=entry;if(library.history.length>200)library.history=library.history.slice(-200);scheduleSave();}
 
 function renderCard(){
   var card=currentCard();
@@ -1333,6 +1371,7 @@ function renderCard(){
     var wIds=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).map(Number);
     el("reviseBtn").hidden=wIds.length===0;session.reviseIds=wIds;session.reviseMode=session.mode;
     el("perfectBadge").hidden=!(seen>0&&uN===0);if(seen>0&&uN===0)setTimeout(launchConfetti,250);
+    el("completeUndoBtn").hidden=!lastMark;
     setNextModeBtns(uN>0?"focus":"all");showSubview("complete");return;
   }
   showSubview("live");setCardText(card.front,card.back);
@@ -1468,6 +1507,7 @@ el("skipBtn").addEventListener("click",function(e){e.stopPropagation();advance()
 el("modeFresh").addEventListener("click",function(){openFreshPopup();});
 
 el("undoBtn").addEventListener("click",function(e){e.stopPropagation();performUndo();});
+el("completeUndoBtn").addEventListener("click",function(e){e.stopPropagation();performUndo();});
 
 document.addEventListener("keydown",function(e){if(currentScreen!=="study")return;if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;if(!liveView.classList.contains("active")||session.mode==="quiz")return;if(e.code==="Space"||e.code==="Enter"){e.preventDefault();if(!undoResolveActive)flipCard();}else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}else if(e.code==="ArrowDown"){e.preventDefault();if(lastMark&&!undoResolveActive)performUndo();}});
 
@@ -1592,6 +1632,37 @@ function hideCardDetail(){
   el("cardDetailPanel").classList.remove("show");
 }
 
+function renderBrowse(){
+  var deck=activeDeck();
+  var list=el("browseList");
+  list.innerHTML="";
+  if(!deck){list.innerHTML='<p class="browseEmptyHint">Select a deck to browse.</p>';return;}
+  var q=(el("browseSearch").value||"").trim().toLowerCase();
+  var unknownOnly=el("browseUnknownOnly").checked;
+  var cards=deck.cards.filter(function(c){
+    if(unknownOnly&&deck.progress[c.id]==="known")return false;
+    if(q&&c.front.toLowerCase().indexOf(q)===-1&&c.back.toLowerCase().indexOf(q)===-1)return false;
+    return true;
+  });
+  var countEl=document.createElement("div");
+  countEl.className="browseCount";
+  countEl.textContent=cards.length+" of "+deck.cards.length+" cards";
+  list.appendChild(countEl);
+  if(cards.length===0){
+    var empty=document.createElement("p");empty.className="browseEmptyHint";
+    empty.textContent=q?"No cards match \""+q+"\".":"Nothing to show — try turning off the filter above.";
+    list.appendChild(empty);return;
+  }
+  cards.forEach(function(c){
+    var row=document.createElement("div");
+    row.className="browseRow";
+    var isKnown=deck.progress[c.id]==="known";
+    row.innerHTML='<span class="browseDot'+(isKnown?" known":"")+'"></span><span class="browseFront">'+escapeHtml(c.front)+'</span><span class="browseBack">'+escapeHtml(c.back)+'</span>';
+    row.addEventListener("click",function(){showCardDetail(c.id,deck);});
+    list.appendChild(row);
+  });
+}
+
 function renderHistoryDeckPicker(container){
   if(!library.decks||library.decks.length<2)return;
   var viewDeck=historyViewDeck();
@@ -1617,9 +1688,22 @@ function renderHistory(){
   renderHistoryDeckPicker(container);
   if(!deck){var noD=document.createElement("p");noD.className="noHistHint";noD.textContent="Select a deck to see its history.";container.appendChild(noD);return;}
   if(hist.length===0){var noH=document.createElement("p");noH.className="noHistHint";noH.textContent="No sessions yet for "+deck.name+".";container.appendChild(noH);return;}
-  var totalSeen=hist.reduce(function(s,h){return s+h.seen;},0);var avgPct=Math.round(hist.reduce(function(s,h){return s+h.pct;},0)/hist.length);var sDiv=document.createElement("div");sDiv.className="histStats";var bestStr=bestCombo>0?bestCombo+"✓":"—";sDiv.innerHTML='<div class="histStat"><div class="histStatN">'+hist.length+'</div><div class="histStatL">Sessions</div></div><div class="histStat"><div class="histStatN">'+totalSeen+'</div><div class="histStatL">Cards seen</div></div><div class="histStat"><div class="histStatN">'+avgPct+'%</div><div class="histStatL">Avg score</div></div><div class="histStat"><div class="histStatN">'+bestStr+'</div><div class="histStatL">Best streak</div></div>';container.appendChild(sDiv);
-renderTroubleSpots(container,deck);
-var best=hist.slice().sort(function(a,b){return b.pct!==a.pct?b.pct-a.pct:b.seen-a.seen;})[0];var bKP=best.seen>0?Math.round(best.known/best.seen*100):0,bUP=best.seen>0?Math.round(best.unknown/best.seen*100):0;var bestDiv=document.createElement("div");bestDiv.className="bestSessionCard";bestDiv.style.cursor="pointer";bestDiv.innerHTML='<div class="bestLabel">Best session</div><div class="bestRow"><span class="bestPct" style="color:'+pctColor(best.pct)+'">'+best.pct+'%</span><div class="bestMeta">'+best.known+' got it · '+best.unknown+' to review<br>'+fmtDate(best.ts)+' · '+best.mode+'</div></div><div class="bestBar"><div class="bestBarKnown" style="width:'+bKP+'%"></div><div class="bestBarUnknown" style="width:'+bUP+'%"></div></div>';bestDiv.addEventListener("click",function(){showSessionDetail(best);});container.appendChild(bestDiv);var bSec=document.createElement("div");bSec.className="bubblesSection";bSec.innerHTML='<div class="bubblesLabel">All sessions · newest first</div>';var bWrap=document.createElement("div");bWrap.className="bubblesWrap";var histNewestFirst=hist.slice().reverse();histNewestFirst.forEach(function(h,i){var b=document.createElement("div");b.className="bubble";b.style.background=pctColor(h.pct);b.textContent=h.pct+"%";b.title=fmtDate(h.ts)+(i===0?" · Most recent":"")+"\n"+h.known+" got it · "+h.unknown+" · "+h.mode;b.addEventListener("click",function(){showSessionDetail(h);});bWrap.appendChild(b);});bSec.appendChild(bWrap);container.appendChild(bSec);var lLabel=document.createElement("div");lLabel.className="bubblesLabel";lLabel.textContent="Recent sessions";container.appendChild(lLabel);var lDiv=document.createElement("div");lDiv.className="histList";hist.slice().reverse().slice(0,20).forEach(function(h){var entry=document.createElement("div");entry.className="histEntry";var kP=h.seen>0?Math.round(h.known/h.seen*100):0,uP=h.seen>0?Math.round(h.unknown/h.seen*100):0;entry.innerHTML='<div class="histPctBadge" style="background:'+pctColor(h.pct)+'">'+h.pct+'%</div><div class="histMeta"><div class="histDate">'+fmtDate(h.ts)+'</div><div class="histSub">'+h.known+' got it · '+h.unknown+' to review · '+h.seen+' cards · '+h.mode+(h.duration?' · '+fmtDuration(h.duration):'')+'</div><div class="histBar"><div class="histBarKnown" style="width:'+kP+'%"></div><div class="histBarUnknown" style="width:'+uP+'%"></div></div></div>';entry.addEventListener("click",function(){showSessionDetail(h);});lDiv.appendChild(entry);});container.appendChild(lDiv);}
+  /* revise-mistakes rounds are short, artificially-high-scoring touch-ups —
+     they'd skew averages and dominate "best session," so they're excluded
+     everywhere in this view: top stats, best session, trend bubbles, and
+     the Recent Sessions log. They're still saved (visible via session
+     detail if you know where a card's log points), just not surfaced here. */
+  var aggHist=hist.filter(function(h){return h.mode!=="revise";});
+  if(aggHist.length>0){
+    var totalSeen=aggHist.reduce(function(s,h){return s+h.seen;},0);var avgPct=Math.round(aggHist.reduce(function(s,h){return s+h.pct;},0)/aggHist.length);var sDiv=document.createElement("div");sDiv.className="histStats";var bestStr=bestCombo>0?bestCombo+"✓":"—";sDiv.innerHTML='<div class="histStat"><div class="histStatN">'+aggHist.length+'</div><div class="histStatL">Sessions</div></div><div class="histStat"><div class="histStatN">'+totalSeen+'</div><div class="histStatL">Cards seen</div></div><div class="histStat"><div class="histStatN">'+avgPct+'%</div><div class="histStatL">Avg score</div></div><div class="histStat"><div class="histStatN">'+bestStr+'</div><div class="histStatL">Best streak</div></div>';container.appendChild(sDiv);
+    renderTroubleSpots(container,deck);
+    var best=aggHist.slice().sort(function(a,b){return b.pct!==a.pct?b.pct-a.pct:b.seen-a.seen;})[0];var bKP=best.seen>0?Math.round(best.known/best.seen*100):0,bUP=best.seen>0?Math.round(best.unknown/best.seen*100):0;var bestDiv=document.createElement("div");bestDiv.className="bestSessionCard";bestDiv.style.cursor="pointer";bestDiv.innerHTML='<div class="bestLabel">Best session</div><div class="bestRow"><span class="bestPct" style="color:'+pctColor(best.pct)+'">'+best.pct+'%</span><div class="bestMeta">'+best.known+' got it · '+best.unknown+' to review<br>'+fmtDate(best.ts)+' · '+best.mode+'</div></div><div class="bestBar"><div class="bestBarKnown" style="width:'+bKP+'%"></div><div class="bestBarUnknown" style="width:'+bUP+'%"></div></div>';bestDiv.addEventListener("click",function(){showSessionDetail(best);});container.appendChild(bestDiv);
+    var bSec=document.createElement("div");bSec.className="bubblesSection";bSec.innerHTML='<div class="bubblesLabel">All sessions · newest first</div>';var bWrap=document.createElement("div");bWrap.className="bubblesWrap";var histNewestFirst=aggHist.slice().reverse();histNewestFirst.forEach(function(h,i){var b=document.createElement("div");b.className="bubble";b.style.background=pctColor(h.pct);b.textContent=h.pct+"%";b.title=fmtDate(h.ts)+(i===0?" · Most recent":"")+"\n"+h.known+" got it · "+h.unknown+" · "+h.mode;b.addEventListener("click",function(){showSessionDetail(h);});bWrap.appendChild(b);});bSec.appendChild(bWrap);container.appendChild(bSec);
+  } else {
+    renderTroubleSpots(container,deck);
+    var onlyRevise=document.createElement("p");onlyRevise.className="noHistHint";onlyRevise.textContent="Only revision rounds so far — study a full session to see stats here.";container.appendChild(onlyRevise);
+  }
+  var lLabel=document.createElement("div");lLabel.className="bubblesLabel";lLabel.textContent="Recent sessions";container.appendChild(lLabel);var lDiv=document.createElement("div");lDiv.className="histList";aggHist.slice().reverse().slice(0,20).forEach(function(h){var entry=document.createElement("div");entry.className="histEntry";var kP=h.seen>0?Math.round(h.known/h.seen*100):0,uP=h.seen>0?Math.round(h.unknown/h.seen*100):0;entry.innerHTML='<div class="histPctBadge" style="background:'+pctColor(h.pct)+'">'+h.pct+'%</div><div class="histMeta"><div class="histDate">'+fmtDate(h.ts)+'</div><div class="histSub">'+h.known+' got it · '+h.unknown+' to review · '+h.seen+' cards · '+h.mode+(h.duration?' · '+fmtDuration(h.duration):'')+'</div><div class="histBar"><div class="histBarKnown" style="width:'+kP+'%"></div><div class="histBarUnknown" style="width:'+uP+'%"></div></div></div>';entry.addEventListener("click",function(){showSessionDetail(h);});lDiv.appendChild(entry);});container.appendChild(lDiv);}
 
 /* settings */
 function renderSettings(){
@@ -1662,6 +1746,12 @@ el("splashStatsBtn").addEventListener("click",function(){
   fromSplash=true;
   hideSplash();
   setTimeout(function(){showScreen("history");},220);
+});
+el("splashBrowseBtn").addEventListener("click",function(){
+  if(el("splashBrowseBtn").disabled)return;
+  fromSplash=true;
+  hideSplash();
+  setTimeout(function(){showScreen("browse");},220);
 });
 el("exitBlur").addEventListener("click",function(){hideExitPopup();hideFreshPopup();});
 el("sdCloseBtn").addEventListener("click",hideSessionDetail);
