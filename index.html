@@ -119,6 +119,7 @@
   .quizGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
   .typeArea{margin-top:12px;display:flex;flex-direction:column;gap:10px;}
   .typeAnswerInput{-webkit-appearance:none;appearance:none;display:block;width:min(280px,90%);margin:0 auto;border:1.5px solid var(--line);border-radius:14px;padding:18px 18px;font-size:22px;text-align:center;font-family:var(--font-ui);color:var(--ink);background:var(--paper);outline:none;transition:border-color .15s;}
+  .typeAnswerInput::placeholder{font-size:14px;color:var(--ink-soft);opacity:.7;}
   .typeSubmitBtn{width:min(280px,90%);margin:0 auto;}
   .typeAnswerInput:focus{border-color:var(--ink-soft);}
   .typeAnswerInput.correct{border-color:var(--known);background:var(--known-soft);}
@@ -334,10 +335,10 @@
   .freshCfgLbl{font-size:11px;color:var(--ink-soft);}
   .freshCfgN{font-size:15px;font-weight:700;color:var(--known);min-width:22px;text-align:center;}
   /* ---- fresh popup stepper ---- */
-  #freshPopup{position:fixed;z-index:950;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:30px 24px 24px;width:min(300px,calc(100% - 40px));box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
-  #freshPopup.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
-  #typePopup{position:fixed;z-index:950;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:30px 24px 24px;width:min(320px,calc(100% - 40px));box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
-  #typePopup.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
+  #startPopup{position:fixed;z-index:1050;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:28px 22px 22px;width:min(360px,calc(100% - 32px));max-height:85vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
+  #startPopup.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
+  #startModeRow{margin-bottom:6px;}
+  #startFreshConfig,#startTypeConfig{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);}
   .typeOptionList{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;text-align:left;}
   .typeOption{-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;gap:3px;background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:13px 15px;cursor:pointer;outline:none;font-family:var(--font-ui);width:100%;text-align:left;transition:border-color .15s,background .15s;}
   .typeOption.selected{border-color:var(--ink);background:var(--known-soft);}
@@ -435,9 +436,9 @@
   @media (hover:hover){.splashSecondaryBtn:hover:not(:disabled){border-color:var(--ink-soft);color:var(--ink);}}
 
   /* ---- exit popup ---- */
-  #exitBlur{position:fixed;inset:0;z-index:900;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:opacity .2s ease;}
+  #exitBlur{position:fixed;inset:0;z-index:1040;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:opacity .2s ease;}
   #exitBlur.show{opacity:1;pointer-events:auto;}
-  #exitPopup{position:fixed;z-index:950;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:30px 24px 24px;width:min(300px,calc(100% - 40px));box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
+  #exitPopup{position:fixed;z-index:1050;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:30px 24px 24px;width:min(300px,calc(100% - 40px));box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
   #exitPopup.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
   .exitPopupTitle{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;}
   .exitPopupSub{font-size:13.5px;color:var(--ink-soft);margin-bottom:22px;line-height:1.45;}
@@ -536,37 +537,41 @@
 </div>
 
 <!-- ========== FRESH MODE POPUP ========== -->
-<div id="freshPopup">
-  <div class="freshPopupTitle">Fresh mode</div>
-  <div class="freshPopupSub">Focus on your most recently added cards</div>
-  <div class="stepperRow">
-    <button class="stepperBtn" id="freshMinusBtn">−</button>
-    <span class="stepperNum" id="freshPopupNum">15</span>
-    <button class="stepperBtn" id="freshPlusBtn">+</button>
+<div id="startPopup">
+  <div class="freshPopupTitle">Choose a mode</div>
+  <div class="modeRow" id="startModeRow">
+    <button class="modeBtn active" id="modeAll" title="Study every card">All</button>
+    <button class="modeBtn" id="modeFocus" title="Unknown cards only">Focus</button>
+    <button class="modeBtn" id="modeMixed" title="Mostly unknown + some known">Mixed</button>
+    <button class="modeBtn" id="modeQuiz" title="Multiple-choice quiz">Quiz</button>
+    <button class="modeBtn" id="modeWild" title="Random font each card">Wild</button>
+    <button class="modeBtn" id="modeFresh" title="Focus on newest cards">Fresh</button>
+    <button class="modeBtn" id="modeType" title="Type the reading yourself">Type</button>
+  </div>
+  <div id="startFreshConfig" hidden>
+    <div class="freshPopupSub">Focus on your most recently added cards</div>
+    <div class="stepperRow">
+      <button class="stepperBtn" id="freshMinusBtn">−</button>
+      <span class="stepperNum" id="freshPopupNum">15</span>
+      <button class="stepperBtn" id="freshPlusBtn">+</button>
+    </div>
+  </div>
+  <div id="startTypeConfig" hidden>
+    <div class="freshPopupSub">Type the reading yourself — no options to pick from</div>
+    <div class="typeOptionList">
+      <button class="typeOption" id="typeOptStrict" data-val="strict">
+        <span class="typeOptName">Strict</span>
+        <span class="typeOptDesc">Type it exactly — this is the real test.</span>
+      </button>
+      <button class="typeOption" id="typeOptFlexible" data-val="flexible">
+        <span class="typeOptName">Flexible</span>
+        <span class="typeOptDesc">Punctuation doesn't matter, and alternate readings count.</span>
+      </button>
+    </div>
   </div>
   <div class="btnStack">
-    <button class="primaryBtn" id="freshStartBtn" style="width:100%">Start</button>
-    <button class="outlineBtn" id="freshCancelBtn" style="width:100%">Cancel</button>
-  </div>
-</div>
-
-<!-- ========== TYPE MODE POPUP ========== -->
-<div id="typePopup">
-  <div class="freshPopupTitle">Type mode</div>
-  <div class="freshPopupSub">Type the reading yourself — no options to pick from</div>
-  <div class="typeOptionList">
-    <button class="typeOption" id="typeOptStrict" data-val="strict">
-      <span class="typeOptName">Strict</span>
-      <span class="typeOptDesc">Type it exactly — this is the real test.</span>
-    </button>
-    <button class="typeOption" id="typeOptFlexible" data-val="flexible">
-      <span class="typeOptName">Flexible</span>
-      <span class="typeOptDesc">Punctuation doesn't matter, and alternate readings count.</span>
-    </button>
-  </div>
-  <div class="btnStack">
-    <button class="primaryBtn" id="typeStartBtn" style="width:100%">Start</button>
-    <button class="outlineBtn" id="typeCancelBtn" style="width:100%">Cancel</button>
+    <button class="primaryBtn" id="startPopupGoBtn" style="width:100%">Start</button>
+    <button class="outlineBtn" id="startPopupCancelBtn" style="width:100%">Cancel</button>
   </div>
 </div>
 
@@ -634,15 +639,6 @@
         <div class="progressBar"><div id="progressKnown" style="width:0%"></div><div id="progressUnknown" style="width:0%;left:0%"></div></div>
         <span class="progressRight" id="progressRight">0 / 0</span>
       </div>
-      <div class="modeRow">
-        <button class="modeBtn active" id="modeAll" title="Study every card">All</button>
-        <button class="modeBtn" id="modeFocus" title="Unknown cards only">Focus</button>
-        <button class="modeBtn" id="modeMixed" title="Mostly unknown + some known">Mixed</button>
-        <button class="modeBtn" id="modeQuiz" title="Multiple-choice quiz">Quiz</button>
-        <button class="modeBtn" id="modeWild" title="Random font each card">Wild</button>
-        <button class="modeBtn" id="modeFresh" title="Focus on newest cards">Fresh</button>
-        <button class="modeBtn" id="modeType" title="Type the reading yourself">Type</button>
-      </div>
       <div id="comboBar" class="comboBar" hidden><span class="comboNum" id="comboNum">3</span><span class="comboLbl">in a row</span><span class="comboFire" id="comboFire">🔥</span></div>
       <div class="cardStage">
         <div class="card" id="card" tabindex="0" role="button">
@@ -696,19 +692,7 @@
       <div class="perfectBadge" id="perfectBadge" hidden>🎯 Perfect session!</div>
       <div class="btnStack">
         <button class="primaryBtn" id="reviseBtn" hidden>Revise mistakes →</button>
-        <div>
-          <div class="nextLabel">Next session</div>
-          <div class="modeRow" style="margin-bottom:10px;">
-            <button class="modeBtn" id="nextAll">All</button>
-            <button class="modeBtn active" id="nextFocus">Focus</button>
-            <button class="modeBtn" id="nextMixed">Mixed</button>
-            <button class="modeBtn" id="nextQuiz">Quiz</button>
-            <button class="modeBtn" id="nextWild">Wild</button>
-            <button class="modeBtn" id="nextFresh">Fresh</button>
-            <button class="modeBtn" id="nextType">Type</button>
-          </div>
-          <button class="outlineBtn" id="studyAgainBtn" style="width:100%">Study again</button>
-        </div>
+        <button class="outlineBtn" id="studyAgainBtn" style="width:100%">Study again</button>
       </div>
     </div>
   </div>
@@ -850,7 +834,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.17</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.18</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -954,7 +938,7 @@ function mergeCards(ec,ep,nc,mode){var ebk={};ec.forEach(function(c){ebk[cardKey
 /* state */
 var library={decks:[],activeDeckId:null,history:[]};
 var session={order:[],pos:0,mode:"all",results:{},startTime:0,reviseIds:null};
-var nextMode="focus";
+var startPopupSelectedMode="all";var startPopupContext=null;
 var flipped=false,marking=false,currentScreen="study",stagedCards=[];
 function activeDeck(){return library.decks.find(function(d){return d.id===library.activeDeckId;})||null;}
 var historyViewDeckId=null;
@@ -1175,7 +1159,7 @@ function hideExitPopup(){
   el("exitPopup").classList.remove("show");
 }
 
-/* ---- fresh mode popup ---- */
+/* ---- fresh mode stepper (used within the unified start popup) ---- */
 var freshStaging=15;
 function freshMaxN(){var deck=activeDeck();return deck?Math.max(5,Math.min(50,deck.cards.length)):50;}
 function updateFreshPopupNum(){
@@ -1184,16 +1168,6 @@ function updateFreshPopupNum(){
   el("freshPopupNum").textContent=freshStaging;
   el("freshMinusBtn").disabled=freshStaging<=5;
   el("freshPlusBtn").disabled=freshStaging>=max;
-}
-function openFreshPopup(){
-  freshStaging=freshN;
-  updateFreshPopupNum();
-  el("exitBlur").classList.add("show");
-  el("freshPopup").classList.add("show");
-}
-function hideFreshPopup(){
-  el("exitBlur").classList.remove("show");
-  el("freshPopup").classList.remove("show");
 }
 
 /* ---- feedback functions ---- */
@@ -1276,7 +1250,45 @@ function buildPool(mode){var deck=activeDeck();if(!deck)return[];if(mode==="focu
 
 function setModeBtns(mode){["all","focus","mixed","quiz","wild","fresh","type"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.classList.toggle("active",m===mode);});}
 
-function updateModeAvailability(){var deck=activeDeck();var focusOk=deck&&knownCountOf(deck)>0&&buildPool("focus").length>0;el("modeFocus").hidden=!focusOk;el("nextFocus").hidden=!focusOk;}
+function updateModeAvailability(){var deck=activeDeck();var focusOk=deck&&knownCountOf(deck)>0&&buildPool("focus").length>0;el("modeFocus").hidden=!focusOk;}
+
+/* ---- unified start-session popup ---- */
+function selectStartMode(m){
+  startPopupSelectedMode=m;
+  setModeBtns(m);
+  el("startFreshConfig").hidden=m!=="fresh";
+  el("startTypeConfig").hidden=m!=="type";
+  if(m==="fresh"){freshStaging=freshN;updateFreshPopupNum();}
+  if(m==="type"){var deck=activeDeck();setTypeOptionSelected(deck?(deck.answerStrictness||"strict"):"strict");}
+}
+function openStartPopup(context){
+  var deck=activeDeck();if(!deck)return;
+  startPopupContext=context;
+  updateModeAvailability();
+  var mode=startPopupSelectedMode;
+  if(mode==="focus"&&el("modeFocus").hidden)mode="all";
+  selectStartMode(mode);
+  el("exitBlur").classList.add("show");
+  el("startPopup").classList.add("show");
+}
+function hideStartPopup(){
+  el("exitBlur").classList.remove("show");
+  el("startPopup").classList.remove("show");
+}
+el("startPopupGoBtn").addEventListener("click",function(){
+  var deck=activeDeck();if(!deck)return;
+  var mode=startPopupSelectedMode;
+  if(mode==="fresh"){freshN=freshStaging;storageSet(FRESH_N_KEY,freshN);}
+  if(mode==="type"){deck.answerStrictness=typeSelectedStrictness;scheduleSave();}
+  hideStartPopup();
+  if(startPopupContext==="splash"){
+    hideSplash();
+    renderStudy(mode);
+  } else {
+    startSession(mode);
+  }
+});
+el("startPopupCancelBtn").addEventListener("click",hideStartPopup);
 
 function updateStudyUi(){
   var isQuiz=session.mode==="quiz";
@@ -1446,7 +1458,7 @@ function renderCard(){
     el("reviseBtn").hidden=wIds.length===0;session.reviseIds=wIds;session.reviseMode=session.mode;
     el("perfectBadge").hidden=!(seen>0&&uN===0);if(seen>0&&uN===0)setTimeout(launchConfetti,250);
     el("completeUndoBtn").hidden=!lastMark;
-    setNextModeBtns(uN>0?"focus":"all");showSubview("complete");return;
+    startPopupSelectedMode=uN>0?"focus":"all";showSubview("complete");return;
   }
   showSubview("live");setCardText(card.front,card.back);
   if(session.mode==="quiz")renderQuizOptions(card);
@@ -1563,34 +1575,15 @@ function handleTypeSubmit(){
 el("typeSubmitBtn").addEventListener("click",handleTypeSubmit);
 el("typeAnswerInput").addEventListener("keydown",function(e){if(e.code==="Enter"){e.preventDefault();handleTypeSubmit();}});
 
-/* type mode popup */
+/* type strictness options (used within the unified start popup) */
 var typeSelectedStrictness="strict";
 function setTypeOptionSelected(val){
   typeSelectedStrictness=val;
   el("typeOptStrict").classList.toggle("selected",val==="strict");
   el("typeOptFlexible").classList.toggle("selected",val==="flexible");
 }
-function openTypePopup(){
-  var deck=activeDeck();if(!deck)return;
-  setTypeOptionSelected(deck.answerStrictness||"strict");
-  el("exitBlur").classList.add("show");
-  el("typePopup").classList.add("show");
-}
-function hideTypePopup(){
-  el("exitBlur").classList.remove("show");
-  el("typePopup").classList.remove("show");
-}
 el("typeOptStrict").addEventListener("click",function(){setTypeOptionSelected("strict");});
 el("typeOptFlexible").addEventListener("click",function(){setTypeOptionSelected("flexible");});
-el("modeType").addEventListener("click",function(){openTypePopup();});
-el("typeStartBtn").addEventListener("click",function(){
-  var deck=activeDeck();if(!deck)return;
-  deck.answerStrictness=typeSelectedStrictness;
-  scheduleSave();
-  hideTypePopup();
-  startSession("type");
-});
-el("typeCancelBtn").addEventListener("click",hideTypePopup);
 
 /* flip / mark */
 function flipCard(){if(!currentCard()||session.mode==="quiz"||session.mode==="type")return;flipped=!flipped;cardEl.classList.toggle("flipped",flipped);haptic("light");}
@@ -1660,8 +1653,8 @@ cardEl.addEventListener("click",function(){if(Date.now()-lastSwipeTime<300||swip
 el("btnKnow").addEventListener("click",function(e){e.stopPropagation();markCard("known");});
 el("btnDontKnow").addEventListener("click",function(e){e.stopPropagation();markCard("unknown");});
 el("skipBtn").addEventListener("click",function(e){e.stopPropagation();advance();});
-["all","focus","mixed","quiz","wild"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.addEventListener("click",function(){if(session.mode!==m)startSession(m);});});
-el("modeFresh").addEventListener("click",function(){openFreshPopup();});
+["all","focus","mixed","quiz","wild","fresh","type"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.addEventListener("click",function(){selectStartMode(m);});});
+
 
 el("undoBtn").addEventListener("click",function(e){e.stopPropagation();performUndo();});
 el("completeUndoBtn").addEventListener("click",function(e){e.stopPropagation();performUndo();});
@@ -1669,11 +1662,9 @@ el("completeUndoBtn").addEventListener("click",function(e){e.stopPropagation();p
 document.addEventListener("keydown",function(e){if(currentScreen!=="study")return;if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;if(!liveView.classList.contains("active")||session.mode==="quiz"||session.mode==="type")return;if(e.code==="Space"||e.code==="Enter"){e.preventDefault();if(!undoResolveActive)flipCard();}else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}else if(e.code==="ArrowDown"){e.preventDefault();if(lastMark&&!undoResolveActive)performUndo();}});
 
 /* complete screen */
-function setNextModeBtns(mode){nextMode=mode;["all","focus","mixed","quiz","wild","fresh","type"].forEach(function(m){var btn=el("next"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.classList.toggle("active",m===mode);});}
-["all","focus","mixed","quiz","wild","fresh","type"].forEach(function(m){var btn=el("next"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.addEventListener("click",function(){setNextModeBtns(m);});});
-el("studyAgainBtn").addEventListener("click",function(){startSession(nextMode);});
+el("studyAgainBtn").addEventListener("click",function(){openStartPopup("again");});
 el("reviseBtn").addEventListener("click",function(){if(session.reviseIds&&session.reviseIds.length>0)startSession(session.reviseMode||"focus",session.reviseIds,true);});
-function renderStudy(){currentScreen="study";el("studyScreen").classList.add("active");el("studyScreen").style.display="flex";el("settingsScreen").classList.remove("active");el("settingsScreen").style.display="none";el("historyScreen").classList.remove("active");el("historyScreen").style.display="none";headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";updateDeckPill();if(!activeDeck()){showSubview("empty");return;}startSession("all");}
+function renderStudy(mode){currentScreen="study";el("studyScreen").classList.add("active");el("studyScreen").style.display="flex";el("settingsScreen").classList.remove("active");el("settingsScreen").style.display="none";el("historyScreen").classList.remove("active");el("historyScreen").style.display="none";headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";updateDeckPill();if(!activeDeck()){showSubview("empty");return;}startSession(mode||"all");}
 
 /* history */
 function deckHistory(){var deck=historyViewDeck();if(!deck||!library.history)return[];return library.history.filter(function(h){return h.deckId===deck.id;});}
@@ -1890,8 +1881,7 @@ el("clearCacheBtn").addEventListener("click",function(){
 /* splash + exit popup listeners */
 el("splashStartBtn").addEventListener("click",function(){
   if(!activeDeck())return;
-  renderStudy();
-  hideSplash();
+  openStartPopup("splash");
 });
 el("splashSettingsBtn").addEventListener("click",function(){
   fromSplash=true;
@@ -1910,7 +1900,7 @@ el("splashBrowseBtn").addEventListener("click",function(){
   hideSplash();
   setTimeout(function(){showScreen("browse");},220);
 });
-el("exitBlur").addEventListener("click",function(){hideExitPopup();hideFreshPopup();hideTypePopup();});
+el("exitBlur").addEventListener("click",function(){hideExitPopup();hideStartPopup();});
 el("sdCloseBtn").addEventListener("click",hideSessionDetail);
 el("sessionDetailBlur").addEventListener("click",hideSessionDetail);
 el("cdCloseBtn").addEventListener("click",hideCardDetail);
@@ -1923,13 +1913,6 @@ el("exitConfirmBtn").addEventListener("click",function(){
 el("exitCancelBtn").addEventListener("click",hideExitPopup);
 el("freshMinusBtn").addEventListener("click",function(){freshStaging-=1;updateFreshPopupNum();});
 el("freshPlusBtn").addEventListener("click",function(){freshStaging+=1;updateFreshPopupNum();});
-el("freshStartBtn").addEventListener("click",function(){
-  freshN=freshStaging;
-  storageSet(FRESH_N_KEY,freshN);
-  hideFreshPopup();
-  startSession("fresh");
-});
-el("freshCancelBtn").addEventListener("click",hideFreshPopup);
 /* boot */
 Promise.all([storageGet(LIB_KEY),storageGet(THEME_KEY),storageGet(FONT_KEY),storageGet(FONT_FACE_KEY),storageGet(SWIPE_REVEAL_KEY),storageGet(COMBO_KEY),storageGet(BEST_COMBO_KEY),storageGet(LIGHT_THEME_KEY),storageGet(DARK_THEME_KEY),storageGet(FRESH_N_KEY)]).then(function(res){var data=res[0],theme=res[1],scale=res[2],fontFace=res[3],swipeRevealPref=res[4],comboPref=res[5],bestComboPref=res[6],savedLight=res[7],savedDark=res[8],savedFreshN=res[9];if(data&&data.decks&&data.decks.length){library=data;if(!library.history)library.history=[];if(!library.decks.some(function(d){return d.id===library.activeDeckId;}))library.activeDeckId=library.decks[0].id;}
 if(swipeRevealPref===false){swipeRevealEnabled=false;if(el("swipeRevealCheck"))el("swipeRevealCheck").checked=false;}
