@@ -187,7 +187,7 @@
   .undoResolveCard{position:absolute;inset:0;z-index:250;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 14px 40px rgba(0,0,0,.22);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;}
   .undoResolveCard.show{display:flex;animation:urSlideIn .32s cubic-bezier(.22,.9,.32,1.1) forwards;}
   .undoResolveCard.hide{display:flex;animation:urSlideOut .26s ease-in forwards;}
-  .urTop .text{font-family:var(--font-display);font-weight:600;font-size:clamp(30px,9vw,46px);line-height:1.15;word-break:break-word;}
+  .urTop .text{font-family:var(--font-display);font-weight:var(--font-display-weight);font-size:clamp(30px,9vw,46px);line-height:1.15;word-break:break-word;}
   .urDivider{width:44px;height:1px;background:var(--line);margin:14px 0;}
   .urBottom .text{font-family:var(--font-back);font-style:italic;font-size:clamp(15px,4.5vw,20px);color:var(--ink-soft);line-height:1.35;word-break:break-word;}
   .urHint{margin-top:16px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
@@ -251,7 +251,7 @@
   .browseDot{width:9px;height:9px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--line);margin-top:9px;}
   .browseDot.known{background:var(--known);border-color:var(--known);}
   .browseTextCol{flex:1;min-width:0;}
-  .browseFront{font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--ink);line-height:1.3;word-break:break-word;}
+  .browseFront{font-family:var(--font-display);font-size:26px;font-weight:var(--font-display-weight);color:var(--ink);line-height:1.3;word-break:break-word;}
   .browseBack{font-family:var(--font-back);font-style:italic;font-size:16px;color:var(--ink-soft);line-height:1.4;margin-top:3px;word-break:break-word;}
   .browseEmptyHint{font-size:13px;color:var(--ink-soft);text-align:center;padding:24px 0;}
   .browseCount{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
@@ -286,7 +286,7 @@
   .rangeSlider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--ink);cursor:pointer;border:none;}
   .fontPreviewCard{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 12px 10px;text-align:center;}
   .fontPreviewInner{display:flex;align-items:center;justify-content:center;gap:10px;}
-  .fontPreviewFront{font-family:var(--font-display);font-weight:600;line-height:1;color:var(--ink);}
+  .fontPreviewFront{font-family:var(--font-display);font-weight:var(--font-display-weight);line-height:1;color:var(--ink);}
   .fontPreviewArrow{color:var(--ink-soft);font-size:14px;}
   .fontPreviewBack{font-family:var(--font-back);font-style:italic;color:var(--ink-soft);}
   .fontPreviewPct{font-size:11px;color:var(--ink-soft);margin-top:8px;}
@@ -377,7 +377,7 @@
   #cardDetailPanel{position:fixed;z-index:950;left:50%;bottom:0;transform:translate(-50%,100%);background:var(--bg);border-radius:22px 22px 0 0;padding:24px 20px max(22px,env(safe-area-inset-bottom));width:min(440px,100%);max-height:75vh;overflow-y:auto;transition:transform .28s cubic-bezier(.22,.9,.4,1);text-align:center;}
   #cardDetailPanel.show{transform:translate(-50%,0);box-shadow:0 -8px 40px rgba(0,0,0,.24);}
   .cdTopRow{display:flex;align-items:center;justify-content:flex-end;margin-bottom:4px;}
-  .cdChar{font-family:var(--font-display);font-size:52px;font-weight:600;color:var(--ink);line-height:1;}
+  .cdChar{font-family:var(--font-display);font-size:52px;font-weight:var(--font-display-weight);color:var(--ink);line-height:1;}
   .cdReading{font-family:var(--font-back);font-style:italic;font-size:16px;color:var(--ink-soft);margin-top:6px;margin-bottom:18px;}
   .cdAccRow{display:flex;justify-content:center;gap:24px;margin-bottom:22px;}
   .cdAccStat{text-align:center;}
@@ -416,7 +416,7 @@
   @media (hover:hover){.actionBtn.know:hover{opacity:.85;}}
   /* ---- splash screen ---- */
   #splashScreen{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:max(56px,env(safe-area-inset-top)) 28px max(40px,env(safe-area-inset-bottom));transition:opacity .4s ease;overflow-y:auto;}
-  .splashMark{position:fixed;top:50%;left:50%;transform:translate(-50%,-58%);font-family:var(--font-display);font-size:clamp(220px,55vw,340px);font-weight:700;color:var(--ink);opacity:.04;line-height:1;pointer-events:none;user-select:none;-webkit-user-select:none;}
+  .splashMark{position:fixed;top:50%;left:50%;transform:translate(-50%,-58%);font-family:var(--font-display);font-size:clamp(220px,55vw,340px);font-weight:var(--font-display-weight);color:var(--ink);opacity:.04;line-height:1;pointer-events:none;user-select:none;-webkit-user-select:none;}
   .splashContent{width:100%;max-width:340px;display:flex;flex-direction:column;align-items:center;position:relative;}
   .splashTop{margin-bottom:44px;text-align:center;}
   .splashLogoImg{height:26px;display:block;}
@@ -471,7 +471,7 @@
   .sdStatL{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-top:1px;}
   .sdMissedLabel{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);font-weight:600;margin:6px 0 8px;}
   .sdMissedRow{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--paper);}
-  .sdMissedFront{font-family:var(--font-display);font-size:17px;font-weight:600;color:var(--ink);}
+  .sdMissedFront{font-family:var(--font-display);font-size:17px;font-weight:var(--font-display-weight);color:var(--ink);}
   .sdMissedBack{font-family:var(--font-back);font-style:italic;font-size:13px;color:var(--ink-soft);}
   .sdEmptyMissed{font-size:13px;color:var(--ink-soft);padding:8px 0;}
   .histEntry,.bubble{cursor:pointer;}
@@ -480,7 +480,7 @@
   .troubleSection{margin-bottom:20px;}
   .troubleRow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
   .troubleRow:last-child{border-bottom:none;}
-  .troubleChar{font-family:var(--font-display);font-size:19px;font-weight:600;color:var(--ink);width:32px;flex-shrink:0;}
+  .troubleChar{font-family:var(--font-display);font-size:19px;font-weight:var(--font-display-weight);color:var(--ink);width:32px;flex-shrink:0;}
   .troubleReading{font-family:var(--font-back);font-style:italic;font-size:12.5px;color:var(--ink-soft);flex-shrink:0;width:50px;}
   .troubleBarWrap{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden;}
   .troubleBarFill{height:100%;}
@@ -630,7 +630,7 @@
     <button class="fontPickerBtn" data-font="serif2"><span class="fChar" style="font-family:'Shippori Mincho B1',serif">あ</span><span class="fLabel">Shippori</span></button>
     <button class="fontPickerBtn" data-font="kaisei"><span class="fChar" style="font-family:'Kaisei Decol',serif">あ</span><span class="fLabel">Kaisei</span></button>
     <button class="fontPickerBtn" data-font="hina"><span class="fChar" style="font-family:'Hina Mincho','Hiragino Mincho ProN',serif">あ</span><span class="fLabel">Hina</span></button>
-    <button class="fontPickerBtn" data-font="kyokasho"><span class="fChar" style="font-family:'DFKyoKaSho','Hiragino Mincho ProN',serif">あ</span><span class="fLabel">Kyokasho</span></button>
+    <button class="fontPickerBtn" data-font="kyokasho"><span class="fChar" style="font-family:'DFKyoKaSho','Hiragino Mincho ProN',serif;font-weight:400">あ</span><span class="fLabel">Kyokasho</span></button>
   </div>
   <button class="outlineBtn" id="quickFontCloseBtn" style="width:100%;margin-top:20px;">Done</button>
 </div>
@@ -801,7 +801,7 @@
         <button class="fontPickerBtn" data-font="serif2"><span class="fChar" style="font-family:'Shippori Mincho B1',serif">あ</span><span class="fLabel">Shippori</span></button>
         <button class="fontPickerBtn" data-font="kaisei"><span class="fChar" style="font-family:'Kaisei Decol',serif">あ</span><span class="fLabel">Kaisei</span></button>
         <button class="fontPickerBtn" data-font="hina"><span class="fChar" style="font-family:'Hina Mincho','Hiragino Mincho ProN',serif">あ</span><span class="fLabel">Hina</span></button>
-        <button class="fontPickerBtn" data-font="kyokasho"><span class="fChar" style="font-family:'DFKyoKaSho','Hiragino Mincho ProN',serif">あ</span><span class="fLabel">Kyokasho</span></button>
+        <button class="fontPickerBtn" data-font="kyokasho"><span class="fChar" style="font-family:'DFKyoKaSho','Hiragino Mincho ProN',serif;font-weight:400">あ</span><span class="fLabel">Kyokasho</span></button>
       </div>
     </div>
 
@@ -887,7 +887,7 @@
       <div class="controlRow"><span class="controlKey">Swipe → / ✓</span><span class="controlDesc">Mark as known</span></div>
       <div class="controlRow"><span class="controlKey">Swipe ← / ✕</span><span class="controlDesc">Mark as unknown</span></div>
       <div class="controlRow"><span class="controlKey">↓ / ↺</span><span class="controlDesc">Undo last mark</span></div>
-      <div class="controlRow"><span class="controlKey">Space / Enter</span><span class="controlDesc">Flip (keyboard)</span></div>
+      <div class="controlRow"><span class="controlKey">Space / Enter / ↑</span><span class="controlDesc">Flip (keyboard)</span></div>
       <div class="controlRow"><span class="controlKey">Skip</span><span class="controlDesc">Move on, no mark</span></div>
     </div>
     <div class="panelSection">
@@ -897,7 +897,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.23.1</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.23.3</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1772,7 +1772,7 @@ el("skipBtn").addEventListener("click",function(e){e.stopPropagation();advance()
 el("undoBtn").addEventListener("click",function(e){e.stopPropagation();performUndo();});
 el("completeUndoBtn").addEventListener("click",function(e){e.stopPropagation();performUndo();});
 
-document.addEventListener("keydown",function(e){if(currentScreen!=="study")return;if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;if(!liveView.classList.contains("active")||session.mode==="quiz"||session.mode==="type")return;if(e.code==="Space"||e.code==="Enter"){e.preventDefault();if(!undoResolveActive)flipCard();}else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}else if(e.code==="ArrowDown"){e.preventDefault();if(lastMark&&!undoResolveActive)performUndo();}});
+document.addEventListener("keydown",function(e){if(currentScreen!=="study")return;if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;if(!liveView.classList.contains("active")||session.mode==="quiz"||session.mode==="type")return;if(e.code==="Space"||e.code==="Enter"||e.code==="ArrowUp"){e.preventDefault();if(!undoResolveActive)flipCard();}else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}else if(e.code==="ArrowDown"){e.preventDefault();if(lastMark&&!undoResolveActive)performUndo();}});
 
 /* complete screen */
 el("studyAgainBtn").addEventListener("click",function(){openStartPopup("again");});
