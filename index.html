@@ -339,7 +339,10 @@
   .freshCfgLbl{font-size:11px;color:var(--ink-soft);}
   .freshCfgN{font-size:15px;font-weight:700;color:var(--known);min-width:22px;text-align:center;}
   /* ---- fresh popup stepper ---- */
-  #startPopup{position:fixed;z-index:1050;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:28px 22px 22px;width:min(360px,calc(100% - 32px));max-height:85vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
+  #startPopup{position:fixed;z-index:1050;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:28px 22px 22px;width:min(360px,calc(100% - 32px));max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
+  .startPopupScroll{overflow-y:auto;flex:1;min-height:0;margin:0 -6px;padding:0 6px;}
+  .startPopupScroll .startOptionList:last-child,.startPopupScroll>div:last-child{margin-bottom:0;}
+  #startPopup .btnStack{flex-shrink:0;padding-top:16px;}
   #quickFontPopup{position:fixed;z-index:1050;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:28px 22px 22px;width:min(340px,calc(100% - 32px));max-height:85vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
   #quickFontPopup.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
   .aaIcon{font-family:var(--font-ui);font-size:12px;font-weight:700;}
@@ -349,7 +352,7 @@
   .startOptionList{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;text-align:left;}
   .startOption{-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;gap:3px;background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:13px 15px;cursor:pointer;outline:none;font-family:var(--font-ui);width:100%;text-align:left;transition:border-color .15s,background .15s;}
   .startOption.active,.startOption.selected{border-color:var(--ink);background:var(--known-soft);}
-  .startOptName{font-size:14.5px;font-weight:700;color:var(--ink);}
+  .startOptName{font-size:17px;font-weight:700;color:var(--ink);display:block;margin-bottom:2px;}
   .startOptDesc{font-size:12.5px;color:var(--ink-soft);line-height:1.4;}
   .startOption:active{transform:scale(.98);}
   .freshPopupTitle{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px;}
@@ -497,7 +500,7 @@
     #app{max-width:640px;padding:0 40px max(20px,env(safe-area-inset-bottom));}
     .card{width:min(360px,100%);height:min(440px,100%,46dvh,440px);}
     #startPopup{width:min(440px,calc(100% - 32px));}
-    .startOptName{font-size:15.5px;}
+    .startOptName{font-size:18.5px;}
     .startOptDesc{font-size:13.5px;}
     .quizGrid{gap:12px;}
     .quizBtn{padding:20px 10px;font-size:16px;min-height:64px;}
@@ -548,6 +551,7 @@
 <!-- ========== START SESSION POPUP ========== -->
 <div id="startPopup">
   <div class="freshPopupTitle">Choose a mode</div>
+  <div class="startPopupScroll">
   <div class="startOptionList" id="startModeRow">
     <button class="startOption active" id="modeAll">
       <span class="startOptName">All</span>
@@ -602,6 +606,7 @@
         <span class="startOptDesc">Punctuation doesn't matter, and alternate readings count.</span>
       </button>
     </div>
+  </div>
   </div>
   <div class="btnStack">
     <button class="primaryBtn" id="startPopupGoBtn" style="width:100%">Start</button>
@@ -727,7 +732,7 @@
         <button class="actionBtn know" id="btnKnow"><svg class="actionIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="4,13 9,18 20,7"/></svg></button>
       </div>
       <button class="skipLink" id="skipBtn">Skip</button>
-      <p class="undoConfirmMsg" id="undoConfirmMsg" hidden></p>
+      <p class="undoConfirmMsg" id="undoConfirmMsg"></p>
       <p class="hintRow" id="hintRow"></p>
     </div>
 
@@ -892,7 +897,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.22</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.23</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1425,7 +1430,7 @@ function fitCardToStage(){
 window.addEventListener("resize",fitCardToStage,{passive:true});
 
 function startSession(mode,overrideIds,isRevise){var deck=activeDeck();if(!deck){showSubview("empty");return;}session.mode=mode||"all";session.isRevise=!!isRevise;session.results={};session.startTime=Date.now();session.reviseIds=null;flipped=false;marking=false;
-lastMark=null;undoResolveActive=false;undoResolveOriginalStatus=null;el("undoBtn").hidden=true;el("undoConfirmMsg").hidden=true;el("undoConfirmMsg").classList.remove("show");el("undoResolveCard").classList.remove("show","hide");session.savedHistoryEntry=null;
+lastMark=null;undoResolveActive=false;undoResolveOriginalStatus=null;el("undoBtn").hidden=true;el("undoConfirmMsg").classList.remove("show");el("undoResolveCard").classList.remove("show","hide");session.savedHistoryEntry=null;
 comboCount=0;sessionBestCombo=0;updateComboDisplay();if(session.mode!=="wild")applyFontFace(currentFontFace);session.order=overrideIds?shuffle(overrideIds):shuffle(buildPool(session.mode));session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
 
 function renderProgress(){var deck=activeDeck();if(!deck)return;var tot=session.order.length;var kN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;var uN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;el("scoreKnown").textContent="✓ "+kN;el("scoreUnknown").textContent="✗ "+uN;el("progressRight").textContent=(kN+uN)+" / "+tot;var kP=tot?Math.round(kN/tot*100):0,uP=tot?Math.round(uN/tot*100):0;el("progressKnown").style.width=kP+"%";el("progressUnknown").style.left=kP+"%";el("progressUnknown").style.width=uP+"%";}
@@ -1493,7 +1498,7 @@ function performUndo(){
 
   undoResolveActive=true;undoResolveOriginalStatus=m.status;
   lastMark=null;el("undoBtn").hidden=true;
-  el("undoConfirmMsg").classList.remove("show");el("undoConfirmMsg").hidden=true;
+  el("undoConfirmMsg").classList.remove("show");
 
   el("urFront").textContent=card.front;
   el("urBack").textContent=card.back;
@@ -1517,8 +1522,8 @@ function resolveUndoCard(status){
   var msg=el("undoConfirmMsg");
   if(changed){
     msg.textContent="→ moved to "+(status==="known"?"Got it":"Don't know");
-    msg.hidden=false;void msg.offsetWidth;msg.classList.add("show");
-    setTimeout(function(){msg.classList.remove("show");setTimeout(function(){msg.hidden=true;},250);},1600);
+    void msg.offsetWidth;msg.classList.add("show");
+    setTimeout(function(){msg.classList.remove("show");},1600);
   }
 
   var ur=el("undoResolveCard");
