@@ -19,7 +19,7 @@
     --known:#4F6B52;--known-soft:rgba(79,107,82,0.12);
     --shadow:0 1px 2px rgba(40,35,25,0.04),0 8px 24px rgba(40,35,25,0.05);
     --radius:14px;--text-scale:1;
-    --card-h-ceiling:320;--front-font-ceiling:58;--back-font-ceiling:24;
+    --card-h-ceiling:320;--front-font-ceiling:58;--back-font-ceiling:24;--font-display-weight:600;
     --font-ui:"Overpass Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
     --font-display:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic Medium","Segoe UI",Roboto,sans-serif;
     --font-back:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
@@ -106,7 +106,7 @@
   .card.flipped .cardInner{transform:rotateY(180deg);}
   .face{position:absolute;inset:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;padding:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden;text-align:center;overflow:hidden;}
   .face-back{transform:rotateY(180deg);}
-  .face-front .text{font-family:var(--font-display);font-size:calc(clamp(38px,11vw,58px)*var(--text-scale));font-weight:600;line-height:1.2;word-break:break-word;max-width:100%;min-width:0;}
+  .face-front .text{font-family:var(--font-display);font-size:calc(clamp(38px,11vw,58px)*var(--text-scale));font-weight:var(--font-display-weight);line-height:1.2;word-break:break-word;max-width:100%;min-width:0;}
   .face-back .text{font-family:var(--font-back);font-style:italic;font-size:calc(clamp(18px,6vw,24px)*var(--text-scale));line-height:1.4;color:var(--ink);max-width:100%;min-width:0;}
   .tapHint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
 
@@ -897,7 +897,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.23</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.23.1</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1130,12 +1130,13 @@ var FONTS={
   serif2:{family:'"Shippori Mincho B1","Hiragino Mincho ProN",serif',gf:'https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@700&display=swap'},
   kaisei:{family:'"Kaisei Decol","Hiragino Mincho ProN",serif',gf:'https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&display=swap'},
   hina:{family:'"Hina Mincho","Hiragino Mincho ProN",serif',gf:'https://fonts.googleapis.com/css2?family=Hina+Mincho&display=swap'},
-  kyokasho:{family:'"DFKyoKaSho","Hiragino Mincho ProN",serif'}
+  kyokasho:{family:'"DFKyoKaSho","Hiragino Mincho ProN",serif',weight:400}
 };
 function applyFontFace(key){currentFontFace=key;
   var font=FONTS[key]||FONTS.system;
   if(font.gf&&!document.getElementById("gf_"+key)){var lk=document.createElement("link");lk.id="gf_"+key;lk.rel="stylesheet";lk.href=font.gf;document.head.appendChild(lk);}
   document.documentElement.style.setProperty("--font-display",font.family);
+  document.documentElement.style.setProperty("--font-display-weight",font.weight||600);
   document.querySelectorAll(".fontPickerBtn").forEach(function(btn){btn.classList.toggle("active",btn.dataset.font===key);});
 }
 document.querySelectorAll(".fontPickerBtn").forEach(function(btn){
