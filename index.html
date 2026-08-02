@@ -197,8 +197,11 @@
 #liveView.active{flex:1;min-height:0;}
     #completeView.active{gap:14px;padding:16px 0;}
   #completeView h2{margin:0;font-size:19px;font-weight:600;}
+  .sessionPhrase{margin:0 0 14px;font-size:17px;text-align:center;font-family:var(--font-back);font-style:italic;color:var(--ink);line-height:1.35;}
   .sessionSummaryCard{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;}
-  .sessionNums{display:flex;gap:0;margin-bottom:12px;}
+  .sessionNums{display:flex;gap:0;margin-bottom:12px;padding-top:12px;border-top:1px solid var(--line);}
+  .backToDecksLink{-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;background:none;border:none;color:var(--ink-soft);font-size:13.5px;font-weight:500;cursor:pointer;font-family:var(--font-ui);padding:10px 8px;outline:none;width:100%;text-align:center;}
+  @media(hover:hover){.backToDecksLink:hover{color:var(--ink);}}
   .sessionNum{flex:1;text-align:center;}
   .sessionNum .n{font-size:28px;font-weight:700;line-height:1;}
   .sessionNum .n.green{color:var(--known);}
@@ -337,6 +340,9 @@
   .freshCfgN{font-size:15px;font-weight:700;color:var(--known);min-width:22px;text-align:center;}
   /* ---- fresh popup stepper ---- */
   #startPopup{position:fixed;z-index:1050;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:28px 22px 22px;width:min(360px,calc(100% - 32px));max-height:85vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
+  #quickFontPopup{position:fixed;z-index:1050;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:28px 22px 22px;width:min(340px,calc(100% - 32px));max-height:85vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
+  #quickFontPopup.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
+  .aaIcon{font-family:var(--font-ui);font-size:12px;font-weight:700;}
   #startPopup.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
   #startModeRow{margin-bottom:6px;}
   #startFreshConfig,#startTypeConfig{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);}
@@ -394,7 +400,7 @@
   .comboLbl{font-size:11px;color:var(--ink-soft);letter-spacing:.04em;text-transform:uppercase;}
   /* ---- perfect badge ---- */
   @keyframes bounceIn{0%{opacity:0;transform:scale(.5) translateY(8px);}70%{transform:scale(1.06);}100%{opacity:1;transform:scale(1) translateY(0);}}
-  .perfectBadge{text-align:center;font-size:16px;font-weight:700;color:var(--known);padding:8px 0 2px;animation:bounceIn .4s cubic-bezier(.34,1.56,.64,1);}
+  .perfectBadge{text-align:center;font-size:16px;font-weight:700;color:var(--known);margin-bottom:6px;animation:bounceIn .4s cubic-bezier(.34,1.56,.64,1);}
   /* ---- thwack (applied to cardStage) ---- */
   @keyframes thwack{0%{transform:scale(1);}40%{transform:scale(1.035);}70%{transform:scale(.99);}100%{transform:scale(1);}}
   .thwacking{animation:thwack .28s cubic-bezier(.34,1.56,.64,1);}
@@ -603,6 +609,27 @@
   </div>
 </div>
 
+<!-- ========== QUICK FONT & SIZE POPUP ========== -->
+<div id="quickFontPopup">
+  <div class="freshPopupTitle">Font &amp; size</div>
+  <div class="sliderWrap" style="margin-bottom:20px;">
+    <span class="sliderA sm">A</span>
+    <input type="range" id="quickScaleSlider" class="rangeSlider" min="70" max="300" step="10" value="100">
+    <span class="sliderA lg">A</span>
+  </div>
+  <div class="fontPicker" id="quickFontPicker">
+    <button class="fontPickerBtn" data-font="system"><span class="fChar" style="font-family:-apple-system,'Hiragino Sans',sans-serif">あ</span><span class="fLabel">System</span></button>
+    <button class="fontPickerBtn" data-font="mincho"><span class="fChar" style="font-family:'Hiragino Mincho ProN','Yu Mincho',serif">あ</span><span class="fLabel">Mincho</span></button>
+    <button class="fontPickerBtn" data-font="rounded"><span class="fChar" style="font-family:'M PLUS Rounded 1c','Hiragino Sans',sans-serif">あ</span><span class="fLabel">Rounded</span></button>
+    <button class="fontPickerBtn" data-font="hand"><span class="fChar" style="font-family:'Klee One',cursive">あ</span><span class="fLabel">Klee</span></button>
+    <button class="fontPickerBtn" data-font="serif2"><span class="fChar" style="font-family:'Shippori Mincho B1',serif">あ</span><span class="fLabel">Shippori</span></button>
+    <button class="fontPickerBtn" data-font="kaisei"><span class="fChar" style="font-family:'Kaisei Decol',serif">あ</span><span class="fLabel">Kaisei</span></button>
+    <button class="fontPickerBtn" data-font="hina"><span class="fChar" style="font-family:'Hina Mincho','Hiragino Mincho ProN',serif">あ</span><span class="fLabel">Hina</span></button>
+    <button class="fontPickerBtn" data-font="kyokasho"><span class="fChar" style="font-family:'DFKyoKaSho','Hiragino Mincho ProN',serif">あ</span><span class="fLabel">Kyokasho</span></button>
+  </div>
+  <button class="outlineBtn" id="quickFontCloseBtn" style="width:100%;margin-top:20px;">Done</button>
+</div>
+
 <!-- ========== CARD DETAIL MODAL ========== -->
 <div id="cardDetailBlur"></div>
 <div id="cardDetailPanel">
@@ -647,6 +674,7 @@
       <div class="headerIcons">
         <button class="iconCircleBtn" id="historyToggle" title="Session history"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="10" width="3.5" height="5" rx="0.8"/><rect x="6.25" y="6.5" width="3.5" height="8.5" rx="0.8"/><rect x="11.5" y="2.5" width="3.5" height="12.5" rx="0.8"/></svg></button>
         <button class="iconCircleBtn" id="themeToggle" title="Toggle theme"><svg class="ico-moon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M13.5 10.5A6 6 0 0 1 5.5 2.5a6 6 0 1 0 8 8z"/></svg><svg class="ico-sun" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="3.2"/><line x1="8" y1="1" x2="8" y2="2.8"/><line x1="8" y1="13.2" x2="8" y2="15"/><line x1="1" y1="8" x2="2.8" y2="8"/><line x1="13.2" y1="8" x2="15" y2="8"/><line x1="2.8" y1="2.8" x2="4.1" y2="4.1"/><line x1="11.9" y1="11.9" x2="13.2" y2="13.2"/><line x1="13.2" y1="2.8" x2="11.9" y2="4.1"/><line x1="4.1" y1="11.9" x2="2.8" y2="13.2"/></svg></button>
+        <button class="iconCircleBtn" id="quickFontToggle" title="Font &amp; size"><span class="aaIcon">Aa</span></button>
         <button class="iconCircleBtn" id="settingsToggle" title="Settings"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"><polygon points="15,8 13.1,10.1 13,13 10.1,13.1 8,15 5.9,13.1 3,13 2.9,10.1 1,8 2.9,5.9 3,3 5.9,2.9 8,1 10.1,2.9 13,3 13.1,5.9"/><circle cx="8" cy="8" r="2.8"/></svg></button>
       </div>
     </div>
@@ -706,6 +734,8 @@
     <div class="subview" id="completeView">
       <h2 id="completeTitle">Session complete</h2>
       <div class="sessionSummaryCard">
+        <div class="perfectBadge" id="perfectBadge" hidden>🎯 Perfect session!</div>
+        <p class="sessionPhrase" id="sessionPhrase"></p>
         <div class="sessionNums">
           <div class="sessionNum"><div class="n green" id="completeKnown">0</div><div class="l">Got it</div></div>
           <div class="sessionDivider"></div>
@@ -717,10 +747,10 @@
         <div class="sessionTime" id="sessionTime"></div>
         <button class="completeUndoLink" id="completeUndoBtn" hidden>↺ Undo last mark</button>
       </div>
-      <div class="perfectBadge" id="perfectBadge" hidden>🎯 Perfect session!</div>
       <div class="btnStack">
         <button class="primaryBtn" id="reviseBtn" hidden>Revise mistakes →</button>
         <button class="outlineBtn" id="studyAgainBtn" style="width:100%">Study again</button>
+        <button class="backToDecksLink" id="backToDecksBtn">Back to decks</button>
       </div>
     </div>
   </div>
@@ -862,7 +892,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.19</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.22</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1050,7 +1080,7 @@ el("comboCheck").addEventListener("change",function(){
 
 /* font slider */
 var fontSlider=el("fontSlider"),textScale=1;
-function applyTextScale(v){textScale=Math.round(v*100)/100;document.documentElement.style.setProperty("--text-scale",textScale);if(fontSlider)fontSlider.value=Math.round(textScale*100);var pct=Math.round(textScale*100);var pctEl=el("fontPreviewPct"),frontEl=el("fontPreviewFront"),backEl=el("fontPreviewBack");if(pctEl)pctEl.textContent=pct+"%";if(frontEl)frontEl.style.fontSize=Math.round(44*textScale)+"px";if(backEl)backEl.style.fontSize=Math.round(20*textScale)+"px";}
+function applyTextScale(v){textScale=Math.round(v*100)/100;document.documentElement.style.setProperty("--text-scale",textScale);if(fontSlider)fontSlider.value=Math.round(textScale*100);var quickSlider=el("quickScaleSlider");if(quickSlider)quickSlider.value=Math.round(textScale*100);var pct=Math.round(textScale*100);var pctEl=el("fontPreviewPct"),frontEl=el("fontPreviewFront"),backEl=el("fontPreviewBack");if(pctEl)pctEl.textContent=pct+"%";if(frontEl)frontEl.style.fontSize=Math.round(44*textScale)+"px";if(backEl)backEl.style.fontSize=Math.round(20*textScale)+"px";}
 fontSlider.addEventListener("input",function(){
   applyTextScale(parseInt(fontSlider.value)/100);
   storageSet(FONT_KEY,textScale);
@@ -1059,6 +1089,34 @@ fontSlider.addEventListener("input",function(){
 });
 
 /* font face */
+var SESSION_PHRASES={
+  perfect:["okay show off","zero mistakes?? who are you","no notes. none.","that's just unfair at this point","you're built for this deck now","100%, let's go","you just don't miss, huh","that was beautiful to watch","clean sweep!!","okay wow, all of them","this is what mastery looks like","no cap that was perfect","i had nothing to correct you on"],
+  excellent:["so close to perfect, amazing job","you really know this deck now","that was such a strong round","look at you go!!","you're doing so well with this","barely missed a beat","okay that was impressive","you're basically fluent in this deck","so good, seriously","one tiny slip, who cares","that's a great score and you know it","you're so close to perfect it's kind of amazing","this deck doesn't stand a chance against you"],
+  good:["nice, that's a solid round","you're getting really comfortable with this","good job, that's real progress","keep going, you're doing great","that's a good pass, i'm happy with that","you're building something real here","that's a strong showing","solid! genuinely solid","you're on a good track with this deck","that's the kind of round that adds up","nice work, keep this energy","you're clearly putting the reps in","good round, i see the improvement"],
+  okay:["hey, you're getting there","half the deck is sticking now, that's something to be happy about","this is what learning looks like, keep at it","some real wins in there, nice","a few more rounds and this'll click","you're right in the middle of the hard part, keep going","progress isn't always pretty but it's still progress","you got more than half, that counts","this is the slow part, and you're doing it","not bad at all for where you're at","you're chipping away at it, i see you","some of these are really sticking, keep going"],
+  rough:["okay that one was tough, but that's alright","rough round, but now you know exactly what to review","everyone has an off day, this was one","that's okay, this just tells you where to focus next","don't worry about this one, next round will be better","this deck's just being difficult today, not you","that's alright, now you know what to hit again","tough round, but you showed up and that matters","not your day, and that's genuinely fine","this happens, don't read too much into it","hey, at least now you know exactly where to focus","rough one, but you're still here trying, that counts for a lot"]
+};
+function tierForPct(pct){
+  if(pct>=100)return"perfect";
+  if(pct>=90)return"excellent";
+  if(pct>=75)return"good";
+  if(pct>=50)return"okay";
+  return"rough";
+}
+function pickSessionPhrase(pct){
+  var tier=tierForPct(pct);
+  var pool=SESSION_PHRASES[tier];
+  if(!library.phraseCycle)library.phraseCycle={};
+  var remaining=library.phraseCycle[tier];
+  if(!remaining||remaining.length===0){
+    remaining=shuffle(pool.map(function(_,i){return i;}));
+  }
+  var idx=remaining.pop();
+  library.phraseCycle[tier]=remaining;
+  scheduleSave();
+  return pool[idx];
+}
+
 var FONTS={
   system:{family:'-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic Medium","Segoe UI",sans-serif'},
   mincho:{family:'"Hiragino Mincho ProN","Yu Mincho","BIZ UDMincho",serif'},
@@ -1076,7 +1134,7 @@ function applyFontFace(key){currentFontFace=key;
   document.querySelectorAll(".fontPickerBtn").forEach(function(btn){btn.classList.toggle("active",btn.dataset.font===key);});
 }
 document.querySelectorAll(".fontPickerBtn").forEach(function(btn){
-  btn.addEventListener("click",function(){applyFontFace(btn.dataset.font);storageSet(FONT_FACE_KEY,btn.dataset.font);});
+  btn.addEventListener("click",function(){applyFontFace(btn.dataset.font);storageSet(FONT_FACE_KEY,btn.dataset.font);var card=currentCard();if(card)setCardText(card.front,card.back);});
 });
 
 /* sync export/import */
@@ -1318,6 +1376,26 @@ el("startPopupGoBtn").addEventListener("click",function(){
 });
 el("startPopupCancelBtn").addEventListener("click",hideStartPopup);
 
+/* quick font & size popup */
+el("quickScaleSlider").addEventListener("input",function(){
+  applyTextScale(parseInt(el("quickScaleSlider").value)/100);
+  storageSet(FONT_KEY,textScale);
+  var card=currentCard();
+  if(card)setCardText(card.front,card.back);
+});
+function openQuickFontPopup(){
+  el("quickScaleSlider").value=Math.round(textScale*100);
+  document.querySelectorAll(".fontPickerBtn").forEach(function(btn){btn.classList.toggle("active",btn.dataset.font===currentFontFace);});
+  el("exitBlur").classList.add("show");
+  el("quickFontPopup").classList.add("show");
+}
+function hideQuickFontPopup(){
+  el("exitBlur").classList.remove("show");
+  el("quickFontPopup").classList.remove("show");
+}
+el("quickFontToggle").addEventListener("click",openQuickFontPopup);
+el("quickFontCloseBtn").addEventListener("click",hideQuickFontPopup);
+
 function updateStudyUi(){
   var isQuiz=session.mode==="quiz";
   var isType=session.mode==="type";
@@ -1482,6 +1560,7 @@ function renderCard(){
     el("sessionBarKnown").style.width=seen>0?Math.round(kN/seen*100)+"%":"0%";
     el("sessionBarUnknown").style.width=seen>0?Math.round(uN/seen*100)+"%":"0%";
     el("sessionTime").textContent=seen>0?"Completed in "+fmtDuration(dur):"";
+    el("sessionPhrase").textContent=seen>0?pickSessionPhrase(pct):"";
     var wIds=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).map(Number);
     el("reviseBtn").hidden=wIds.length===0;session.reviseIds=wIds;session.reviseMode=session.mode;
     el("perfectBadge").hidden=!(seen>0&&uN===0);if(seen>0&&uN===0)setTimeout(launchConfetti,250);
@@ -1691,6 +1770,7 @@ document.addEventListener("keydown",function(e){if(currentScreen!=="study")retur
 
 /* complete screen */
 el("studyAgainBtn").addEventListener("click",function(){openStartPopup("again");});
+el("backToDecksBtn").addEventListener("click",function(){showSplash();});
 el("reviseBtn").addEventListener("click",function(){if(session.reviseIds&&session.reviseIds.length>0)startSession(session.reviseMode||"focus",session.reviseIds,true);});
 function renderStudy(mode){currentScreen="study";el("studyScreen").classList.add("active");el("studyScreen").style.display="flex";el("settingsScreen").classList.remove("active");el("settingsScreen").style.display="none";el("historyScreen").classList.remove("active");el("historyScreen").style.display="none";headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";updateDeckPill();if(!activeDeck()){showSubview("empty");return;}startSession(mode||"all");}
 
@@ -1928,7 +2008,7 @@ el("splashBrowseBtn").addEventListener("click",function(){
   hideSplash();
   setTimeout(function(){showScreen("browse");},220);
 });
-el("exitBlur").addEventListener("click",function(){hideExitPopup();hideStartPopup();});
+el("exitBlur").addEventListener("click",function(){hideExitPopup();hideStartPopup();hideQuickFontPopup();});
 el("sdCloseBtn").addEventListener("click",hideSessionDetail);
 el("sessionDetailBlur").addEventListener("click",hideSessionDetail);
 el("cdCloseBtn").addEventListener("click",hideCardDetail);
