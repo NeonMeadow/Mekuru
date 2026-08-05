@@ -106,7 +106,7 @@
   .card.flipped .cardInner{transform:rotateY(180deg);}
   .face{position:absolute;inset:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;padding:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden;text-align:center;overflow:hidden;}
   .face-back{transform:rotateY(180deg);}
-  .face-front .text{font-family:var(--font-display);font-size:calc(clamp(38px,11vw,58px)*var(--text-scale));font-weight:var(--font-display-weight);line-height:1.2;word-break:break-word;max-width:100%;min-width:0;}
+  .face-front .text{font-family:var(--font-display);font-size:calc(clamp(38px,11vw,58px)*var(--text-scale));font-weight:var(--font-display-weight);line-height:1.2;word-break:keep-all;overflow-wrap:normal;max-width:100%;min-width:0;}
   .face-back .text{font-family:var(--font-back);font-style:italic;font-size:calc(clamp(18px,6vw,24px)*var(--text-scale));line-height:1.4;color:var(--ink);max-width:100%;min-width:0;}
   .tapHint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
 
@@ -127,7 +127,7 @@
   .typeFeedback{text-align:center;font-size:13px;color:var(--ink-soft);min-height:18px;}
   .typeFeedback .typeCorrectAnswer{font-weight:600;color:var(--ink);}
   .quizBtn{position:relative;-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;padding:15px 8px;border:1px solid var(--line);background:var(--paper);border-radius:12px;font-size:14.5px;font-weight:500;color:var(--ink);text-align:center;cursor:pointer;min-height:52px;line-height:1.3;display:flex;align-items:center;justify-content:center;transition:background .12s,border-color .12s,color .12s;}
-  .quizBtnLabel{word-break:break-word;transition:opacity .1s ease;}
+  .quizBtnLabel{word-break:keep-all;overflow-wrap:normal;transition:opacity .1s ease;}
   .quizBtnX,.quizBtnCheck{position:absolute;width:26px;height:26px;opacity:0;pointer-events:none;}
   .quizBtnX{color:var(--accent);}
   .quizBtnCheck{color:#fff;}
@@ -187,9 +187,9 @@
   .undoResolveCard{position:absolute;inset:0;z-index:250;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 14px 40px rgba(0,0,0,.22);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;}
   .undoResolveCard.show{display:flex;animation:urSlideIn .32s cubic-bezier(.22,.9,.32,1.1) forwards;}
   .undoResolveCard.hide{display:flex;animation:urSlideOut .26s ease-in forwards;}
-  .urTop .text{font-family:var(--font-display);font-weight:var(--font-display-weight);font-size:clamp(30px,9vw,46px);line-height:1.15;word-break:break-word;}
+  .urTop .text{font-family:var(--font-display);font-weight:var(--font-display-weight);font-size:clamp(30px,9vw,46px);line-height:1.15;word-break:keep-all;overflow-wrap:normal;}
   .urDivider{width:44px;height:1px;background:var(--line);margin:14px 0;}
-  .urBottom .text{font-family:var(--font-back);font-style:italic;font-size:clamp(15px,4.5vw,20px);color:var(--ink-soft);line-height:1.35;word-break:break-word;}
+  .urBottom .text{font-family:var(--font-back);font-style:italic;font-size:clamp(15px,4.5vw,20px);color:var(--ink-soft);line-height:1.35;word-break:keep-all;overflow-wrap:normal;}
   .urHint{margin-top:16px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
   .skipLink{background:none;border:1px solid var(--line);color:var(--ink-soft);font-size:13px;font-weight:500;border-radius:12px;padding:11px;margin-top:8px;width:100%;cursor:pointer;font-family:inherit;}
   @media (hover:hover){.skipLink:hover{border-color:var(--ink-soft);color:var(--ink);}}
@@ -251,8 +251,8 @@
   .browseDot{width:9px;height:9px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--line);margin-top:9px;}
   .browseDot.known{background:var(--known);border-color:var(--known);}
   .browseTextCol{flex:1;min-width:0;}
-  .browseFront{font-family:var(--font-display);font-size:26px;font-weight:var(--font-display-weight);color:var(--ink);line-height:1.3;word-break:break-word;}
-  .browseBack{font-family:var(--font-back);font-style:italic;font-size:16px;color:var(--ink-soft);line-height:1.4;margin-top:3px;word-break:break-word;}
+  .browseFront{font-family:var(--font-display);font-size:26px;font-weight:var(--font-display-weight);color:var(--ink);line-height:1.3;word-break:keep-all;overflow-wrap:normal;}
+  .browseBack{font-family:var(--font-back);font-style:italic;font-size:16px;color:var(--ink-soft);line-height:1.4;margin-top:3px;word-break:keep-all;overflow-wrap:normal;}
   .browseEmptyHint{font-size:13px;color:var(--ink-soft);text-align:center;padding:24px 0;}
   .browseCount{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
   .deckRow.active{border-color:var(--accent);}
@@ -520,7 +520,6 @@
 </style>
 </head>
 <body>
-<div id="flashOverlay" style="position:fixed;inset:0;pointer-events:none;z-index:499;opacity:0;transition:opacity .15s ease;"></div>
 <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:600;" hidden></canvas>
 
 <!-- ========== EXIT POPUP + BLUR ========== -->
@@ -910,7 +909,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.24.2</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.24.5</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1315,9 +1314,7 @@ function spawnParticles(){
 }
 
 function flashScreen(status){
-  var o=el("flashOverlay");if(!o)return;
-  o.style.background=status==="known"?"rgba(79,107,82,0.09)":"rgba(166,52,43,0.08)";
-  o.style.opacity="1";setTimeout(function(){o.style.opacity="0";},95);
+  /* full-screen flash disabled — was causing a jarring blink on every mark */
 }
 
 function triggerThwack(){
