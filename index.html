@@ -631,7 +631,7 @@
   <div class="freshPopupTitle">Font &amp; size</div>
   <div class="sliderWrap" style="margin-bottom:20px;">
     <span class="sliderA sm">A</span>
-    <input type="range" id="quickScaleSlider" class="rangeSlider" min="70" max="300" step="10" value="100">
+    <input type="range" id="quickScaleSlider" class="rangeSlider" min="50" max="300" step="10" value="100">
     <span class="sliderA lg">A</span>
   </div>
   <div class="fontPicker" id="quickFontPicker">
@@ -821,7 +821,7 @@
       <h3>Card text size</h3>
       <div class="sliderWrap">
         <span class="sliderA sm">A</span>
-        <input type="range" id="fontSlider" class="rangeSlider" min="70" max="300" step="10" value="100">
+        <input type="range" id="fontSlider" class="rangeSlider" min="50" max="300" step="10" value="100">
         <span class="sliderA lg">A</span>
       </div>
       <div class="fontPreviewCard">
@@ -909,7 +909,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.25.6</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.25.7</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1700,10 +1700,30 @@ function renderCard(){
     el("completeUndoBtn").hidden=!lastMark;
     startPopupSelectedMode=uN>0?"focus":"all";showSubview("complete");return;
   }
-  showSubview("live");setCardText(card.front,card.back);
+  showSubview("live");
+  /* new-card entrance: start faded + slightly offset, swap the text in
+     while still invisible (same instant as cardInner's flip-reset above
+     — nothing is animating yet during the swap itself), then animate
+     ONLY cardEl's own opacity/transform to their resting state on the
+     next frame. This never touches cardInner's transition, so it can't
+     reintroduce the earlier flash-of-the-answer bug — that was caused
+     by the FLIP transition running late, not by the lack of an
+     entrance animation. A forced reflow here for the same reason as
+     above: without it, "transition:none" can lose the race against
+     the property changes that follow and end up animating anyway. */
+  cardEl.style.transition="none";
+  cardEl.style.transform="translateY(8px) scale(0.97)";
+  cardEl.style.opacity="0";
+  void cardEl.offsetHeight;
+  setCardText(card.front,card.back);
   if(session.mode==="quiz")renderQuizOptions(card);
   if(session.mode==="type")renderTypeInput();
   if(session.mode==="wild"){var wKeys=Object.keys(FONTS);var wKey=wKeys[Math.floor(Math.random()*wKeys.length)];var wFont=FONTS[wKey];if(wFont.gf&&!document.getElementById("gf_"+wKey)){var wLk=document.createElement("link");wLk.id="gf_"+wKey;wLk.rel="stylesheet";wLk.href=wFont.gf;document.head.appendChild(wLk);}document.documentElement.style.setProperty("--font-display",wFont.family);}
+  requestAnimationFrame(function(){
+    cardEl.style.transition="transform .28s cubic-bezier(.22,.9,.32,1),opacity .22s ease-out";
+    cardEl.style.transform="";
+    cardEl.style.opacity="";
+  });
 }
 
 /* quiz */
