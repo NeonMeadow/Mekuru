@@ -19,7 +19,7 @@
     --known:#4F6B52;--known-soft:rgba(79,107,82,0.12);
     --shadow:0 1px 2px rgba(40,35,25,0.04),0 8px 24px rgba(40,35,25,0.05);
     --radius:14px;--text-scale:1;
-    --card-h-ceiling:320;--front-font-ceiling:58;--back-font-ceiling:24;--font-display-weight:600;
+    --card-h-ceiling:320;--front-font-ceiling:58;--back-font-ceiling:58;--font-display-weight:600;
     --font-ui:"Overpass Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
     --font-display:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic Medium","Segoe UI",Roboto,sans-serif;
     --font-back:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
@@ -107,7 +107,7 @@
   .face{position:absolute;inset:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;padding:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden;text-align:center;overflow:hidden;}
   .face-back{transform:rotateY(180deg);}
   .face-front .text{font-family:var(--font-display);font-size:calc(clamp(38px,11vw,58px)*var(--text-scale));font-weight:var(--font-display-weight);line-height:1.2;word-break:keep-all;overflow-wrap:normal;max-width:100%;min-width:0;}
-  .face-back .text{font-family:var(--font-back);font-style:italic;font-size:calc(clamp(18px,6vw,24px)*var(--text-scale));line-height:1.4;color:var(--ink);max-width:100%;min-width:0;}
+  .face-back .text{font-family:var(--font-back);font-style:italic;font-size:calc(clamp(38px,11vw,58px)*var(--text-scale));line-height:1.4;color:var(--ink);max-width:100%;min-width:0;}
   .tapHint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
 
   /* subtle circular swipe hints */
@@ -499,7 +499,7 @@
      space for it. Below this width, every rule above still applies
      exactly as before — this is purely additive. */
   @media(min-width:900px){
-    :root{--card-h-ceiling:440;--front-font-ceiling:92;--back-font-ceiling:32;}
+    :root{--card-h-ceiling:440;--front-font-ceiling:92;--back-font-ceiling:92;}
     #app{max-width:640px;padding:0 40px max(20px,env(safe-area-inset-bottom));}
     .card{width:min(360px,100%);height:min(440px,100%,46dvh,440px);}
     #startPopup{width:min(440px,calc(100% - 32px));}
@@ -670,7 +670,7 @@
       <img id="splashLogoDark" class="splashLogoImgD" src="" alt="Mekuru">
     </div>
     <div class="splashMiddle">
-      <div class="splashSectionLabel">Your deck</div>
+      <div class="splashSectionLabel">Your decks</div>
       <div class="splashDeckList" id="splashDeckList"></div>
     </div>
     <div class="splashBottom">
@@ -909,7 +909,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.24.5</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.25.6</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -967,25 +967,59 @@ function fitTextToFace(textEl,faceEl,maxFontPx,minFontPx){
   if(!textEl.textContent)return;
   var box=innerBox(faceEl);
   if(box.w<=0||box.h<=0)return; /* not laid out yet */
+  var raw=textEl.textContent; /* capture before any innerHTML transform below */
+  var hasSpace=raw.indexOf(" ")!==-1;
+  if(hasSpace){
+    /* let the browser wrap naturally at whichever spaces are needed to
+       fit the CURRENT font size — never force a break at every space
+       (that over-splits a long sentence into one word per line), and
+       never try to cram everything onto one line first either (that
+       was the original bug: a short phrase that technically fits on
+       one line never got the visual separation it needed). Starting
+       the reflow at the ceiling means content that doesn't comfortably
+       fit on one line at full size wraps immediately and naturally,
+       while content short enough to fit stays on one line — exactly
+       "break only if it doesn't fit at the current size", with the
+       browser deciding how many words share a line rather than a
+       forced break per space. */
+    textEl.textContent=raw;
+    textEl.style.whiteSpace="normal";
+    var fontSize=maxFontPx;
+    textEl.style.fontSize=fontSize+"px";
+    var w=textEl.scrollWidth,h=textEl.scrollHeight;
+    if(w>box.w||h>box.h){
+      /* jump close to a fitting size first (both width and height scale
+         roughly linearly with font-size), then fine-tune with a few 1px
+         steps. A pure 1px-at-a-time loop from the ceiling can need far
+         more steps than a small safety cap allows once maxFontPx is
+         large (e.g. the wider desktop font ceiling combined with an
+         increased text-scale setting) — this jump avoids depending on
+         how many steps that gap happens to be. */
+      var ratio=Math.min(box.w/w,box.h/h);
+      var estimate=Math.floor(maxFontPx*ratio*0.96);
+      fontSize=Math.max(minFontPx,Math.min(maxFontPx,estimate));
+      textEl.style.fontSize=fontSize+"px";
+      var tries=0;
+      while((textEl.scrollWidth>box.w||textEl.scrollHeight>box.h)&&fontSize>minFontPx&&tries<200){
+        fontSize-=1;textEl.style.fontSize=fontSize+"px";tries++;
+      }
+    }
+    return;
+  }
+  /* no space in the string — never wrap (would mean a mid-word break).
+     Shrink to fit on one line, then let the face's overflow:hidden
+     clip extreme cases rather than break mid-word. */
   textEl.style.whiteSpace="nowrap";
-  var fontSize=maxFontPx;
-  textEl.style.fontSize=fontSize+"px";
+  var fontSize2=maxFontPx;
+  textEl.style.fontSize=fontSize2+"px";
   var w=textEl.scrollWidth;
   if(w>box.w){
     var estimate=Math.floor(maxFontPx*(box.w/w)*0.96);
-    fontSize=Math.max(minFontPx,Math.min(maxFontPx,estimate));
-    textEl.style.fontSize=fontSize+"px";
-    var tries=0;
-    while(textEl.scrollWidth>box.w&&fontSize>minFontPx&&tries<6){
-      fontSize-=1;textEl.style.fontSize=fontSize+"px";tries++;
-    }
-  }
-  if(textEl.scrollWidth>box.w){
-    /* still doesn't fit as one line even at the floor — allow wrapping */
-    textEl.style.whiteSpace="normal";
+    fontSize2=Math.max(minFontPx,Math.min(maxFontPx,estimate));
+    textEl.style.fontSize=fontSize2+"px";
     var tries2=0;
-    while(textEl.scrollHeight>box.h&&fontSize>minFontPx&&tries2<12){
-      fontSize-=1;textEl.style.fontSize=fontSize+"px";tries2++;
+    while(textEl.scrollWidth>box.w&&fontSize2>minFontPx&&tries2<6){
+      fontSize2-=1;textEl.style.fontSize=fontSize2+"px";tries2++;
     }
   }
 }
@@ -995,7 +1029,7 @@ function setCardText(front,back){
   var scale=textScale||1;
   var cs=getComputedStyle(document.documentElement);
   var frontCeil=parseFloat(cs.getPropertyValue("--front-font-ceiling"))||58;
-  var backCeil=parseFloat(cs.getPropertyValue("--back-font-ceiling"))||24;
+  var backCeil=parseFloat(cs.getPropertyValue("--back-font-ceiling"))||58;
   fitTextToFace(frontText,frontText.parentElement,Math.round(frontCeil*scale),Math.max(11,Math.round(15*scale)));
   fitTextToFace(backText,backText.parentElement,Math.round(backCeil*scale),Math.max(10,Math.round(12*scale)));
 }
@@ -1011,9 +1045,9 @@ function cardKey(c){return c.front+"\u0000"+c.back;}
 function mergeCards(ec,ep,nc,mode){var ebk={};ec.forEach(function(c){ebk[cardKey(c)]=c;});var nid=ec.reduce(function(m,c){return Math.max(m,c.id);},0)+1;if(mode==="replace"){var ca=nc.map(function(c){var x=ebk[cardKey(c)];return x?x:{id:nid++,front:c.front,back:c.back};});var ki={};ca.forEach(function(c){ki[c.id]=true;});var pr={};Object.keys(ep).forEach(function(id){if(ki[id])pr[id]=ep[id];});return{cards:ca,progress:pr};}else{var ca2=ec.slice();nc.forEach(function(c){if(!ebk[cardKey(c)]){var cd={id:nid++,front:c.front,back:c.back};ca2.push(cd);ebk[cardKey(c)]=cd;}});return{cards:ca2,progress:Object.assign({},ep)};}}
 
 /* state */
-var library={decks:[],activeDeckId:null,history:[]};
-var session={order:[],pos:0,mode:"all",results:{},startTime:0,reviseIds:null};
-var startPopupSelectedMode="all";var startPopupContext=null;
+var library={decks:[],activeDeckId:null,history:[],studySelectedIds:[]};
+var session={order:[],pos:0,mode:"all",results:{},startTime:0,reviseIds:null,deckIds:[],cardIndex:{}};
+var startPopupSelectedMode="all";var startPopupContext=null;var pendingStudyDeckIds=[];
 var flipped=false,marking=false,currentScreen="study",stagedCards=[];
 function activeDeck(){return library.decks.find(function(d){return d.id===library.activeDeckId;})||null;}
 var historyViewDeckId=null;
@@ -1026,11 +1060,17 @@ function historyViewDeck(){
 }
 function nextDeckId(){return library.decks.reduce(function(m,d){return Math.max(m,d.id);},0)+1;}
 function knownCountOf(d){return Object.keys(d.progress).filter(function(id){return d.progress[id]==="known";}).length;}
+/* ---- multi-deck session helpers ---- */
+function resolveDeckIds(ids){return (ids||[]).filter(function(id){return library.decks.some(function(d){return d.id===id;});});}
+function decksById(ids){return resolveDeckIds(ids).map(function(id){return library.decks.find(function(d){return d.id===id;});});}
+function buildCardIndex(decks){var idx={};decks.forEach(function(d){d.cards.forEach(function(c){idx[d.id+":"+c.id]={card:c,deck:d};});});return idx;}
+function currentCardEntry(){if(session.pos>=session.order.length)return null;var cid=session.order[session.pos];return(session.cardIndex&&session.cardIndex[cid])||null;}
+function currentDeck(){var e=currentCardEntry();return e?e.deck:null;}
 
 /* screens */
 var headerLabel=el("headerLabel");
 /* headerConfirm removed — replaced by exit popup */
-function updateDeckPill(){var deck=activeDeck();var show=deck&&currentScreen==="study";el("deckPill").hidden=!show;if(show)el("deckPillName").textContent=deck.name;}
+function updateDeckPill(){var decks=decksById(session.deckIds);var show=decks.length>0&&currentScreen==="study";el("deckPill").hidden=!show;if(show)el("deckPillName").textContent=decks.length===1?decks[0].name:decks.length===2?decks.map(function(d){return d.name;}).join(" + "):decks.length+" decks";}
 el("deckPill").addEventListener("click",function(){showScreen("settings");});
 function showScreen(name){currentScreen=name;var screens={studyScreen:"study",settingsScreen:"settings",historyScreen:"history",browseScreen:"browse"};Object.keys(screens).forEach(function(id){var isActive=screens[id]===name;el(id).classList.toggle("active",isActive);el(id).style.display=isActive?"flex":"none";});el("settingsToggle").classList.toggle("active",name==="settings");el("historyToggle").classList.toggle("active",name==="history");if(name==="study"){headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";}else{headerLabel.classList.remove("headerShowLogo");el("headerText").textContent=name==="settings"?"Settings":name==="browse"?"Browse":"History";}updateDeckPill();if(name==="settings")renderSettings();if(name==="history")renderHistory();if(name==="browse")renderBrowse();
   if(name==="study"){var c=currentCard();if(c)setCardText(c.front,c.back);}
@@ -1180,11 +1220,11 @@ el("syncActionBtn").addEventListener("click",function(){
   } else {
     try{
       var data=importLib(el("syncArea").value.trim());
-      library=data;if(!library.history)library.history=[];
+      library=data;if(!library.history)library.history=[];if(!library.studySelectedIds)library.studySelectedIds=[];
       if(!library.decks.some(function(d){return d.id===library.activeDeckId;})&&library.decks.length)library.activeDeckId=library.decks[0].id;
       storageSet(LIB_KEY,library);
       el("syncNote").textContent="Imported successfully — "+library.decks.length+" deck(s) loaded.";el("syncNote").className="syncNote success";
-      renderSettings();renderStudy();
+      renderSettings();renderStudy(null,[library.activeDeckId]);
     }catch(e){el("syncNote").textContent="Couldn't read that data. Make sure you copied the full export.";el("syncNote").className="syncNote error";}
   }
 });
@@ -1192,6 +1232,7 @@ el("syncActionBtn").addEventListener("click",function(){
 /* session */
 var emptyView=el("emptyView"),liveView=el("liveView"),completeView=el("completeView");
 var cardEl=el("card");
+var cardInner=cardEl.querySelector(".cardInner");
 var frontText=el("frontText"),backText=el("backText"),tapHint=el("tapHint");
 var actionRow=el("actionRow"),quizGrid=el("quizGrid"),hintRow=el("hintRow"),skipBtn=el("skipBtn");
 var frontFace=frontText.parentElement,backFace=backText.parentElement;
@@ -1219,16 +1260,22 @@ function renderSplash(){
     startBtn.disabled=true;statsBtn.disabled=true;browseBtn.disabled=true;return;
   }
   if(!library.decks.some(function(d){return d.id===library.activeDeckId;})){library.activeDeckId=library.decks[0].id;}
+  library.studySelectedIds=resolveDeckIds(library.studySelectedIds);
+  if(!library.studySelectedIds.length)library.studySelectedIds=[library.activeDeckId];
   library.decks.forEach(function(deck){
-    var isSelected=deck.id===library.activeDeckId;
+    var isSelected=library.studySelectedIds.indexOf(deck.id)!==-1;
     var btn=document.createElement("button");
     btn.className="splashDeckItem"+(isSelected?" selected":"");
     btn.dataset.deckId=deck.id;
     var known=knownCountOf(deck);
     btn.innerHTML="<span class='splashDeckName'>"+escapeHtml(deck.name)+"</span><span class='splashDeckMeta'><span>"+known+"/"+deck.cards.length+"</span><span class='splashDeckCheck'>✓</span></span>";
     btn.addEventListener("click",function(){
+      var idx=library.studySelectedIds.indexOf(deck.id);
+      if(idx===-1){library.studySelectedIds.push(deck.id);}
+      else if(library.studySelectedIds.length>1){library.studySelectedIds.splice(idx,1);}
       library.activeDeckId=deck.id;
-      document.querySelectorAll(".splashDeckItem").forEach(function(b){b.classList.toggle("selected",parseInt(b.dataset.deckId)===deck.id);});
+      scheduleSave();
+      btn.classList.toggle("selected",library.studySelectedIds.indexOf(deck.id)!==-1);
       startBtn.disabled=false;
     });
     list.appendChild(btn);
@@ -1265,7 +1312,7 @@ function hideExitPopup(){
 
 /* ---- fresh mode stepper (used within the unified start popup) ---- */
 var freshStaging=15;
-function freshMaxN(){var deck=activeDeck();return deck?Math.max(5,Math.min(50,deck.cards.length)):50;}
+function freshMaxN(){var decks=decksById(pendingStudyDeckIds);var maxCards=decks.reduce(function(m,d){return Math.max(m,d.cards.length);},0);return Math.max(5,Math.min(50,maxCards||50));}
 function updateFreshPopupNum(){
   var max=freshMaxN();
   freshStaging=Math.max(5,Math.min(max,freshStaging));
@@ -1348,11 +1395,49 @@ function launchConfetti(){
 }
 function showSubview(w){emptyView.classList.toggle("active",w==="empty");liveView.classList.toggle("active",w==="live");completeView.classList.toggle("active",w==="complete");}
 
-function buildPool(mode){var deck=activeDeck();if(!deck)return[];if(mode==="focus"){return deck.cards.filter(function(c){return deck.progress[c.id]!=="known";}).map(function(c){return c.id;});}else if(mode==="mixed"){var un=deck.cards.filter(function(c){return deck.progress[c.id]!=="known";});var kn=deck.cards.filter(function(c){return deck.progress[c.id]==="known";});var tk=Math.min(kn.length,Math.max(2,Math.round(un.length*0.25)));return un.map(function(c){return c.id;}).concat(shuffle(kn.map(function(c){return c.id;})).slice(0,tk));}else if(mode==="fresh"){var all=deck.cards.map(function(c){return c.id;});var newIds=all.slice(Math.max(0,all.length-freshN));var oldIds=all.slice(0,Math.max(0,all.length-freshN));var oldSample=shuffle(oldIds).slice(0,Math.max(0,Math.round(newIds.length*0.2)));return shuffle(newIds.concat(oldSample));}else if(mode==="weak"){var stats=deck.cardStats||{};var scored=deck.cards.map(function(c){var cs=stats[c.id];var acc=(cs&&cs.seen>0)?(cs.correct/cs.seen):0.5;return{id:c.id,acc:acc};});scored.sort(function(a,b){return a.acc-b.acc;});var weakCount=Math.max(1,Math.round(scored.length*0.7));var weakIds=scored.slice(0,weakCount).map(function(s){return s.id;});var restIds=scored.slice(weakCount).map(function(s){return s.id;});var sampleCount=Math.min(restIds.length,Math.max(0,Math.round(weakIds.length*0.2)));return shuffle(weakIds.concat(shuffle(restIds).slice(0,sampleCount)));}else{return deck.cards.map(function(c){return c.id;});}}
+function buildPool(mode,decks){
+  decks=decks||decksById(session.deckIds);
+  if(!decks.length)return[];
+  if(mode==="focus"){
+    var ids=[];
+    decks.forEach(function(d){d.cards.forEach(function(c){if(d.progress[c.id]!=="known")ids.push(d.id+":"+c.id);});});
+    return ids;
+  }else if(mode==="mixed"){
+    var un=[],kn=[];
+    decks.forEach(function(d){d.cards.forEach(function(c){var cid=d.id+":"+c.id;if(d.progress[c.id]!=="known")un.push(cid);else kn.push(cid);});});
+    var tk=Math.min(kn.length,Math.max(2,Math.round(un.length*0.25)));
+    return un.concat(shuffle(kn).slice(0,tk));
+  }else if(mode==="fresh"){
+    var newIds=[],oldIds=[];
+    decks.forEach(function(d){
+      var all=d.cards.map(function(c){return d.id+":"+c.id;});
+      newIds=newIds.concat(all.slice(Math.max(0,all.length-freshN)));
+      oldIds=oldIds.concat(all.slice(0,Math.max(0,all.length-freshN)));
+    });
+    var oldSample=shuffle(oldIds).slice(0,Math.max(0,Math.round(newIds.length*0.2)));
+    return shuffle(newIds.concat(oldSample));
+  }else if(mode==="weak"){
+    var scored=[];
+    decks.forEach(function(d){
+      var stats=d.cardStats||{};
+      d.cards.forEach(function(c){var cs=stats[c.id];var acc=(cs&&cs.seen>0)?(cs.correct/cs.seen):0.5;scored.push({id:d.id+":"+c.id,acc:acc});});
+    });
+    scored.sort(function(a,b){return a.acc-b.acc;});
+    var weakCount=Math.max(1,Math.round(scored.length*0.7));
+    var weakIds=scored.slice(0,weakCount).map(function(s){return s.id;});
+    var restIds=scored.slice(weakCount).map(function(s){return s.id;});
+    var sampleCount=Math.min(restIds.length,Math.max(0,Math.round(weakIds.length*0.2)));
+    return shuffle(weakIds.concat(shuffle(restIds).slice(0,sampleCount)));
+  }else{
+    var allIds=[];
+    decks.forEach(function(d){d.cards.forEach(function(c){allIds.push(d.id+":"+c.id);});});
+    return allIds;
+  }
+}
 
 function setModeBtns(mode){["all","focus","mixed","quiz","wild","fresh","weak","type"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.classList.toggle("active",m===mode);});}
 
-function updateModeAvailability(){var deck=activeDeck();var focusOk=deck&&knownCountOf(deck)>0&&buildPool("focus").length>0;el("modeFocus").hidden=!focusOk;var weakOk=deck&&deck.cardStats&&Object.keys(deck.cardStats).length>0;el("modeWeak").hidden=!weakOk;}
+function updateModeAvailability(){var decks=decksById(pendingStudyDeckIds);var focusOk=decks.length>0&&decks.some(function(d){return knownCountOf(d)>0;})&&buildPool("focus",decks).length>0;el("modeFocus").hidden=!focusOk;var weakOk=decks.some(function(d){return d.cardStats&&Object.keys(d.cardStats).length>0;});el("modeWeak").hidden=!weakOk;}
 
 /* ---- unified start-session popup ---- */
 function selectStartMode(m){
@@ -1361,10 +1446,12 @@ function selectStartMode(m){
   el("startFreshConfig").hidden=m!=="fresh";
   el("startTypeConfig").hidden=m!=="type";
   if(m==="fresh"){freshStaging=freshN;updateFreshPopupNum();}
-  if(m==="type"){var deck=activeDeck();setTypeOptionSelected(deck?(deck.answerStrictness||"strict"):"strict");}
+  if(m==="type"){var decks=decksById(pendingStudyDeckIds);setTypeOptionSelected(decks.length?(decks[0].answerStrictness||"strict"):"strict");}
 }
 function openStartPopup(context){
-  var deck=activeDeck();if(!deck)return;
+  var ids=context==="splash"?resolveDeckIds(library.studySelectedIds):resolveDeckIds(session.deckIds);
+  if(!ids.length)return;
+  pendingStudyDeckIds=ids;
   startPopupContext=context;
   updateModeAvailability();
   var mode=startPopupSelectedMode;
@@ -1378,15 +1465,16 @@ function hideStartPopup(){
   el("startPopup").classList.remove("show");
 }
 el("startPopupGoBtn").addEventListener("click",function(){
-  var deck=activeDeck();if(!deck)return;
+  var decks=decksById(pendingStudyDeckIds);if(!decks.length)return;
   var mode=startPopupSelectedMode;
   if(mode==="fresh"){freshN=freshStaging;storageSet(FRESH_N_KEY,freshN);}
-  if(mode==="type"){deck.answerStrictness=typeSelectedStrictness;scheduleSave();}
+  if(mode==="type"){decks.forEach(function(d){d.answerStrictness=typeSelectedStrictness;});scheduleSave();}
   hideStartPopup();
   if(startPopupContext==="splash"){
     hideSplash();
-    renderStudy(mode);
+    renderStudy(mode,pendingStudyDeckIds);
   } else {
+    session.deckIds=pendingStudyDeckIds;
     startSession(mode);
   }
 });
@@ -1440,16 +1528,16 @@ function fitCardToStage(){
 }
 window.addEventListener("resize",fitCardToStage,{passive:true});
 
-function startSession(mode,overrideIds,isRevise){var deck=activeDeck();if(!deck){showSubview("empty");return;}session.mode=mode||"all";session.isRevise=!!isRevise;session.results={};session.startTime=Date.now();session.reviseIds=null;flipped=false;marking=false;
+function startSession(mode,overrideIds,isRevise){var decks=decksById(session.deckIds);if(!decks.length){showSubview("empty");return;}pendingStudyDeckIds=session.deckIds;session.mode=mode||"all";session.isRevise=!!isRevise;session.results={};session.startTime=Date.now();session.reviseIds=null;flipped=false;marking=false;
 lastMark=null;undoResolveActive=false;undoResolveOriginalStatus=null;el("undoBtn").hidden=true;el("undoConfirmMsg").classList.remove("show");el("undoResolveCard").classList.remove("show","hide");session.savedHistoryEntry=null;
-comboCount=0;sessionBestCombo=0;updateComboDisplay();if(session.mode!=="wild")applyFontFace(currentFontFace);session.order=overrideIds?shuffle(overrideIds):shuffle(buildPool(session.mode));session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
+comboCount=0;sessionBestCombo=0;updateComboDisplay();if(session.mode!=="wild")applyFontFace(currentFontFace);session.cardIndex=buildCardIndex(decks);session.order=overrideIds?shuffle(overrideIds):shuffle(buildPool(session.mode,decks));session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
 
-function renderProgress(){var deck=activeDeck();if(!deck)return;var tot=session.order.length;var kN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;var uN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;el("scoreKnown").textContent="✓ "+kN;el("scoreUnknown").textContent="✗ "+uN;el("progressRight").textContent=(kN+uN)+" / "+tot;var kP=tot?Math.round(kN/tot*100):0,uP=tot?Math.round(uN/tot*100):0;el("progressKnown").style.width=kP+"%";el("progressUnknown").style.left=kP+"%";el("progressUnknown").style.width=uP+"%";}
+function renderProgress(){if(!session.deckIds||!session.deckIds.length)return;var tot=session.order.length;var kN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;var uN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;el("scoreKnown").textContent="✓ "+kN;el("scoreUnknown").textContent="✗ "+uN;el("progressRight").textContent=(kN+uN)+" / "+tot;var kP=tot?Math.round(kN/tot*100):0,uP=tot?Math.round(uN/tot*100):0;el("progressKnown").style.width=kP+"%";el("progressUnknown").style.left=kP+"%";el("progressUnknown").style.width=uP+"%";}
 
-function currentCard(){var deck=activeDeck();if(!deck||session.pos>=session.order.length)return null;var id=session.order[session.pos];return deck.cards.find(function(c){return c.id===id;})||null;}
+function currentCard(){var e=currentCardEntry();return e?e.card:null;}
 
 function recordResult(card,deck,status){
-  session.results[card.id]=status;
+  session.results[deck.id+":"+card.id]=status;
   deck.progress[card.id]=status;
   if(!deck.cardStats)deck.cardStats={};
   var cs=deck.cardStats[card.id];
@@ -1471,6 +1559,7 @@ function recordResultWithUndo(card,deck,status){
   var prevCs=deck.cardStats&&deck.cardStats[card.id];
   var snap={
     cardId:card.id,deck:deck,status:status,
+    compositeId:deck.id+":"+card.id,
     prevProgress:deck.progress[card.id],
     hadProgress:Object.prototype.hasOwnProperty.call(deck.progress,card.id),
     prevSeen:prevCs?prevCs.seen:0,
@@ -1500,7 +1589,7 @@ function performUndo(){
     cs.seen=m.prevSeen;cs.correct=m.prevCorrect;cs.wrong=m.prevWrong;
     if(cs.log)cs.log=cs.log.slice(0,m.prevLogLen);
   }
-  delete session.results[m.cardId];
+  delete session.results[m.compositeId];
   comboCount=m.prevComboCount;sessionBestCombo=m.prevSessionBestCombo;
   if(bestCombo!==m.prevBestCombo){bestCombo=m.prevBestCombo;storageSet(BEST_COMBO_KEY,bestCombo);}
   session.pos=m.prevSessionPos;
@@ -1520,7 +1609,7 @@ function performUndo(){
 
 function resolveUndoCard(status){
   if(!undoResolveActive)return;
-  var card=currentCard(),deck=activeDeck();
+  var e=currentCardEntry();var card=e&&e.card,deck=e&&e.deck;
   if(!card||!deck){undoResolveActive=false;return;}
   recordResultWithUndo(card,deck,status);
   scheduleSave();renderProgress();
@@ -1549,17 +1638,45 @@ function resolveUndoCard(status){
   },260);
 }
 
-function saveSessionToHistory(){var deck=activeDeck();if(!deck)return;var ids=Object.keys(session.results);var kN=ids.filter(function(id){return session.results[id]==="known";}).length;var uN=ids.filter(function(id){return session.results[id]==="unknown";}).length;var seen=kN+uN;if(seen===0)return;var dur=Date.now()-session.startTime;var wrongCards=ids.filter(function(id){return session.results[id]==="unknown";}).map(function(id){var c=deck.cards.find(function(cc){return String(cc.id)===String(id);});return c?{front:c.front,back:c.back}:null;}).filter(Boolean);var modeLabel=session.isRevise?"revise":session.mode;var pct=Math.round(kN/seen*100);
-if(session.savedHistoryEntry){
-  var e=session.savedHistoryEntry;
-  e.seen=seen;e.known=kN;e.unknown=uN;e.pct=pct;e.duration=dur;e.wrongCards=wrongCards;e.ts=Date.now();
-  scheduleSave();return;
+function saveSessionToHistory(){
+  var decks=decksById(session.deckIds);if(!decks.length)return;
+  var ids=Object.keys(session.results);
+  var kN=ids.filter(function(id){return session.results[id]==="known";}).length;
+  var uN=ids.filter(function(id){return session.results[id]==="unknown";}).length;
+  var seen=kN+uN;if(seen===0)return;
+  var dur=Date.now()-session.startTime;
+  var wrongCards=ids.filter(function(id){return session.results[id]==="unknown";}).map(function(id){
+    var e=session.cardIndex&&session.cardIndex[id];
+    return e?{front:e.card.front,back:e.card.back}:null;
+  }).filter(Boolean);
+  var modeLabel=session.isRevise?"revise":session.mode;
+  var pct=Math.round(kN/seen*100);
+  var deckIds=decks.map(function(d){return d.id;});
+  var deckNames=decks.map(function(d){return d.name;});
+  if(session.savedHistoryEntry){
+    var e2=session.savedHistoryEntry;
+    e2.seen=seen;e2.known=kN;e2.unknown=uN;e2.pct=pct;e2.duration=dur;e2.wrongCards=wrongCards;e2.ts=Date.now();
+    scheduleSave();return;
+  }
+  if(!library.history)library.history=[];
+  var entry={id:Date.now(),deckId:deckIds[0],deckName:deckNames[0],deckIds:deckIds,deckNames:deckNames,mode:modeLabel,total:session.order.length,seen:seen,known:kN,unknown:uN,pct:pct,duration:dur,ts:Date.now(),wrongCards:wrongCards};
+  library.history.push(entry);session.savedHistoryEntry=entry;if(library.history.length>200)library.history=library.history.slice(-200);scheduleSave();
 }
-if(!library.history)library.history=[];var entry={id:Date.now(),deckId:deck.id,deckName:deck.name,mode:modeLabel,total:session.order.length,seen:seen,known:kN,unknown:uN,pct:pct,duration:dur,ts:Date.now(),wrongCards:wrongCards};library.history.push(entry);session.savedHistoryEntry=entry;if(library.history.length>200)library.history=library.history.slice(-200);scheduleSave();}
 
 function renderCard(){
   var card=currentCard();
-  flipped=false;cardEl.classList.remove("flipped");
+  flipped=false;
+  /* the flip transition actually lives on .cardInner (transform:rotateY),
+     not on the outer .card element — suppressing transition on cardEl
+     here was a no-op for it, so removing "flipped" always played the
+     real 350ms flip-back animation using the NEW card's already-updated
+     text, briefly showing its answer mid-rotation. Suppress cardInner's
+     own transition, force a reflow so the browser commits that before
+     the class change, then restore it next frame for future flips. */
+  cardInner.style.transition="none";
+  void cardInner.offsetHeight;
+  cardEl.classList.remove("flipped");
+  requestAnimationFrame(function(){cardInner.style.transition="";});
   cardEl.style.transition="none";cardEl.style.transform="";cardEl.style.opacity="";cardEl.style.zIndex="";
   el("swipeHintRight").style.opacity=0;el("swipeHintLeft").style.opacity=0;
   resetFaces();
@@ -1577,7 +1694,7 @@ function renderCard(){
     el("sessionBarUnknown").style.width=seen>0?Math.round(uN/seen*100)+"%":"0%";
     el("sessionTime").textContent=seen>0?"Completed in "+fmtDuration(dur):"";
     el("sessionPhrase").textContent=seen>0?pickSessionPhrase(pct):"";
-    var wIds=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).map(Number);
+    var wIds=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";});
     el("reviseBtn").hidden=wIds.length===0;session.reviseIds=wIds;session.reviseMode=session.mode;
     el("perfectBadge").hidden=!(seen>0&&uN===0);if(seen>0&&uN===0)setTimeout(launchConfetti,250);
     el("completeUndoBtn").hidden=!lastMark;
@@ -1591,7 +1708,7 @@ function renderCard(){
 
 /* quiz */
 var quizWrongAttempt=false;
-function buildQuizOptions(card){var deck=activeDeck();var others=deck.cards.filter(function(c){return c.id!==card.id;}).map(function(c){return c.back;});var unique=[];others.forEach(function(v){if(unique.indexOf(v)===-1)unique.push(v);});return shuffle([card.back].concat(shuffle(unique).slice(0,3)));}
+function buildQuizOptions(card){var deck=currentDeck()||activeDeck();var others=deck?deck.cards.filter(function(c){return c.id!==card.id;}).map(function(c){return c.back;}):[];var unique=[];others.forEach(function(v){if(unique.indexOf(v)===-1)unique.push(v);});return shuffle([card.back].concat(shuffle(unique).slice(0,3)));}
 function renderQuizOptions(card){
   quizWrongAttempt=false;
   var opts=buildQuizOptions(card);
@@ -1632,7 +1749,7 @@ function handleQuizAnswer(value,card,btnEl){
   var status=quizWrongAttempt?"unknown":"known";
   ["qBtn0","qBtn1","qBtn2","qBtn3"].forEach(function(id){el(id).classList.add("qbtnDisabled");});
   if(btnEl){btnEl.classList.add("correct");btnEl.blur();}
-  var deck=activeDeck();
+  var deck=currentDeck()||activeDeck();
   recordResult(card,deck,status);
   scheduleSave();renderProgress();
   haptic(status==="known"?"success":"medium");
@@ -1673,7 +1790,7 @@ function renderTypeInput(){
 }
 function handleTypeSubmit(){
   if(marking)return;
-  var card=currentCard(),deck=activeDeck();
+  var e=currentCardEntry();var card=e&&e.card,deck=e&&e.deck;
   if(!card||!deck)return;
   var input=el("typeAnswerInput");
   var typed=input.value;
@@ -1710,7 +1827,7 @@ el("typeOptFlexible").addEventListener("click",function(){setTypeOptionSelected(
 
 /* flip / mark */
 function flipCard(){if(!currentCard()||session.mode==="quiz"||session.mode==="type")return;flipped=!flipped;cardEl.classList.toggle("flipped",flipped);haptic("light");}
-function markCard(status){if(undoResolveActive){resolveUndoCard(status);return;}if(marking)return;var card=currentCard(),deck=activeDeck();if(!card||!deck)return;marking=true;recordResultWithUndo(card,deck,status);scheduleSave();renderProgress();
+function markCard(status){if(undoResolveActive){resolveUndoCard(status);return;}if(marking)return;var e=currentCardEntry();var card=e&&e.card,deck=e&&e.deck;if(!card||!deck)return;marking=true;recordResultWithUndo(card,deck,status);scheduleSave();renderProgress();
 haptic(status==="known"?"success":"medium");flashScreen(status);triggerThwack();if(status==="known")spawnParticles();updateCombo(status);var go=function(){setTimeout(advance,650);};if(!flipped){flipped=true;cardEl.classList.add("flipped");setTimeout(go,370);}else{go();}}
 function advance(){marking=false;session.pos++;renderCard();}
 
@@ -1741,7 +1858,7 @@ cardEl.addEventListener("touchend",function(e){
   if(Math.abs(dx)>=SWIPE_THRESH&&!marking){
     lastSwipeTime=Date.now();
     var status=dx>0?"known":"unknown";
-    var card=currentCard(),deck=activeDeck();if(!card||!deck)return;
+    var e=currentCardEntry();var card=e&&e.card,deck=e&&e.deck;if(!card||!deck)return;
     marking=true;recordResultWithUndo(card,deck,status);scheduleSave();renderProgress();
 haptic(status==="known"?"success":"medium");flashScreen(status);triggerThwack();if(status==="known")spawnParticles();updateCombo(status);
     /* fly all the way off → reset invisible → flip to back → fade in → flash → advance */
@@ -1788,10 +1905,16 @@ document.addEventListener("keydown",function(e){if(currentScreen!=="study")retur
 el("studyAgainBtn").addEventListener("click",function(){openStartPopup("again");});
 el("backToDecksBtn").addEventListener("click",function(){showSplash();});
 el("reviseBtn").addEventListener("click",function(){if(session.reviseIds&&session.reviseIds.length>0)startSession(session.reviseMode||"focus",session.reviseIds,true);});
-function renderStudy(mode){currentScreen="study";el("studyScreen").classList.add("active");el("studyScreen").style.display="flex";el("settingsScreen").classList.remove("active");el("settingsScreen").style.display="none";el("historyScreen").classList.remove("active");el("historyScreen").style.display="none";headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";updateDeckPill();if(!activeDeck()){showSubview("empty");return;}startSession(mode||"all");}
+function renderStudy(mode,deckIds){currentScreen="study";el("studyScreen").classList.add("active");el("studyScreen").style.display="flex";el("settingsScreen").classList.remove("active");el("settingsScreen").style.display="none";el("historyScreen").classList.remove("active");el("historyScreen").style.display="none";headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";
+if(deckIds)session.deckIds=resolveDeckIds(deckIds);
+else if(!session.deckIds||!resolveDeckIds(session.deckIds).length)session.deckIds=resolveDeckIds([library.activeDeckId]);
+else session.deckIds=resolveDeckIds(session.deckIds);
+updateDeckPill();
+if(!session.deckIds.length){showSubview("empty");return;}
+startSession(mode||"all");}
 
 /* history */
-function deckHistory(){var deck=historyViewDeck();if(!deck||!library.history)return[];return library.history.filter(function(h){return h.deckId===deck.id;});}
+function deckHistory(){var deck=historyViewDeck();if(!deck||!library.history)return[];return library.history.filter(function(h){var ids=h.deckIds||(h.deckId!=null?[h.deckId]:[]);return ids.indexOf(deck.id)!==-1;});}
 
 /* ---- session detail modal ---- */
 function showSessionDetail(h){
@@ -1799,7 +1922,7 @@ function showSessionDetail(h){
   el("sdScore").textContent=h.pct+"%";
   el("sdCounts").textContent=h.known+" / "+h.unknown;
   el("sdTime").textContent=h.duration?fmtDuration(h.duration):"—";
-  el("sdMode").textContent=h.mode.charAt(0).toUpperCase()+h.mode.slice(1);
+  el("sdMode").textContent=h.mode.charAt(0).toUpperCase()+h.mode.slice(1)+(h.deckIds&&h.deckIds.length>1?" · "+h.deckIds.length+" decks":"");
   var list=el("sdMissedList");list.innerHTML="";
   if(!h.wrongCards||h.wrongCards.length===0){
     list.innerHTML='<p class="sdEmptyMissed">No mistakes — clean sweep.</p>';
@@ -1969,20 +2092,20 @@ function renderHistory(){
   if(aggHist.length>0){
     var totalSeen=aggHist.reduce(function(s,h){return s+h.seen;},0);var avgPct=Math.round(aggHist.reduce(function(s,h){return s+h.pct;},0)/aggHist.length);var sDiv=document.createElement("div");sDiv.className="histStats";var bestStr=bestCombo>0?bestCombo+"✓":"—";sDiv.innerHTML='<div class="histStat"><div class="histStatN">'+aggHist.length+'</div><div class="histStatL">Sessions</div></div><div class="histStat"><div class="histStatN">'+totalSeen+'</div><div class="histStatL">Cards seen</div></div><div class="histStat"><div class="histStatN">'+avgPct+'%</div><div class="histStatL">Avg score</div></div><div class="histStat"><div class="histStatN">'+bestStr+'</div><div class="histStatL">Best streak</div></div>';container.appendChild(sDiv);
     renderTroubleSpots(container,deck);
-    var best=aggHist.slice().sort(function(a,b){return b.pct!==a.pct?b.pct-a.pct:b.seen-a.seen;})[0];var bKP=best.seen>0?Math.round(best.known/best.seen*100):0,bUP=best.seen>0?Math.round(best.unknown/best.seen*100):0;var bestDiv=document.createElement("div");bestDiv.className="bestSessionCard";bestDiv.style.cursor="pointer";bestDiv.innerHTML='<div class="bestLabel">Best session</div><div class="bestRow"><span class="bestPct" style="color:'+pctColor(best.pct)+'">'+best.pct+'%</span><div class="bestMeta">'+best.known+' got it · '+best.unknown+' to review<br>'+fmtDate(best.ts)+' · '+best.mode+'</div></div><div class="bestBar"><div class="bestBarKnown" style="width:'+bKP+'%"></div><div class="bestBarUnknown" style="width:'+bUP+'%"></div></div>';bestDiv.addEventListener("click",function(){showSessionDetail(best);});container.appendChild(bestDiv);
-    var bSec=document.createElement("div");bSec.className="bubblesSection";bSec.innerHTML='<div class="bubblesLabel">All sessions · newest first</div>';var bWrap=document.createElement("div");bWrap.className="bubblesWrap";var histNewestFirst=aggHist.slice().reverse();histNewestFirst.forEach(function(h,i){var b=document.createElement("div");b.className="bubble";b.style.background=pctColor(h.pct);b.textContent=h.pct+"%";b.title=fmtDate(h.ts)+(i===0?" · Most recent":"")+"\n"+h.known+" got it · "+h.unknown+" · "+h.mode;b.addEventListener("click",function(){showSessionDetail(h);});bWrap.appendChild(b);});bSec.appendChild(bWrap);container.appendChild(bSec);
+    var best=aggHist.slice().sort(function(a,b){return b.pct!==a.pct?b.pct-a.pct:b.seen-a.seen;})[0];var bKP=best.seen>0?Math.round(best.known/best.seen*100):0,bUP=best.seen>0?Math.round(best.unknown/best.seen*100):0;var bestDiv=document.createElement("div");bestDiv.className="bestSessionCard";bestDiv.style.cursor="pointer";bestDiv.innerHTML='<div class="bestLabel">Best session</div><div class="bestRow"><span class="bestPct" style="color:'+pctColor(best.pct)+'">'+best.pct+'%</span><div class="bestMeta">'+best.known+' got it · '+best.unknown+' to review<br>'+fmtDate(best.ts)+' · '+best.mode+(best.deckIds&&best.deckIds.length>1?' · '+best.deckIds.length+' decks':'')+'</div></div><div class="bestBar"><div class="bestBarKnown" style="width:'+bKP+'%"></div><div class="bestBarUnknown" style="width:'+bUP+'%"></div></div>';bestDiv.addEventListener("click",function(){showSessionDetail(best);});container.appendChild(bestDiv);
+    var bSec=document.createElement("div");bSec.className="bubblesSection";bSec.innerHTML='<div class="bubblesLabel">All sessions · newest first</div>';var bWrap=document.createElement("div");bWrap.className="bubblesWrap";var histNewestFirst=aggHist.slice().reverse();histNewestFirst.forEach(function(h,i){var b=document.createElement("div");b.className="bubble";b.style.background=pctColor(h.pct);b.textContent=h.pct+"%";b.title=fmtDate(h.ts)+(i===0?" · Most recent":"")+"\n"+h.known+" got it · "+h.unknown+" · "+h.mode+(h.deckIds&&h.deckIds.length>1?" · "+h.deckIds.length+" decks":"");b.addEventListener("click",function(){showSessionDetail(h);});bWrap.appendChild(b);});bSec.appendChild(bWrap);container.appendChild(bSec);
   } else {
     renderTroubleSpots(container,deck);
     var onlyRevise=document.createElement("p");onlyRevise.className="noHistHint";onlyRevise.textContent="Only revision rounds so far — study a full session to see stats here.";container.appendChild(onlyRevise);
   }
-  var lLabel=document.createElement("div");lLabel.className="bubblesLabel";lLabel.textContent="Recent sessions";container.appendChild(lLabel);var lDiv=document.createElement("div");lDiv.className="histList";aggHist.slice().reverse().slice(0,20).forEach(function(h){var entry=document.createElement("div");entry.className="histEntry";var kP=h.seen>0?Math.round(h.known/h.seen*100):0,uP=h.seen>0?Math.round(h.unknown/h.seen*100):0;entry.innerHTML='<div class="histPctBadge" style="background:'+pctColor(h.pct)+'">'+h.pct+'%</div><div class="histMeta"><div class="histDate">'+fmtDate(h.ts)+'</div><div class="histSub">'+h.known+' got it · '+h.unknown+' to review · '+h.seen+' cards · '+h.mode+(h.duration?' · '+fmtDuration(h.duration):'')+'</div><div class="histBar"><div class="histBarKnown" style="width:'+kP+'%"></div><div class="histBarUnknown" style="width:'+uP+'%"></div></div></div>';entry.addEventListener("click",function(){showSessionDetail(h);});lDiv.appendChild(entry);});container.appendChild(lDiv);}
+  var lLabel=document.createElement("div");lLabel.className="bubblesLabel";lLabel.textContent="Recent sessions";container.appendChild(lLabel);var lDiv=document.createElement("div");lDiv.className="histList";aggHist.slice().reverse().slice(0,20).forEach(function(h){var entry=document.createElement("div");entry.className="histEntry";var kP=h.seen>0?Math.round(h.known/h.seen*100):0,uP=h.seen>0?Math.round(h.unknown/h.seen*100):0;entry.innerHTML='<div class="histPctBadge" style="background:'+pctColor(h.pct)+'">'+h.pct+'%</div><div class="histMeta"><div class="histDate">'+fmtDate(h.ts)+'</div><div class="histSub">'+h.known+' got it · '+h.unknown+' to review · '+h.seen+' cards · '+h.mode+(h.deckIds&&h.deckIds.length>1?' · '+h.deckIds.length+' decks':'')+(h.duration?' · '+fmtDuration(h.duration):'')+'</div><div class="histBar"><div class="histBarKnown" style="width:'+kP+'%"></div><div class="histBarUnknown" style="width:'+uP+'%"></div></div></div>';entry.addEventListener("click",function(){showSessionDetail(h);});lDiv.appendChild(entry);});container.appendChild(lDiv);}
 
 /* settings */
 function renderSettings(){
   renderDeckList();renderDestinationBlock();el("thisDeckSection").hidden=!activeDeck();
   Object.keys(FONTS).forEach(function(k){var f=FONTS[k];if(f.gf&&!document.getElementById("gf_"+k)){var lk=document.createElement("link");lk.id="gf_"+k;lk.rel="stylesheet";lk.href=f.gf;document.head.appendChild(lk);}});
 }
-function renderDeckList(){var dl=el("deckList");dl.innerHTML="";el("noDeckHint").hidden=library.decks.length>0;library.decks.forEach(function(d){var row=document.createElement("div");row.className="deckRow"+(d.id===library.activeDeckId?" active":"");row.innerHTML='<span class="name">'+escapeHtml(d.name)+'</span><span class="count">'+knownCountOf(d)+'/'+d.cards.length+'</span>';row.addEventListener("click",function(){library.activeDeckId=d.id;scheduleSave();renderStudy();showScreen("study");});dl.appendChild(row);});}
+function renderDeckList(){var dl=el("deckList");dl.innerHTML="";el("noDeckHint").hidden=library.decks.length>0;library.decks.forEach(function(d){var row=document.createElement("div");row.className="deckRow"+(d.id===library.activeDeckId?" active":"");row.innerHTML='<span class="name">'+escapeHtml(d.name)+'</span><span class="count">'+knownCountOf(d)+'/'+d.cards.length+'</span>';row.addEventListener("click",function(){library.activeDeckId=d.id;scheduleSave();renderStudy(null,[d.id]);showScreen("study");});dl.appendChild(row);});}
 var stagingArea=el("stagingArea"),previewBox=el("previewBox"),previewCount=el("previewCount"),previewRows=el("previewRows"),previewMore=el("previewMore"),destinationBlock=el("destinationBlock"),newDeckNameInput=el("newDeckName"),updateExistingBlock=el("updateExistingBlock"),updateDetail=el("updateDetail"),createDeckBtn=el("createDeckBtn"),appendBtn=el("appendBtn"),replaceBtn=el("replaceBtn");
 function readFileAsText(file){return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(r.result);};r.onerror=reject;r.readAsText(file);});}
 el("csvFileInput").addEventListener("change",function(e){var file=e.target.files[0];if(!file)return;if(!newDeckNameInput.value.trim())newDeckNameInput.value=file.name.replace(/\.csv$/i,"");readFileAsText(file).then(function(text){stagingArea.value=text;updatePreview();});e.target.value="";});
@@ -1990,13 +2113,13 @@ stagingArea.addEventListener("input",updatePreview);
 function updatePreview(){var text=stagingArea.value;if(!text.trim()){previewBox.hidden=true;stagedCards=[];renderDestinationBlock();return;}var rows=parseCSV(text),cards=rowsToCards(rows);stagedCards=cards;previewBox.hidden=false;if(cards.length===0){previewBox.classList.add("error");previewCount.textContent="No valid rows found";previewRows.textContent="Make sure each line has two values separated by a comma.";previewMore.textContent="";}else{previewBox.classList.remove("error");previewCount.textContent=cards.length+(cards.length===1?" card found":" cards found");previewRows.textContent=cards.slice(0,5).map(function(c){return c.front+" → "+c.back;}).join("\n");previewMore.textContent=cards.length>5?"…and "+(cards.length-5)+" more":"";}renderDestinationBlock();}
 function renderDestinationBlock(){var hC=stagedCards.length>0;destinationBlock.classList.toggle("disabled",!hC);createDeckBtn.disabled=!hC;createDeckBtn.textContent=hC?"Create new deck — "+stagedCards.length+" card"+(stagedCards.length===1?"":"s"):"Create new deck";var deck=activeDeck();updateExistingBlock.hidden=!deck;if(deck&&hC){var ebk={};deck.cards.forEach(function(c){ebk[cardKey(c)]=true;});var nO=stagedCards.filter(function(c){return!ebk[cardKey(c)];}).length;var du=stagedCards.length-nO,ma=stagedCards.filter(function(c){return ebk[cardKey(c)];}).length;appendBtn.disabled=false;replaceBtn.disabled=false;appendBtn.textContent="Add "+nO+" new card"+(nO===1?"":"s");replaceBtn.textContent="Replace deck ("+stagedCards.length+" total)";updateDetail.textContent="Adding: skips "+du+" already in \u201c"+deck.name+"\u201d. Replacing: keeps progress for "+ma+" matching card"+(ma===1?"":"s")+".";}else if(deck){appendBtn.disabled=true;replaceBtn.disabled=true;appendBtn.textContent="Add new cards";replaceBtn.textContent="Replace deck";updateDetail.textContent="";}}
 function resetStaging(){stagingArea.value="";stagedCards=[];previewBox.hidden=true;newDeckNameInput.value="";renderDestinationBlock();}
-createDeckBtn.addEventListener("click",function(){if(stagedCards.length===0)return;var id=nextDeckId(),cards=stagedCards.map(function(c,i){return{id:i+1,front:c.front,back:c.back};});library.decks.push({id:id,name:newDeckNameInput.value.trim()||("Deck "+id),cards:cards,progress:{}});library.activeDeckId=id;scheduleSave();resetStaging();if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{renderStudy();showScreen("study");}});
+createDeckBtn.addEventListener("click",function(){if(stagedCards.length===0)return;var id=nextDeckId(),cards=stagedCards.map(function(c,i){return{id:i+1,front:c.front,back:c.back};});library.decks.push({id:id,name:newDeckNameInput.value.trim()||("Deck "+id),cards:cards,progress:{}});library.activeDeckId=id;scheduleSave();resetStaging();if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{renderStudy(null,[id]);showScreen("study");}});
 appendBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||stagedCards.length===0)return;var r=mergeCards(deck.cards,deck.progress,stagedCards,"append");deck.cards=r.cards;deck.progress=r.progress;scheduleSave();resetStaging();renderSettings();renderProgress();});
 replaceBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||stagedCards.length===0)return;var r=mergeCards(deck.cards,deck.progress,stagedCards,"replace");deck.cards=r.cards;deck.progress=r.progress;scheduleSave();resetStaging();renderSettings();renderProgress();});
 function twoStep(btn,fn){var ok=false,t=null,orig=btn.textContent;btn.addEventListener("click",function(){if(!ok){ok=true;btn.textContent="Click again to confirm";btn.classList.add("confirming");t=setTimeout(function(){ok=false;btn.textContent=orig;btn.classList.remove("confirming");},3000);}else{clearTimeout(t);ok=false;btn.textContent=orig;btn.classList.remove("confirming");fn();}});}
 twoStep(el("resetProgressBtn"),function(){var deck=activeDeck();if(!deck)return;deck.progress={};scheduleSave();renderSettings();updateModeAvailability();});
-twoStep(el("deleteDeckBtn"),function(){var deck=activeDeck();if(!deck)return;library.decks=library.decks.filter(function(d){return d.id!==deck.id;});library.activeDeckId=library.decks.length?library.decks[0].id:null;scheduleSave();renderSettings();renderStudy();});
-twoStep(el("clearHistoryBtn"),function(){var deck=activeDeck();if(!deck)return;library.history=(library.history||[]).filter(function(h){return h.deckId!==deck.id;});deck.cardStats={};scheduleSave();renderSettings();});
+twoStep(el("deleteDeckBtn"),function(){var deck=activeDeck();if(!deck)return;library.decks=library.decks.filter(function(d){return d.id!==deck.id;});library.studySelectedIds=(library.studySelectedIds||[]).filter(function(id){return id!==deck.id;});library.activeDeckId=library.decks.length?library.decks[0].id:null;scheduleSave();renderSettings();renderStudy(null,[library.activeDeckId]);});
+twoStep(el("clearHistoryBtn"),function(){var deck=activeDeck();if(!deck)return;library.history=(library.history||[]).filter(function(h){var ids=h.deckIds||(h.deckId!=null?[h.deckId]:[]);return ids.indexOf(deck.id)===-1;});deck.cardStats={};scheduleSave();renderSettings();});
 
 /* clear cache */
 el("clearCacheBtn").addEventListener("click",function(){
@@ -2004,7 +2127,7 @@ el("clearCacheBtn").addEventListener("click",function(){
 });
 /* splash + exit popup listeners */
 el("splashStartBtn").addEventListener("click",function(){
-  if(!activeDeck())return;
+  if(!resolveDeckIds(library.studySelectedIds).length)return;
   openStartPopup("splash");
 });
 el("splashSettingsBtn").addEventListener("click",function(){
@@ -2037,8 +2160,14 @@ el("exitConfirmBtn").addEventListener("click",function(){
 el("exitCancelBtn").addEventListener("click",hideExitPopup);
 el("freshMinusBtn").addEventListener("click",function(){freshStaging-=1;updateFreshPopupNum();});
 el("freshPlusBtn").addEventListener("click",function(){freshStaging+=1;updateFreshPopupNum();});
+if(document.fonts&&document.fonts.addEventListener){
+  document.fonts.addEventListener("loadingdone",function(){
+    var card=currentCard();
+    if(card&&liveView.classList.contains("active"))setCardText(card.front,card.back);
+  });
+}
 /* boot */
-Promise.all([storageGet(LIB_KEY),storageGet(THEME_KEY),storageGet(FONT_KEY),storageGet(FONT_FACE_KEY),storageGet(SWIPE_REVEAL_KEY),storageGet(COMBO_KEY),storageGet(BEST_COMBO_KEY),storageGet(LIGHT_THEME_KEY),storageGet(DARK_THEME_KEY),storageGet(FRESH_N_KEY)]).then(function(res){var data=res[0],theme=res[1],scale=res[2],fontFace=res[3],swipeRevealPref=res[4],comboPref=res[5],bestComboPref=res[6],savedLight=res[7],savedDark=res[8],savedFreshN=res[9];if(data&&data.decks&&data.decks.length){library=data;if(!library.history)library.history=[];if(!library.decks.some(function(d){return d.id===library.activeDeckId;}))library.activeDeckId=library.decks[0].id;}
+Promise.all([storageGet(LIB_KEY),storageGet(THEME_KEY),storageGet(FONT_KEY),storageGet(FONT_FACE_KEY),storageGet(SWIPE_REVEAL_KEY),storageGet(COMBO_KEY),storageGet(BEST_COMBO_KEY),storageGet(LIGHT_THEME_KEY),storageGet(DARK_THEME_KEY),storageGet(FRESH_N_KEY)]).then(function(res){var data=res[0],theme=res[1],scale=res[2],fontFace=res[3],swipeRevealPref=res[4],comboPref=res[5],bestComboPref=res[6],savedLight=res[7],savedDark=res[8],savedFreshN=res[9];if(data&&data.decks&&data.decks.length){library=data;if(!library.history)library.history=[];if(!library.studySelectedIds)library.studySelectedIds=[];if(!library.decks.some(function(d){return d.id===library.activeDeckId;}))library.activeDeckId=library.decks[0].id;}
 if(swipeRevealPref===false){swipeRevealEnabled=false;if(el("swipeRevealCheck"))el("swipeRevealCheck").checked=false;}
 if(comboPref===false){comboEnabled=false;if(el("comboCheck"))el("comboCheck").checked=false;}
 if(typeof bestComboPref==="number")bestCombo=bestComboPref;
