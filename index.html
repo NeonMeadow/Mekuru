@@ -222,6 +222,7 @@
   .btnStack{display:flex;flex-direction:column;gap:8px;}
 
   .settingsTopRow{display:flex;align-items:center;gap:8px;margin-bottom:20px;}
+  .screenHeading{margin:0 0 18px;font-size:18px;font-weight:700;color:var(--ink);}
   .backLink{background:none;border:none;color:var(--ink-soft);font-size:14px;padding:4px 0;display:flex;align-items:center;gap:4px;}
   @media (hover:hover){.backLink:hover{color:var(--ink);}}
   /* toggle switches */
@@ -269,7 +270,8 @@
   .dmBtn{flex-shrink:0;border:none;background:none;color:var(--ink-soft);cursor:pointer;padding:4px 5px;font-size:13px;font-family:inherit;white-space:nowrap;}
   @media (hover:hover){.dmBtn:hover{color:var(--ink);}}
   .dmBtn.danger{color:var(--accent);}
-  .dmBtn.danger.confirming{color:#fff;background:var(--accent);border-radius:6px;padding:4px 8px;}
+  .dmBtn.rename{font-size:17px;padding:4px 8px;}
+  .dmConflictBadge{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:13px;font-weight:700;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
   .dmEmptyHint{font-size:13px;color:var(--ink-soft);text-align:center;padding:24px 0;}
   .splashManageBtn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:none;border:1px solid var(--line);border-radius:14px;padding:12px;color:var(--ink-soft);font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font-ui);margin-top:10px;transition:border-color .15s,color .15s;}
   .splashManageBtn svg{width:15px;height:15px;flex-shrink:0;}
@@ -322,6 +324,10 @@
   .syncSection{margin-top:12px;}
   textarea.syncArea{width:100%;min-height:80px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;resize:vertical;background:var(--paper);color:var(--ink);}
   .syncNote{font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.5;}
+  .ghLinkText{font-family:monospace;font-size:11.5px;background:var(--line);padding:1px 4px;border-radius:4px;}
+  .ghStatus{font-size:12.5px;color:var(--ink-soft);margin:0 0 10px;line-height:1.5;}
+  .ghStatus.error{color:var(--accent);}
+  #ghTokenInput{margin-bottom:10px;}
   .syncNote.success{color:var(--known);}
   .syncNote.error{color:var(--accent);}
 
@@ -473,6 +479,22 @@
 
   /* ---- exit popup ---- */
   #exitBlur{position:fixed;inset:0;z-index:1040;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:opacity .2s ease;}
+  #confirmDialog{position:fixed;z-index:1060;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:20px;padding:26px 22px 20px;width:min(320px,calc(100% - 40px));box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
+  #confirmDialog.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
+  #confirmMessage{font-size:15px;line-height:1.5;color:var(--ink);margin:0 0 20px;}
+  .confirmActions{display:flex;gap:10px;}
+  .confirmActions button{flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;}
+  #confirmCancelBtn{background:none;border:1px solid var(--line);color:var(--ink);}
+  #confirmYesBtn{background:var(--accent);border:1px solid var(--accent);color:#fff;}
+  #nameConflictDialog{position:fixed;z-index:1060;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:20px;padding:26px 22px 20px;width:min(360px,calc(100% - 40px));box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
+  #nameConflictDialog.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
+  #ncMessage{font-size:14.5px;line-height:1.5;color:var(--ink);margin:0 0 16px;}
+  .ncOptions{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+  .ncOptionBtn{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  @media (hover:hover){.ncOptionBtn:hover{border-color:var(--ink-soft);}}
+  .ncCustomRow{display:flex;gap:8px;margin-bottom:12px;}
+  .ncCustomRow .textInput{flex:1;}
+  .ncCancelLink{background:none;border:none;color:var(--ink-soft);font-size:13px;font-family:inherit;cursor:pointer;padding:4px;}
   #exitBlur.show{opacity:1;pointer-events:auto;}
   #exitPopup{position:fixed;z-index:1050;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:30px 24px 24px;width:min(300px,calc(100% - 40px));box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
   #exitPopup.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
@@ -547,6 +569,25 @@
 
 <!-- ========== EXIT POPUP + BLUR ========== -->
 <div id="exitBlur"></div>
+<div id="confirmDialog">
+  <p id="confirmMessage">Are you sure?</p>
+  <div class="confirmActions">
+    <button id="confirmCancelBtn">Cancel</button>
+    <button id="confirmYesBtn">Delete</button>
+  </div>
+</div>
+<div id="nameConflictDialog">
+  <p id="ncMessage">This deck has a different name on another device.</p>
+  <div class="ncOptions">
+    <button class="ncOptionBtn" id="ncOptionA">Name A</button>
+    <button class="ncOptionBtn" id="ncOptionB">Name B</button>
+  </div>
+  <div class="ncCustomRow">
+    <input type="text" class="textInput" id="ncCustomInput" placeholder="Or type a different name…">
+    <button class="smallBtn primary" id="ncCustomBtn">Use this</button>
+  </div>
+  <button class="ncCancelLink" id="ncCancelBtn">Cancel</button>
+</div>
 <div id="exitPopup">
   <div class="exitPopupTitle">End this round?</div>
   <div class="exitPopupSub">Your results so far will be saved.</div>
@@ -805,6 +846,7 @@
   <!-- SETTINGS -->
   <div class="screen" id="settingsScreen">
     <div class="settingsTopRow"><button class="backLink" id="backBtn">‹ Back to cards</button></div>
+    <h2 class="screenHeading">Settings</h2>
 
     <div class="panelSection">
       <h3>Your decks</h3>
@@ -888,6 +930,22 @@
       </div>
     </div>
 
+    <div class="panelSection">
+      <h3>Sync across devices</h3>
+      <p class="muted" id="ghSyncIntro">Automatically keep progress in sync using a private GitHub Gist. Generate a token at <span class="ghLinkText">github.com/settings/tokens</span> (classic, "gist" scope only) and paste it below.</p>
+      <div id="ghSyncSetup">
+        <input type="password" class="textInput" id="ghTokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+        <div class="btnRow"><button class="smallBtn primary" id="ghConnectBtn">Connect</button></div>
+      </div>
+      <div id="ghSyncConnected" hidden>
+        <p class="ghStatus" id="ghStatus">Not synced yet.</p>
+        <div class="btnRow">
+          <button class="smallBtn" id="ghSyncNowBtn">Sync now</button>
+          <button class="smallBtn danger" id="ghDisconnectBtn">Disconnect</button>
+        </div>
+      </div>
+    </div>
+
     <div class="panelSection" id="thisDeckSection" hidden>
       <h3>This deck</h3>
       <div class="btnRow">
@@ -913,18 +971,20 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.26.3</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.29.0</span></div>
   </div>
 
   <!-- HISTORY -->
   <div class="screen" id="historyScreen">
     <div class="settingsTopRow"><button class="backLink" id="histBackBtn">‹ Back to cards</button></div>
+    <h2 class="screenHeading">History</h2>
     <div id="historyContent"></div>
   </div>
 
   <!-- BROWSE -->
   <div class="screen" id="browseScreen">
     <div class="settingsTopRow"><button class="backLink" id="browseBackBtn">‹ Back to cards</button></div>
+    <h2 class="screenHeading">Browse</h2>
     <input type="text" class="textInput" id="browseSearch" placeholder="Search this deck…" style="margin-bottom:12px;">
     <label class="switchLabel" style="margin-bottom:16px;">
       <span class="sub">Show only what I don't know yet</span>
@@ -936,7 +996,7 @@
   <!-- DECK MANAGER -->
   <div class="screen" id="deckManagerScreen">
     <div class="settingsTopRow"><button class="backLink" id="dmBackBtn">‹ Back to settings</button></div>
-    <h2 style="margin:0 0 4px;font-size:18px;">Manage decks</h2>
+    <h2 class="screenHeading" style="margin:0 0 4px;">Manage decks</h2>
     <p class="muted" style="margin:0 0 16px;">Drag the handle to reorder. Rename, edit cards, or delete a deck.</p>
     <div class="dmList" id="dmList"></div>
     <p class="dmEmptyHint" id="dmEmptyHint" hidden>No decks yet.</p>
@@ -988,7 +1048,266 @@ var fromSplash=false; /* tracks if settings was opened from splash */
 function storageGet(k){if(hasCS)return window.storage.get(k,false).then(function(r){return r?JSON.parse(r.value):null;}).catch(function(){return null;});try{var v=localStorage.getItem(k);return Promise.resolve(v?JSON.parse(v):null);}catch(e){return Promise.resolve(null);}}
 function storageSet(k,v){if(hasCS)return window.storage.set(k,JSON.stringify(v),false).then(function(){return true;}).catch(function(){return false;});try{localStorage.setItem(k,JSON.stringify(v));return Promise.resolve(true);}catch(e){return Promise.resolve(false);}}
 var saveTimer=null;
-function scheduleSave(){clearTimeout(saveTimer);el("saveNote").textContent="Saving…";saveTimer=setTimeout(function(){storageSet(LIB_KEY,library).then(function(ok){el("saveNote").textContent=ok?"":"Couldn't save.";});},250);}
+function scheduleSave(fast){clearTimeout(saveTimer);el("saveNote").textContent="Saving…";saveTimer=setTimeout(function(){storageSet(LIB_KEY,library).then(function(ok){el("saveNote").textContent=ok?"":"Couldn't save.";});},250);ghScheduleSync(fast);}
+
+/* ---- GitHub Gist sync ---- */
+var GH_TOKEN_KEY="mekuru:githubToken";
+var GH_GIST_ID_KEY="mekuru:githubGistId";
+var GH_LAST_SYNC_KEY="mekuru:lastSyncTime";
+var GH_GIST_DESC="Mekuru sync data (managed by the Mekuru app — do not delete)";
+var GH_GIST_FILENAME="mekuru-sync.json";
+var ghSyncTimer=null;
+var ghSyncing=false;
+
+function ghGetToken(){try{return localStorage.getItem(GH_TOKEN_KEY)||"";}catch(e){return "";}}
+function ghSetToken(t){try{if(t)localStorage.setItem(GH_TOKEN_KEY,t);else localStorage.removeItem(GH_TOKEN_KEY);}catch(e){}}
+function ghGetGistId(){try{return localStorage.getItem(GH_GIST_ID_KEY)||"";}catch(e){return "";}}
+function ghSetGistId(id){try{if(id)localStorage.setItem(GH_GIST_ID_KEY,id);else localStorage.removeItem(GH_GIST_ID_KEY);}catch(e){}}
+function ghHeaders(token){return {"Authorization":"token "+token,"Accept":"application/vnd.github+json","Content-Type":"application/json"};}
+
+function ghFindOrCreateGist(token){
+  var cached=ghGetGistId();
+  var checkCached=cached?fetch("https://api.github.com/gists/"+cached,{headers:ghHeaders(token)}).then(function(r){return r.ok?cached:null;}).catch(function(){return null;}):Promise.resolve(null);
+  return checkCached.then(function(id){
+    if(id)return id;
+    return fetch("https://api.github.com/gists?per_page=100",{headers:ghHeaders(token)}).then(function(r){
+      if(!r.ok){var err=new Error("list_failed");err.status=r.status;throw err;}
+      return r.json();
+    }).then(function(gists){
+      var found=gists.find(function(g){return g.description===GH_GIST_DESC;});
+      if(found){ghSetGistId(found.id);return found.id;}
+      var body={description:GH_GIST_DESC,public:false,files:{}};
+      body.files[GH_GIST_FILENAME]={content:JSON.stringify({decks:[],history:[]})};
+      return fetch("https://api.github.com/gists",{method:"POST",headers:ghHeaders(token),body:JSON.stringify(body)}).then(function(r){
+        if(!r.ok){var err=new Error("create_failed");err.status=r.status;throw err;}
+        return r.json();
+      }).then(function(created){ghSetGistId(created.id);return created.id;});
+    });
+  });
+}
+function ghFetchRemote(token,gistId){
+  return fetch("https://api.github.com/gists/"+gistId,{headers:ghHeaders(token)}).then(function(r){
+    if(!r.ok){var err=new Error("fetch_failed");err.status=r.status;throw err;}
+    return r.json();
+  }).then(function(gist){
+    var file=gist.files&&gist.files[GH_GIST_FILENAME];
+    if(!file||!file.content)return null;
+    try{return JSON.parse(file.content);}catch(e){return null;}
+  });
+}
+function ghPushRemote(token,gistId,data){
+  var body={files:{}};
+  body.files[GH_GIST_FILENAME]={content:JSON.stringify(data)};
+  return fetch("https://api.github.com/gists/"+gistId,{method:"PATCH",headers:ghHeaders(token),body:JSON.stringify(body)}).then(function(r){
+    if(!r.ok){var err=new Error("push_failed");err.status=r.status;throw err;}
+    return r.json();
+  });
+}
+
+/* ---- merge: union study-log entries per card (each entry is a genuine,
+   non-overlapping study event from one device), recompute seen/correct/wrong
+   from the merged log, and take the most recent entry as current progress.
+   Decks/cards are matched by id; if two devices independently created a
+   deck/card offline and happened to land on the same id for UNRELATED
+   content, that collision is detected (different name/content, no shared
+   cards) and the incoming one is reassigned a fresh id rather than blended
+   into the wrong deck. */
+function ghMergeLog(a,b){
+  var merged=(a||[]).concat(b||[]);
+  merged.sort(function(x,y){return x.ts-y.ts;});
+  var seen={},out=[];
+  merged.forEach(function(e){
+    var k=e.ts+":"+e.status;
+    if(seen[k])return;
+    seen[k]=true;out.push(e);
+  });
+  if(out.length>60)out=out.slice(-60);
+  return out;
+}
+var GH_CONFLICT_WINDOW_MS=2*60*1000;
+function ghMergeDeckIdentity(ld,rd){
+  if(ld.name===rd.name){
+    var maxT=Math.max(ld.nameEditedAt||0,rd.nameEditedAt||0);
+    var resolvedSame=(ld.nameEditedAt||0)>=(rd.nameEditedAt||0)?!!ld.nameResolved:!!rd.nameResolved;
+    return {name:ld.name,nameEditedAt:maxT||undefined,nameConflict:null,nameResolved:resolvedSame};
+  }
+  var lt=ld.nameEditedAt||0,rt=rd.nameEditedAt||0;
+  /* an EXPLICIT conflict resolution (picked via the "!" dialog) always
+     wins outright, no matter how soon after the original conflict it
+     happens — without this, a resolution's own fresh timestamp would
+     often still fall inside the conflict window relative to the OTHER
+     side's original (now-superseded) rename, re-flagging the very
+     conflict it just settled. */
+  if(rd.nameResolved&&rt>=lt)return {name:rd.name,nameEditedAt:rt,nameConflict:null,nameResolved:true};
+  if(ld.nameResolved&&lt>=rt)return {name:ld.name,nameEditedAt:lt,nameConflict:null,nameResolved:true};
+  if(lt&&rt&&Math.abs(lt-rt)<=GH_CONFLICT_WINDOW_MS){
+    /* both sides explicitly renamed it, close together in time, to
+       different names — a genuine simultaneous conflict. Auto-pick the
+       more recent one as the working name (so the deck isn't stuck
+       useless in the meantime) but flag it so the user can review and
+       confirm/override via the "!" in the deck manager. */
+    var winner=rt>lt?rd:ld;
+    return {name:winner.name,nameEditedAt:winner.nameEditedAt,nameConflict:{a:ld.name,b:rd.name},nameResolved:!!winner.nameResolved};
+  }
+  /* not a genuine conflict — just an ordinary rename propagating from
+     whichever side has the (only, or more recent) explicit edit, likely
+     because the other device simply hasn't synced this rename yet */
+  if(rt>lt)return {name:rd.name,nameEditedAt:rd.nameEditedAt,nameConflict:null,nameResolved:!!rd.nameResolved};
+  return {name:ld.name,nameEditedAt:ld.nameEditedAt,nameConflict:null,nameResolved:!!ld.nameResolved};
+}
+function ghMergeDeck(ld,rd){
+  /* card text: same id, same content on both sides is just the same
+     unchanged card. If the text actually differs, resolve using each
+     side's editedAt (stamped only when the card editor's Save button is
+     used) — take whichever edit is more recent; if only one side has
+     ever been edited, that edit wins over the untouched original. Only
+     falls back to "keep local" in the rare case neither side has an
+     edit timestamp despite differing text (e.g. pre-existing data from
+     before this was tracked). A card id present on only one side is a
+     genuine new addition and is pulled in as-is. Progress/stats always
+     merge fully by id below, regardless of which card text wins. */
+  var remoteCardById={};rd.cards.forEach(function(c){remoteCardById[c.id]=c;});
+  var mergedCards=[];
+  var handledIds={};
+  ld.cards.forEach(function(lc){
+    var rc=remoteCardById[lc.id];
+    if(!rc||(rc.front===lc.front&&rc.back===lc.back)){
+      mergedCards.push(lc);
+    } else {
+      var winner;
+      if(lc.editedAt&&rc.editedAt)winner=rc.editedAt>lc.editedAt?rc:lc;
+      else if(rc.editedAt&&!lc.editedAt)winner=rc;
+      else winner=lc;
+      mergedCards.push({id:lc.id,front:winner.front,back:winner.back,editedAt:winner.editedAt});
+    }
+    handledIds[lc.id]=true;
+  });
+  rd.cards.forEach(function(rc){
+    if(handledIds[rc.id])return;
+    mergedCards.push(rc);
+  });
+  var mergedProgress={},mergedStats={};
+  mergedCards.forEach(function(c){
+    var cid=c.id;
+    var lcs=ld.cardStats&&ld.cardStats[cid];
+    var rcs=rd.cardStats&&rd.cardStats[cid];
+    var lp=ld.progress&&ld.progress[cid];
+    var rp=rd.progress&&rd.progress[cid];
+    var mergedLogEntries=ghMergeLog(lcs&&lcs.log,rcs&&rcs.log);
+    if(mergedLogEntries.length>0){
+      var correct=mergedLogEntries.filter(function(e){return e.status==="known";}).length;
+      mergedStats[cid]={seen:mergedLogEntries.length,correct:correct,wrong:mergedLogEntries.length-correct,log:mergedLogEntries};
+      mergedProgress[cid]=mergedLogEntries[mergedLogEntries.length-1].status;
+    } else if(lp||rp){
+      mergedProgress[cid]=lp||rp;
+    }
+  });
+  var identity=ghMergeDeckIdentity(ld,rd);
+  var result={id:ld.id,name:identity.name,cards:mergedCards,progress:mergedProgress,cardStats:mergedStats,answerStrictness:ld.answerStrictness||rd.answerStrictness};
+  if(identity.nameEditedAt)result.nameEditedAt=identity.nameEditedAt;
+  if(identity.nameConflict)result.nameConflict=identity.nameConflict;
+  if(identity.nameResolved)result.nameResolved=true;
+  return result;
+}
+function ghDecksLookRelated(ld,rd){
+  if(ld.name===rd.name)return true;
+  return ld.cards.some(function(c){return rd.cards.some(function(rc){return rc.id===c.id&&rc.front===c.front&&rc.back===c.back;});});
+}
+function ghMergeLibrary(local,remote){
+  if(!remote||!remote.decks)return {decks:local.decks||[],history:local.history||[]};
+  var localDecks=local.decks||[];
+  var remoteDecks=remote.decks||[];
+  var localById={};localDecks.forEach(function(d){localById[d.id]=d;});
+  var remoteById={};remoteDecks.forEach(function(d){remoteById[d.id]=d;});
+  var mergedDecks=[],handled={};
+  localDecks.forEach(function(ld){
+    var rd=remoteById[ld.id];
+    if(!rd){mergedDecks.push(ld);handled[ld.id]=true;return;}
+    if(!ghDecksLookRelated(ld,rd)){mergedDecks.push(ld);handled[ld.id]=true;return;}
+    mergedDecks.push(ghMergeDeck(ld,rd));handled[ld.id]=true;
+  });
+  var usedDeckIds={};mergedDecks.forEach(function(d){usedDeckIds[d.id]=true;});
+  remoteDecks.forEach(function(rd){
+    if(handled[rd.id]){
+      var ld=localById[rd.id];
+      if(ld&&!ghDecksLookRelated(ld,rd)){
+        var newId=1;while(usedDeckIds[newId])newId++;
+        usedDeckIds[newId]=true;
+        var clone=JSON.parse(JSON.stringify(rd));clone.id=newId;
+        mergedDecks.push(clone);
+      }
+      return;
+    }
+    mergedDecks.push(rd);usedDeckIds[rd.id]=true;
+  });
+  var histById={};
+  (local.history||[]).forEach(function(h){histById[h.id]=h;});
+  (remote.history||[]).forEach(function(h){if(!histById[h.id])histById[h.id]=h;});
+  var mergedHistory=Object.keys(histById).map(function(k){return histById[k];});
+  mergedHistory.sort(function(a,b){return a.ts-b.ts;});
+  if(mergedHistory.length>200)mergedHistory=mergedHistory.slice(-200);
+  return {decks:mergedDecks,history:mergedHistory};
+}
+
+function ghSetStatus(text,isError){
+  var s=el("ghStatus");if(!s)return;
+  s.textContent=text;s.classList.toggle("error",!!isError);
+}
+function ghSyncNow(showStatus){
+  var token=ghGetToken();
+  if(!token)return Promise.resolve(false);
+  if(ghSyncing)return Promise.resolve(false);
+  ghSyncing=true;
+  if(showStatus)ghSetStatus("Syncing…",false);
+  return ghFindOrCreateGist(token).then(function(gistId){
+    return ghFetchRemote(token,gistId).then(function(remote){
+      var merged=ghMergeLibrary(library,remote);
+      library.decks=merged.decks;
+      library.history=merged.history;
+      if(!library.decks.some(function(d){return d.id===library.activeDeckId;})&&library.decks.length)library.activeDeckId=library.decks[0].id;
+      return ghPushRemote(token,gistId,{decks:library.decks,history:library.history}).then(function(){
+        storageSet(LIB_KEY,library);
+        ghSyncing=false;
+        try{localStorage.setItem(GH_LAST_SYNC_KEY,String(Date.now()));}catch(e){}
+        if(showStatus)ghSetStatus("Synced just now",false);
+        if(currentScreen==="settings")renderSettings();
+        if(currentScreen==="deckManager")renderDeckManager();
+        if(currentScreen==="study")updateDeckPill();
+        return true;
+      });
+    });
+  }).catch(function(err){
+    ghSyncing=false;
+    var msg=err&&err.status===401?"Invalid token — check it and reconnect.":"Sync failed — will retry later.";
+    if(showStatus)ghSetStatus(msg,true);
+    return false;
+  });
+}
+function ghScheduleSync(fast){
+  if(!ghGetToken())return;
+  clearTimeout(ghSyncTimer);
+  /* deliberate deck actions (rename, create, delete, reorder, card edits,
+     import) sync soon rather than waiting out the normal debounce — the
+     normal delay exists to avoid hammering the API during a rapid study
+     session (marking many cards in quick succession), which doesn't apply
+     to these one-off, intentional actions. */
+  ghSyncTimer=setTimeout(function(){ghSyncNow(true);},fast?400:3000);
+}
+function renderGhSyncUI(){
+  var token=ghGetToken();
+  el("ghSyncSetup").hidden=!!token;
+  el("ghSyncConnected").hidden=!token;
+  if(token){
+    var last=null;try{last=localStorage.getItem(GH_LAST_SYNC_KEY);}catch(e){}
+    if(last){
+      var mins=Math.round((Date.now()-parseInt(last,10))/60000);
+      el("ghStatus").textContent=mins<1?"Synced just now":"Synced "+mins+"m ago";
+    } else {
+      el("ghStatus").textContent="Connected — syncing…";
+    }
+    el("ghStatus").classList.remove("error");
+  }
+}
 
 /* helpers */
 function el(id){return document.getElementById(id);}
@@ -1143,15 +1462,23 @@ var headerLabel=el("headerLabel");
 /* headerConfirm removed — replaced by exit popup */
 function updateDeckPill(){var decks=decksById(session.deckIds);var show=decks.length>0&&currentScreen==="study";el("deckPill").hidden=!show;if(show)el("deckPillName").textContent=decks.length===1?decks[0].name:decks.length===2?decks.map(function(d){return d.name;}).join(" + "):decks.length+" decks";}
 el("deckPill").addEventListener("click",function(){showScreen("settings");});
-function showScreen(name){currentScreen=name;var screens={studyScreen:"study",settingsScreen:"settings",historyScreen:"history",browseScreen:"browse",deckManagerScreen:"deckManager"};Object.keys(screens).forEach(function(id){var isActive=screens[id]===name;el(id).classList.toggle("active",isActive);el(id).style.display=isActive?"flex":"none";});el("settingsToggle").classList.toggle("active",name==="settings");el("historyToggle").classList.toggle("active",name==="history");if(name==="study"){headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";}else{headerLabel.classList.remove("headerShowLogo");el("headerText").textContent=name==="settings"?"Settings":name==="browse"?"Browse":name==="deckManager"?"Manage decks":"History";}updateDeckPill();if(name==="settings")renderSettings();if(name==="history")renderHistory();if(name==="browse")renderBrowse();if(name==="deckManager")renderDeckManager();
+function showScreen(name){currentScreen=name;var screens={studyScreen:"study",settingsScreen:"settings",historyScreen:"history",browseScreen:"browse",deckManagerScreen:"deckManager"};Object.keys(screens).forEach(function(id){var isActive=screens[id]===name;el(id).classList.toggle("active",isActive);el(id).style.display=isActive?"flex":"none";});el("settingsToggle").classList.toggle("active",name==="settings");el("historyToggle").classList.toggle("active",name==="history");updateDeckPill();if(name==="settings")renderSettings();if(name==="history")renderHistory();if(name==="browse")renderBrowse();if(name==="deckManager")renderDeckManager();
   if(name==="study"){var c=currentCard();if(c)setCardText(c.front,c.back);}
 }
-el("settingsToggle").addEventListener("click",function(){if(currentScreen==="settings"){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}}else{showScreen("settings");}});
-el("historyToggle").addEventListener("click",function(){if(currentScreen==="history"){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}}else{showScreen("history");}});
-el("backBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}});
-el("histBackBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}});
-el("browseBackBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}});
-el("dmBackBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("settings");}});
+el("settingsToggle").addEventListener("click",function(){if(currentScreen==="settings"){if(fromSplash){goHome();}else{showScreen("study");}}else{showScreen("settings");}});
+el("historyToggle").addEventListener("click",function(){if(currentScreen==="history"){if(fromSplash){goHome();}else{showScreen("study");}}else{showScreen("history");}});
+function goHome(){
+  fromSplash=false;
+  ["studyScreen","settingsScreen","historyScreen","browseScreen","deckManagerScreen"].forEach(function(id){
+    el(id).classList.remove("active");el(id).style.display="none";
+  });
+  renderSplash();showSplash();
+}
+el("headerLabel").addEventListener("click",goHome);
+el("backBtn").addEventListener("click",function(){if(fromSplash){goHome();}else{showScreen("study");}});
+el("histBackBtn").addEventListener("click",function(){if(fromSplash){goHome();}else{showScreen("study");}});
+el("browseBackBtn").addEventListener("click",function(){if(fromSplash){goHome();}else{showScreen("study");}});
+el("dmBackBtn").addEventListener("click",function(){if(fromSplash){goHome();}else{showScreen("settings");}});
 el("browseSearch").addEventListener("input",renderBrowse);
 el("browseUnknownOnly").addEventListener("change",renderBrowse);
 el("emptyImportBtn").addEventListener("click",function(){showScreen("deckManager");});
@@ -1166,7 +1493,7 @@ headerLabel.addEventListener("click",function(){
       showSplash();
     }
   } else {
-    if(fromSplash){fromSplash=false;renderSplash();showSplash();}
+    if(fromSplash){goHome();}
     else{showScreen("study");}
   }
 });
@@ -2009,7 +2336,7 @@ document.addEventListener("keydown",function(e){if(currentScreen!=="study")retur
 el("studyAgainBtn").addEventListener("click",function(){openStartPopup("again");});
 el("backToDecksBtn").addEventListener("click",function(){showSplash();});
 el("reviseBtn").addEventListener("click",function(){if(session.reviseIds&&session.reviseIds.length>0)startSession(session.reviseMode||"focus",session.reviseIds,true);});
-function renderStudy(mode,deckIds){currentScreen="study";el("studyScreen").classList.add("active");el("studyScreen").style.display="flex";el("settingsScreen").classList.remove("active");el("settingsScreen").style.display="none";el("historyScreen").classList.remove("active");el("historyScreen").style.display="none";headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";
+function renderStudy(mode,deckIds){currentScreen="study";el("studyScreen").classList.add("active");el("studyScreen").style.display="flex";el("settingsScreen").classList.remove("active");el("settingsScreen").style.display="none";el("historyScreen").classList.remove("active");el("historyScreen").style.display="none";
 if(deckIds)session.deckIds=resolveDeckIds(deckIds);
 else if(!session.deckIds||!resolveDeckIds(session.deckIds).length)session.deckIds=resolveDeckIds([library.activeDeckId]);
 else session.deckIds=resolveDeckIds(session.deckIds);
@@ -2101,6 +2428,7 @@ function renderTroubleSpots(container,deck){
 
 /* ---- card detail modal ---- */
 var cdEditingCardId=null,cdEditingDeck=null;
+var ncEditingDeck=null;
 function showCardDetail(cardId,deck){
   var c=deck.cards.find(function(cc){return String(cc.id)===String(cardId);});
   if(!c)return;
@@ -2215,6 +2543,7 @@ function renderHistory(){
 /* settings */
 function renderSettings(){
   renderDeckList();renderDestinationBlock();el("thisDeckSection").hidden=!activeDeck();
+  renderGhSyncUI();
   Object.keys(FONTS).forEach(function(k){var f=FONTS[k];if(f.gf&&!document.getElementById("gf_"+k)){var lk=document.createElement("link");lk.id="gf_"+k;lk.rel="stylesheet";lk.href=f.gf;document.head.appendChild(lk);}});
 }
 function renderDeckList(){var dl=el("deckList");dl.innerHTML="";el("noDeckHint").hidden=library.decks.length>0;library.decks.forEach(function(d){var row=document.createElement("div");row.className="deckRow"+(d.id===library.activeDeckId?" active":"");row.innerHTML='<span class="name">'+escapeHtml(d.name)+'</span><span class="count">'+knownCountOf(d)+'/'+d.cards.length+'</span>';row.addEventListener("click",function(){library.activeDeckId=d.id;scheduleSave();renderStudy(null,[d.id]);showScreen("study");});dl.appendChild(row);});}
@@ -2228,16 +2557,23 @@ function renderDeckManager(){
     var row=document.createElement("div");
     row.className="dmRow";
     row.dataset.deckId=d.id;
+    var conflictBadge=d.nameConflict?'<button class="dmConflictBadge" data-action="nameConflict" title="Name conflict">!</button>':'';
     row.innerHTML='<span class="dmHandle" title="Drag to reorder">⠿</span>'+
+      conflictBadge+
       '<span class="dmName">'+escapeHtml(d.name)+'</span>'+
-      '<button class="dmBtn" data-action="rename" title="Rename">✎</button>'+
+      '<button class="dmBtn rename" data-action="rename" title="Rename">✎</button>'+
       '<span class="dmCount">'+d.cards.length+' cards</span>'+
       '<button class="dmBtn" data-action="editCards" title="Edit cards">Edit ›</button>'+
       '<button class="dmBtn danger" data-action="delete" title="Delete deck">Delete</button>';
     list.appendChild(row);
     row.querySelector('[data-action="rename"]').addEventListener("click",function(){startRenameDeck(row,d);});
     row.querySelector('[data-action="editCards"]').addEventListener("click",function(){library.activeDeckId=d.id;scheduleSave();showScreen("browse");});
-    twoStep(row.querySelector('[data-action="delete"]'),function(){deleteDeckById(d.id);});
+    row.querySelector('[data-action="delete"]').addEventListener("click",function(){
+      showConfirm('Delete "'+d.name+'"? This removes all its cards and progress.',"Delete",function(){deleteDeckById(d.id);});
+    });
+    if(d.nameConflict){
+      row.querySelector('[data-action="nameConflict"]').addEventListener("click",function(){showNameConflictDialog(d);});
+    }
   });
   initDeckManagerDnD();
 }
@@ -2253,8 +2589,8 @@ function startRenameDeck(row,d){
   function commit(){
     if(done)return;done=true;
     var v=input.value.trim();
-    if(v)d.name=v;
-    scheduleSave();
+    if(v&&v!==d.name){d.name=v;d.nameEditedAt=Date.now();delete d.nameConflict;delete d.nameResolved;}
+    scheduleSave(true);
     renderDeckManager();
     renderSettings();
   }
@@ -2264,21 +2600,70 @@ function startRenameDeck(row,d){
     if(e.key==="Escape"){done=true;renderDeckManager();}
   });
 }
+function showNameConflictDialog(d){
+  var c=d.nameConflict;if(!c)return;
+  ncEditingDeck=d;
+  el("ncMessage").textContent="This deck has a different name on another device. Pick one to use everywhere:";
+  el("ncOptionA").textContent=c.a;
+  el("ncOptionB").textContent=c.b;
+  el("ncOptionA").onclick=function(){resolveNameConflict(d,c.a);};
+  el("ncOptionB").onclick=function(){resolveNameConflict(d,c.b);};
+  el("ncCustomInput").value=d.name;
+  el("exitBlur").classList.add("show");
+  el("nameConflictDialog").classList.add("show");
+}
+function hideNameConflictDialog(){
+  ncEditingDeck=null;
+  el("nameConflictDialog").classList.remove("show");
+  el("exitBlur").classList.remove("show");
+}
+function resolveNameConflict(d,chosenName){
+  d.name=chosenName;
+  d.nameEditedAt=Date.now();
+  d.nameResolved=true;
+  delete d.nameConflict;
+  scheduleSave(true);
+  hideNameConflictDialog();
+  renderDeckManager();
+  renderSettings();
+}
 function deleteDeckById(id){
   library.decks=library.decks.filter(function(d){return d.id!==id;});
   library.studySelectedIds=(library.studySelectedIds||[]).filter(function(x){return x!==id;});
   if(library.activeDeckId===id)library.activeDeckId=library.decks.length?library.decks[0].id:null;
-  scheduleSave();
+  scheduleSave(true);
   renderDeckManager();
   renderSettings();
 }
 function initDeckManagerDnD(){
   var list=el("dmList");
-  var dragRow=null,startY=0,rowH=0;
+  var dragRow=null,startPointerY=0,startNaturalTop=0;
+
+  /* the row's position WITHOUT its drag transform — changes only when
+     the DOM order actually changes (i.e. after a swap) */
+  function naturalTop(row){
+    var saved=row.style.transform;
+    row.style.transform="";
+    var top=row.getBoundingClientRect().top;
+    row.style.transform=saved;
+    return top;
+  }
+  /* re-anchor the transform so the row's VISUAL position always equals
+     "its starting position + how far the pointer has moved" — computed
+     fresh each time, so it stays correct no matter how many swaps have
+     changed the row's underlying natural position in the meantime.
+     Without this re-anchoring, each swap leaves the old transform
+     applied on top of a suddenly-different natural position, and the
+     row visibly jumps — compounding with every further swap. */
+  function reanchor(pointerY){
+    var desiredVisualTop=startNaturalTop+(pointerY-startPointerY);
+    var natTop=naturalTop(dragRow);
+    dragRow.style.transform="translateY("+(desiredVisualTop-natTop)+"px)";
+  }
+
   function onMove(e){
     if(!dragRow)return;
-    var deltaY=e.clientY-startY;
-    dragRow.style.transform="translateY("+deltaY+"px)";
+    reanchor(e.clientY);
     var dragRect=dragRow.getBoundingClientRect();
     var dragCenter=dragRect.top+dragRect.height/2;
     var siblings=Array.prototype.slice.call(list.children).filter(function(r){return r!==dragRow;});
@@ -2287,8 +2672,15 @@ function initDeckManagerDnD(){
       var sibRect=sib.getBoundingClientRect();
       var sibCenter=sibRect.top+sibRect.height/2;
       var dragIsAfterSib=Array.prototype.indexOf.call(list.children,dragRow)>Array.prototype.indexOf.call(list.children,sib);
-      if(dragCenter<sibCenter&&dragIsAfterSib){flipMove(function(){list.insertBefore(dragRow,sib);});break;}
-      else if(dragCenter>sibCenter&&!dragIsAfterSib){flipMove(function(){list.insertBefore(dragRow,sib.nextSibling);});break;}
+      if(dragCenter<sibCenter&&dragIsAfterSib){
+        flipMove(function(){list.insertBefore(dragRow,sib);});
+        reanchor(e.clientY);
+        break;
+      }else if(dragCenter>sibCenter&&!dragIsAfterSib){
+        flipMove(function(){list.insertBefore(dragRow,sib.nextSibling);});
+        reanchor(e.clientY);
+        break;
+      }
     }
   }
   function flipMove(mutate){
@@ -2320,7 +2712,7 @@ function initDeckManagerDnD(){
     document.removeEventListener("pointerup",onUp);
     var newOrder=Array.prototype.map.call(list.children,function(r){return parseInt(r.dataset.deckId,10);});
     library.decks.sort(function(a,b){return newOrder.indexOf(a.id)-newOrder.indexOf(b.id);});
-    scheduleSave();
+    scheduleSave(true);
     dragRow=null;
     setTimeout(function(){renderDeckManager();renderSettings();},160);
   }
@@ -2329,8 +2721,8 @@ function initDeckManagerDnD(){
     handle.addEventListener("pointerdown",function(e){
       e.preventDefault();
       dragRow=row;
-      startY=e.clientY;
-      rowH=row.offsetHeight+8;
+      startPointerY=e.clientY;
+      startNaturalTop=naturalTop(row);
       row.classList.add("dragging");
       row.style.transition="none";
       handle.setPointerCapture(e.pointerId);
@@ -2346,14 +2738,73 @@ stagingArea.addEventListener("input",updatePreview);
 function updatePreview(){var text=stagingArea.value;if(!text.trim()){previewBox.hidden=true;stagedCards=[];renderDestinationBlock();return;}var rows=parseCSV(text),cards=rowsToCards(rows);stagedCards=cards;previewBox.hidden=false;if(cards.length===0){previewBox.classList.add("error");previewCount.textContent="No valid rows found";previewRows.textContent="Make sure each line has two values separated by a comma.";previewMore.textContent="";}else{previewBox.classList.remove("error");previewCount.textContent=cards.length+(cards.length===1?" card found":" cards found");previewRows.textContent=cards.slice(0,5).map(function(c){return c.front+" → "+c.back;}).join("\n");previewMore.textContent=cards.length>5?"…and "+(cards.length-5)+" more":"";}renderDestinationBlock();}
 function renderDestinationBlock(){var hC=stagedCards.length>0;destinationBlock.classList.toggle("disabled",!hC);createDeckBtn.disabled=!hC;createDeckBtn.textContent=hC?"Create new deck — "+stagedCards.length+" card"+(stagedCards.length===1?"":"s"):"Create new deck";var deck=activeDeck();updateExistingBlock.hidden=!deck;if(deck&&hC){var ebk={};deck.cards.forEach(function(c){ebk[cardKey(c)]=true;});var nO=stagedCards.filter(function(c){return!ebk[cardKey(c)];}).length;var du=stagedCards.length-nO,ma=stagedCards.filter(function(c){return ebk[cardKey(c)];}).length;appendBtn.disabled=false;replaceBtn.disabled=false;appendBtn.textContent="Add "+nO+" new card"+(nO===1?"":"s");replaceBtn.textContent="Replace deck ("+stagedCards.length+" total)";updateDetail.textContent="Adding: skips "+du+" already in \u201c"+deck.name+"\u201d. Replacing: keeps progress for "+ma+" matching card"+(ma===1?"":"s")+".";}else if(deck){appendBtn.disabled=true;replaceBtn.disabled=true;appendBtn.textContent="Add new cards";replaceBtn.textContent="Replace deck";updateDetail.textContent="";}}
 function resetStaging(){stagingArea.value="";stagedCards=[];previewBox.hidden=true;newDeckNameInput.value="";renderDestinationBlock();}
-createDeckBtn.addEventListener("click",function(){if(stagedCards.length===0)return;var id=nextDeckId(),cards=stagedCards.map(function(c,i){return{id:i+1,front:c.front,back:c.back};});library.decks.push({id:id,name:newDeckNameInput.value.trim()||("Deck "+id),cards:cards,progress:{}});library.activeDeckId=id;scheduleSave();resetStaging();if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{renderStudy(null,[id]);showScreen("study");}});
-appendBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||stagedCards.length===0)return;var r=mergeCards(deck.cards,deck.progress,stagedCards,"append");deck.cards=r.cards;deck.progress=r.progress;scheduleSave();resetStaging();renderSettings();renderProgress();});
-replaceBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||stagedCards.length===0)return;var r=mergeCards(deck.cards,deck.progress,stagedCards,"replace");deck.cards=r.cards;deck.progress=r.progress;scheduleSave();resetStaging();renderSettings();renderProgress();});
-function twoStep(btn,fn){var ok=false,t=null,orig=btn.textContent;btn.addEventListener("click",function(){if(!ok){ok=true;btn.textContent="Click again to confirm";btn.classList.add("confirming");t=setTimeout(function(){ok=false;btn.textContent=orig;btn.classList.remove("confirming");},3000);}else{clearTimeout(t);ok=false;btn.textContent=orig;btn.classList.remove("confirming");fn();}});}
-twoStep(el("resetProgressBtn"),function(){var deck=activeDeck();if(!deck)return;deck.progress={};scheduleSave();renderSettings();updateModeAvailability();});
+createDeckBtn.addEventListener("click",function(){if(stagedCards.length===0)return;var id=nextDeckId(),cards=stagedCards.map(function(c,i){return{id:i+1,front:c.front,back:c.back};});library.decks.push({id:id,name:newDeckNameInput.value.trim()||("Deck "+id),cards:cards,progress:{}});library.activeDeckId=id;scheduleSave(true);resetStaging();if(fromSplash){goHome();}else{renderStudy(null,[id]);showScreen("study");}});
+appendBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||stagedCards.length===0)return;var r=mergeCards(deck.cards,deck.progress,stagedCards,"append");deck.cards=r.cards;deck.progress=r.progress;scheduleSave(true);resetStaging();renderSettings();renderProgress();});
+replaceBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||stagedCards.length===0)return;var r=mergeCards(deck.cards,deck.progress,stagedCards,"replace");deck.cards=r.cards;deck.progress=r.progress;scheduleSave(true);resetStaging();renderSettings();renderProgress();});
+var confirmCallback=null;
+function showConfirm(message,confirmLabel,fn){
+  confirmCallback=fn;
+  el("confirmMessage").textContent=message;
+  el("confirmYesBtn").textContent=confirmLabel||"Delete";
+  el("exitBlur").classList.add("show");
+  el("confirmDialog").classList.add("show");
+}
+function hideConfirmDialog(){
+  confirmCallback=null;
+  el("exitBlur").classList.remove("show");
+  el("confirmDialog").classList.remove("show");
+}
+el("confirmCancelBtn").addEventListener("click",hideConfirmDialog);
+el("confirmYesBtn").addEventListener("click",function(){
+  var fn=confirmCallback;
+  hideConfirmDialog();
+  if(fn)fn();
+});
+el("ncCancelBtn").addEventListener("click",hideNameConflictDialog);
+el("ncCustomBtn").addEventListener("click",function(){
+  var v=el("ncCustomInput").value.trim();
+  if(!v||!ncEditingDeck)return;
+  resolveNameConflict(ncEditingDeck,v);
+});
+el("resetProgressBtn").addEventListener("click",function(){
+  var deck=activeDeck();if(!deck)return;
+  showConfirm("Reset all progress for this deck? This can't be undone.","Reset",function(){
+    deck.progress={};scheduleSave();renderSettings();updateModeAvailability();
+  });
+});
 el("openDeckManagerBtn").addEventListener("click",function(){showScreen("deckManager");});
-twoStep(el("deleteDeckBtn"),function(){var deck=activeDeck();if(!deck)return;library.decks=library.decks.filter(function(d){return d.id!==deck.id;});library.studySelectedIds=(library.studySelectedIds||[]).filter(function(id){return id!==deck.id;});library.activeDeckId=library.decks.length?library.decks[0].id:null;scheduleSave();renderSettings();renderStudy(null,[library.activeDeckId]);});
-twoStep(el("clearHistoryBtn"),function(){var deck=activeDeck();if(!deck)return;library.history=(library.history||[]).filter(function(h){var ids=h.deckIds||(h.deckId!=null?[h.deckId]:[]);return ids.indexOf(deck.id)===-1;});deck.cardStats={};scheduleSave();renderSettings();});
+el("ghConnectBtn").addEventListener("click",function(){
+  var t=el("ghTokenInput").value.trim();
+  if(!t)return;
+  ghSetToken(t);
+  el("ghTokenInput").value="";
+  renderGhSyncUI();
+  ghSyncNow(true);
+});
+el("ghSyncNowBtn").addEventListener("click",function(){ghSyncNow(true);});
+el("ghDisconnectBtn").addEventListener("click",function(){
+  showConfirm("Disconnect GitHub sync? Your data stays as-is on this device and in the Gist — you can reconnect anytime.","Disconnect",function(){
+    ghSetToken("");ghSetGistId("");
+    try{localStorage.removeItem(GH_LAST_SYNC_KEY);}catch(e){}
+    renderGhSyncUI();
+  });
+});
+el("deleteDeckBtn").addEventListener("click",function(){
+  var deck=activeDeck();if(!deck)return;
+  showConfirm('Delete "'+deck.name+'"? This removes all its cards and progress.',"Delete",function(){
+    library.decks=library.decks.filter(function(d){return d.id!==deck.id;});
+    library.studySelectedIds=(library.studySelectedIds||[]).filter(function(id){return id!==deck.id;});
+    library.activeDeckId=library.decks.length?library.decks[0].id:null;
+    scheduleSave();renderSettings();renderStudy(null,[library.activeDeckId]);
+  });
+});
+el("clearHistoryBtn").addEventListener("click",function(){
+  var deck=activeDeck();if(!deck)return;
+  showConfirm("Clear this deck's study history?","Clear",function(){
+    library.history=(library.history||[]).filter(function(h){var ids=h.deckIds||(h.deckId!=null?[h.deckId]:[]);return ids.indexOf(deck.id)===-1;});
+    deck.cardStats={};scheduleSave();renderSettings();
+  });
+});
 
 /* clear cache */
 el("clearCacheBtn").addEventListener("click",function(){
@@ -2386,7 +2837,7 @@ el("splashManageDecksBtn").addEventListener("click",function(){
   hideSplash();
   setTimeout(function(){showScreen("deckManager");},220);
 });
-el("exitBlur").addEventListener("click",function(){hideExitPopup();hideStartPopup();hideQuickFontPopup();});
+el("exitBlur").addEventListener("click",function(){hideExitPopup();hideStartPopup();hideQuickFontPopup();hideConfirmDialog();hideNameConflictDialog();});
 el("sdCloseBtn").addEventListener("click",hideSessionDetail);
 el("sessionDetailBlur").addEventListener("click",hideSessionDetail);
 el("cdCloseBtn").addEventListener("click",hideCardDetail);
@@ -2406,9 +2857,9 @@ el("cdSaveBtn").addEventListener("click",function(){
   var c=deck.cards.find(function(cc){return String(cc.id)===String(cdEditingCardId);});
   if(c){
     var nf=el("cdEditFront").value.trim(),nb=el("cdEditBack").value.trim();
-    if(nf)c.front=nf;
-    if(nb)c.back=nb;
-    scheduleSave();
+    if(nf&&nf!==c.front){c.front=nf;c.editedAt=Date.now();}
+    if(nb&&nb!==c.back){c.back=nb;c.editedAt=Date.now();}
+    scheduleSave(true);
   }
   var savedId=cdEditingCardId,savedDeck=cdEditingDeck;
   exitCardEdit();
@@ -2444,6 +2895,7 @@ var resolvedTheme=theme==="light"?lightTheme:theme==="amoled"||theme==="dark"?th
 if(!resolvedTheme){resolvedTheme=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)?darkTheme:lightTheme;}
 applyTheme(resolvedTheme);applyTextScale(typeof scale==="number"?scale:1);if(fontFace&&FONTS[fontFace])applyFontFace(fontFace);
 initSplashLogos();renderSplash(); /* splash is visible by default */
+if(ghGetToken())ghSyncNow(false).then(function(){if(!splashVisible)return;renderSplash();});
 if(window.matchMedia){window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(e){storageGet(THEME_KEY).then(function(saved){if(!saved){applyTheme(e.matches?"dark":"light");}});});}
 });
 })();
