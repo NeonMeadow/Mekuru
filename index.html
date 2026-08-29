@@ -80,7 +80,7 @@
   .deckPill .chev{font-size:11px;opacity:.7;}
 
   .screen{display:none;flex-direction:column;}.screen.active{display:flex;flex-direction:column;flex:1;min-height:0;}
-  #settingsScreen,#historyScreen,#browseScreen{overflow-y:auto;-webkit-overflow-scrolling:touch;padding-left:8px;padding-right:8px;margin-left:-8px;margin-right:-8px;}
+  #settingsScreen,#historyScreen,#browseScreen,#deckManagerScreen{overflow-y:auto;-webkit-overflow-scrolling:touch;padding-left:8px;padding-right:8px;margin-left:-8px;margin-right:-8px;}
   .subview{display:none;}.subview.active{display:flex;flex-direction:column;}
   #emptyView.active{align-items:center;text-align:center;gap:18px;padding:56px 0;}
   #emptyView h1{font-size:20px;margin:0;font-weight:600;}
@@ -258,6 +258,29 @@
   .deckRow.active{border-color:var(--accent);}
   .deckRow .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .deckRow .count{color:var(--ink-soft);font-size:12px;flex-shrink:0;}
+  .dmList{display:flex;flex-direction:column;gap:8px;}
+  .dmRow{display:flex;align-items:center;gap:9px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);font-size:14px;touch-action:pan-y;}
+  .dmRow.dragging{box-shadow:0 10px 28px rgba(0,0,0,.2);position:relative;z-index:10;opacity:.97;}
+  .dmHandle{flex-shrink:0;color:var(--ink-soft);cursor:grab;touch-action:none;padding:2px 6px;font-size:17px;line-height:1;user-select:none;-webkit-user-select:none;}
+  .dmHandle:active{cursor:grabbing;}
+  .dmName{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .dmNameInput{flex:1;min-width:0;border:1px solid var(--accent);border-radius:6px;padding:5px 7px;font-size:14px;font-family:inherit;background:var(--bg);color:var(--ink);}
+  .dmCount{color:var(--ink-soft);font-size:12px;flex-shrink:0;white-space:nowrap;}
+  .dmBtn{flex-shrink:0;border:none;background:none;color:var(--ink-soft);cursor:pointer;padding:4px 5px;font-size:13px;font-family:inherit;white-space:nowrap;}
+  @media (hover:hover){.dmBtn:hover{color:var(--ink);}}
+  .dmBtn.danger{color:var(--accent);}
+  .dmBtn.danger.confirming{color:#fff;background:var(--accent);border-radius:6px;padding:4px 8px;}
+  .dmEmptyHint{font-size:13px;color:var(--ink-soft);text-align:center;padding:24px 0;}
+  .splashManageBtn{width:100%;display:flex;align-items:center;justify-content:center;gap:7px;background:none;border:1px solid var(--line);border-radius:14px;padding:12px;color:var(--ink-soft);font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font-ui);margin-top:10px;transition:border-color .15s,color .15s;}
+  .splashManageBtn svg{width:15px;height:15px;flex-shrink:0;}
+  @media (hover:hover){.splashManageBtn:hover{border-color:var(--ink-soft);color:var(--ink);}}
+  .cdTopRow{display:flex;justify-content:space-between;align-items:center;}
+  .cdEditBtn{border:none;background:none;color:var(--ink-soft);font-size:13px;font-family:inherit;cursor:pointer;padding:4px 6px;}
+  @media (hover:hover){.cdEditBtn:hover{color:var(--ink);}}
+  .cdEditInput{width:100%;font-family:inherit;text-align:center;border:1px solid var(--accent);border-radius:8px;background:var(--bg);color:var(--ink);padding:6px 8px;margin:4px 0;box-sizing:border-box;}
+  #cdEditFront{font-size:28px;}
+  #cdEditBack{font-size:16px;}
+  .cdEditActions{display:flex;gap:8px;justify-content:center;margin:10px 0 4px;}
   .emptyHint{font-size:13px;color:var(--ink-soft);}
   textarea.csvPaste{width:100%;min-height:90px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:12.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;resize:vertical;background:var(--paper);color:var(--ink);}
   .fieldLabel{font-size:12px;color:var(--ink-soft);margin:10px 0 5px;}
@@ -650,9 +673,15 @@
 <!-- ========== CARD DETAIL MODAL ========== -->
 <div id="cardDetailBlur"></div>
 <div id="cardDetailPanel">
-  <div class="cdTopRow"><button class="sdCloseBtn" id="cdCloseBtn">✕</button></div>
+  <div class="cdTopRow"><button class="cdEditBtn" id="cdEditBtn">✎ Edit</button><button class="sdCloseBtn" id="cdCloseBtn">✕</button></div>
   <div class="cdChar" id="cdChar">あ</div>
+  <input class="cdEditInput" id="cdEditFront" hidden>
   <div class="cdReading" id="cdReading">a</div>
+  <input class="cdEditInput" id="cdEditBack" hidden>
+  <div class="cdEditActions" id="cdEditActions" hidden>
+    <button class="smallBtn primary" id="cdSaveBtn">Save</button>
+    <button class="smallBtn" id="cdCancelBtn">Cancel</button>
+  </div>
   <div class="cdAccRow">
     <div class="cdAccStat"><div class="cdAccN" id="cdAccPct">—</div><div class="cdAccL">Accuracy</div></div>
     <div class="cdAccStat"><div class="cdAccN" id="cdAccSeen">—</div><div class="cdAccL">Times seen</div></div>
@@ -672,6 +701,7 @@
     <div class="splashMiddle">
       <div class="splashSectionLabel">Your decks</div>
       <div class="splashDeckList" id="splashDeckList"></div>
+      <button class="splashManageBtn" id="splashManageDecksBtn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2.3" width="12" height="3.4" rx="1"/><rect x="2" y="6.3" width="12" height="3.4" rx="1"/><rect x="2" y="10.3" width="12" height="3.4" rx="1"/></svg>Manage decks</button>
     </div>
     <div class="splashBottom">
       <button class="splashStartBtn" id="splashStartBtn">Start</button>
@@ -777,6 +807,15 @@
     <div class="settingsTopRow"><button class="backLink" id="backBtn">‹ Back to cards</button></div>
 
     <div class="panelSection">
+      <h3>Your decks</h3>
+      <div class="deckList" id="deckList"></div>
+      <p class="emptyHint" id="noDeckHint" hidden>No decks yet — tap Manage decks to import one.</p>
+      <div class="btnRow" style="margin-top:10px;">
+        <button class="smallBtn" id="openDeckManagerBtn">Manage decks</button>
+      </div>
+    </div>
+
+    <div class="panelSection">
       <h3>Appearance</h3>
       <div class="themeGroup">
         <div class="themeGroupLbl">Light theme</div>
@@ -835,12 +874,6 @@
     </div>
 
     <div class="panelSection">
-      <h3>Your decks</h3>
-      <div class="deckList" id="deckList"></div>
-      <p class="emptyHint" id="noDeckHint" hidden>No decks yet — import one below.</p>
-    </div>
-
-    <div class="panelSection">
       <h3>Sync / Backup</h3>
       <p class="muted">Copy all decks and progress to use on another device. Paste on the other device to restore.</p>
       <div class="btnRow">
@@ -852,35 +885,6 @@
         <textarea class="syncArea" id="syncArea" rows="3" placeholder="Paste export data here…"></textarea>
         <div class="btnRow"><button class="smallBtn primary" id="syncActionBtn">Copy to clipboard</button></div>
         <p class="syncNote" id="syncNote"></p>
-      </div>
-    </div>
-
-    <div class="panelSection">
-      <h3>Import cards</h3>
-      <p class="muted">Two-column CSV: front, back. Choose a file or paste below.</p>
-      <input type="file" id="csvFileInput" accept=".csv,text/csv" style="display:none;">
-      <label class="fileBtn" for="csvFileInput">Choose CSV file</label>
-      <div class="fieldLabel">or paste CSV text</div>
-      <textarea class="csvPaste" id="stagingArea" placeholder="front,back&#10;あ,a&#10;い,i&#10;う,u"></textarea>
-      <div id="previewBox" class="previewBox" hidden>
-        <div class="previewCount" id="previewCount"></div>
-        <div class="previewRows" id="previewRows"></div>
-        <div class="previewMore" id="previewMore"></div>
-      </div>
-      <div class="destinationBlock disabled" id="destinationBlock">
-        <div>
-          <div class="fieldLabel" style="margin-top:0;">Save as a new deck</div>
-          <input class="textInput" id="newDeckName" placeholder="Deck name">
-          <div class="btnRow"><button class="smallBtn primary" id="createDeckBtn">Create new deck</button></div>
-        </div>
-        <div id="updateExistingBlock" hidden>
-          <div class="fieldLabel">— or add to current deck —</div>
-          <div class="btnRow">
-            <button class="smallBtn" id="appendBtn">Add new cards</button>
-            <button class="smallBtn" id="replaceBtn">Replace deck</button>
-          </div>
-          <p class="muted" id="updateDetail" style="margin-top:8px;"></p>
-        </div>
       </div>
     </div>
 
@@ -909,7 +913,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.25.7</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.26.3</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -927,6 +931,44 @@
       <label class="switch"><input type="checkbox" id="browseUnknownOnly"><span class="switchTrack"></span></label>
     </label>
     <div id="browseList"></div>
+  </div>
+
+  <!-- DECK MANAGER -->
+  <div class="screen" id="deckManagerScreen">
+    <div class="settingsTopRow"><button class="backLink" id="dmBackBtn">‹ Back to settings</button></div>
+    <h2 style="margin:0 0 4px;font-size:18px;">Manage decks</h2>
+    <p class="muted" style="margin:0 0 16px;">Drag the handle to reorder. Rename, edit cards, or delete a deck.</p>
+    <div class="dmList" id="dmList"></div>
+    <p class="dmEmptyHint" id="dmEmptyHint" hidden>No decks yet.</p>
+
+    <div class="panelSection" style="margin-top:20px;">
+      <h3>Import cards</h3>
+      <p class="muted">Two-column CSV: front, back. Choose a file or paste below.</p>
+      <input type="file" id="csvFileInput" accept=".csv,text/csv" style="display:none;">
+      <label class="fileBtn" for="csvFileInput">Choose CSV file</label>
+      <div class="fieldLabel">or paste CSV text</div>
+      <textarea class="csvPaste" id="stagingArea" placeholder="front,back&#10;あ,a&#10;い,i&#10;う,u"></textarea>
+      <div id="previewBox" class="previewBox" hidden>
+        <div class="previewCount" id="previewCount"></div>
+        <div class="previewRows" id="previewRows"></div>
+        <div class="previewMore" id="previewMore"></div>
+      </div>
+      <div class="destinationBlock disabled" id="destinationBlock">
+        <div>
+          <div class="fieldLabel" style="margin-top:0;">Save as a new deck</div>
+          <input class="textInput" id="newDeckName" placeholder="Deck name">
+          <div class="btnRow"><button class="smallBtn primary" id="createDeckBtn">Create new deck</button></div>
+        </div>
+        <div id="updateExistingBlock" hidden>
+          <div class="fieldLabel">— or add to current deck —</div>
+          <div class="btnRow">
+            <button class="smallBtn" id="appendBtn">Add new cards</button>
+            <button class="smallBtn" id="replaceBtn">Replace deck</button>
+          </div>
+          <p class="muted" id="updateDetail" style="margin-top:8px;"></p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1034,6 +1076,35 @@ function setCardText(front,back){
   fitTextToFace(backText,backText.parentElement,Math.round(backCeil*scale),Math.max(10,Math.round(12*scale)));
 }
 function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+/* shuffle that also spreads out cards which would otherwise cluster —
+   cards from the same deck (in a multi-deck session) or cards that sat
+   right next to each other in the original pool order are kept apart
+   in the shuffled result wherever possible. True randomness naturally
+   produces short same-deck / same-neighborhood runs fairly often (a
+   well-known perception gap — genuinely random shuffles look "clumpy"
+   to people); this keeps each card's odds random while breaking up
+   the runs a plain shuffle tends to leave in place. */
+function shuffleSpread(ids,multiDeck){
+  var origIndex={};
+  ids.forEach(function(id,i){origIndex[id]=i;});
+  function conflicts(a,b){
+    if(multiDeck&&a.split(":")[0]===b.split(":")[0])return true;
+    var ia=origIndex[a],ib=origIndex[b];
+    return ia!==undefined&&ib!==undefined&&Math.abs(ia-ib)===1;
+  }
+  var result=shuffle(ids);
+  for(var i=1;i<result.length;i++){
+    if(conflicts(result[i-1],result[i])){
+      for(var j=i+1;j<result.length;j++){
+        if(!conflicts(result[i-1],result[j])){
+          var t=result[i];result[i]=result[j];result[j]=t;
+          break;
+        }
+      }
+    }
+  }
+  return result;
+}
 function pctColor(p){return "hsl("+Math.round(p*1.2)+",65%,46%)";}
 function fmtDate(ts){var d=new Date(ts);return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" "+d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});}
 
@@ -1072,7 +1143,7 @@ var headerLabel=el("headerLabel");
 /* headerConfirm removed — replaced by exit popup */
 function updateDeckPill(){var decks=decksById(session.deckIds);var show=decks.length>0&&currentScreen==="study";el("deckPill").hidden=!show;if(show)el("deckPillName").textContent=decks.length===1?decks[0].name:decks.length===2?decks.map(function(d){return d.name;}).join(" + "):decks.length+" decks";}
 el("deckPill").addEventListener("click",function(){showScreen("settings");});
-function showScreen(name){currentScreen=name;var screens={studyScreen:"study",settingsScreen:"settings",historyScreen:"history",browseScreen:"browse"};Object.keys(screens).forEach(function(id){var isActive=screens[id]===name;el(id).classList.toggle("active",isActive);el(id).style.display=isActive?"flex":"none";});el("settingsToggle").classList.toggle("active",name==="settings");el("historyToggle").classList.toggle("active",name==="history");if(name==="study"){headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";}else{headerLabel.classList.remove("headerShowLogo");el("headerText").textContent=name==="settings"?"Settings":name==="browse"?"Browse":"History";}updateDeckPill();if(name==="settings")renderSettings();if(name==="history")renderHistory();if(name==="browse")renderBrowse();
+function showScreen(name){currentScreen=name;var screens={studyScreen:"study",settingsScreen:"settings",historyScreen:"history",browseScreen:"browse",deckManagerScreen:"deckManager"};Object.keys(screens).forEach(function(id){var isActive=screens[id]===name;el(id).classList.toggle("active",isActive);el(id).style.display=isActive?"flex":"none";});el("settingsToggle").classList.toggle("active",name==="settings");el("historyToggle").classList.toggle("active",name==="history");if(name==="study"){headerLabel.classList.add("headerShowLogo");el("headerText").textContent="";}else{headerLabel.classList.remove("headerShowLogo");el("headerText").textContent=name==="settings"?"Settings":name==="browse"?"Browse":name==="deckManager"?"Manage decks":"History";}updateDeckPill();if(name==="settings")renderSettings();if(name==="history")renderHistory();if(name==="browse")renderBrowse();if(name==="deckManager")renderDeckManager();
   if(name==="study"){var c=currentCard();if(c)setCardText(c.front,c.back);}
 }
 el("settingsToggle").addEventListener("click",function(){if(currentScreen==="settings"){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}}else{showScreen("settings");}});
@@ -1080,9 +1151,10 @@ el("historyToggle").addEventListener("click",function(){if(currentScreen==="hist
 el("backBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}});
 el("histBackBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}});
 el("browseBackBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("study");}});
+el("dmBackBtn").addEventListener("click",function(){if(fromSplash){fromSplash=false;renderSplash();showSplash();}else{showScreen("settings");}});
 el("browseSearch").addEventListener("input",renderBrowse);
 el("browseUnknownOnly").addEventListener("change",renderBrowse);
-el("emptyImportBtn").addEventListener("click",function(){showScreen("settings");});
+el("emptyImportBtn").addEventListener("click",function(){showScreen("deckManager");});
 
 /* header click — exit popup */
 headerLabel.addEventListener("click",function(){
@@ -1256,7 +1328,7 @@ function renderSplash(){
   var browseBtn=el("splashBrowseBtn");
   list.innerHTML="";
   if(!library.decks||library.decks.length===0){
-    list.innerHTML="<p class='splashNoDeck'>No decks yet.<br>Import cards from Settings to get started.</p>";
+    list.innerHTML="<p class='splashNoDeck'>No decks yet.<br>Import cards from Manage decks to get started.</p>";
     startBtn.disabled=true;statsBtn.disabled=true;browseBtn.disabled=true;return;
   }
   if(!library.decks.some(function(d){return d.id===library.activeDeckId;})){library.activeDeckId=library.decks[0].id;}
@@ -1527,10 +1599,22 @@ function fitCardToStage(){
   });
 }
 window.addEventListener("resize",fitCardToStage,{passive:true});
+window.addEventListener("orientationchange",function(){
+  /* on some mobile browsers, dvh/viewport dimensions haven't fully
+     settled the instant this fires — re-check a couple more times
+     shortly after so a stale (pre-rotation) card height doesn't stick
+     around and overlap the surrounding UI. */
+  fitCardToStage();
+  setTimeout(fitCardToStage,120);
+  setTimeout(fitCardToStage,350);
+});
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize",fitCardToStage,{passive:true});
+}
 
 function startSession(mode,overrideIds,isRevise){var decks=decksById(session.deckIds);if(!decks.length){showSubview("empty");return;}pendingStudyDeckIds=session.deckIds;session.mode=mode||"all";session.isRevise=!!isRevise;session.results={};session.startTime=Date.now();session.reviseIds=null;flipped=false;marking=false;
 lastMark=null;undoResolveActive=false;undoResolveOriginalStatus=null;el("undoBtn").hidden=true;el("undoConfirmMsg").classList.remove("show");el("undoResolveCard").classList.remove("show","hide");session.savedHistoryEntry=null;
-comboCount=0;sessionBestCombo=0;updateComboDisplay();if(session.mode!=="wild")applyFontFace(currentFontFace);session.cardIndex=buildCardIndex(decks);session.order=overrideIds?shuffle(overrideIds):shuffle(buildPool(session.mode,decks));session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
+comboCount=0;sessionBestCombo=0;updateComboDisplay();if(session.mode!=="wild")applyFontFace(currentFontFace);session.cardIndex=buildCardIndex(decks);session.order=shuffleSpread(overrideIds||buildPool(session.mode,decks),decks.length>1);session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
 
 function renderProgress(){if(!session.deckIds||!session.deckIds.length)return;var tot=session.order.length;var kN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;var uN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;el("scoreKnown").textContent="✓ "+kN;el("scoreUnknown").textContent="✗ "+uN;el("progressRight").textContent=(kN+uN)+" / "+tot;var kP=tot?Math.round(kN/tot*100):0,uP=tot?Math.round(uN/tot*100):0;el("progressKnown").style.width=kP+"%";el("progressUnknown").style.left=kP+"%";el("progressUnknown").style.width=uP+"%";}
 
@@ -2016,9 +2100,12 @@ function renderTroubleSpots(container,deck){
 }
 
 /* ---- card detail modal ---- */
+var cdEditingCardId=null,cdEditingDeck=null;
 function showCardDetail(cardId,deck){
   var c=deck.cards.find(function(cc){return String(cc.id)===String(cardId);});
   if(!c)return;
+  cdEditingCardId=cardId;cdEditingDeck=deck;
+  exitCardEdit();
   var cs=(deck.cardStats||{})[cardId]||{seen:0,correct:0,log:[]};
   el("cdChar").textContent=c.front;
   el("cdReading").textContent=c.back;
@@ -2041,6 +2128,11 @@ function showCardDetail(cardId,deck){
   }
   el("cardDetailBlur").classList.add("show");
   el("cardDetailPanel").classList.add("show");
+}
+function exitCardEdit(){
+  el("cdChar").hidden=false;el("cdReading").hidden=false;
+  el("cdEditFront").hidden=true;el("cdEditBack").hidden=true;el("cdEditActions").hidden=true;
+  el("cdEditBtn").hidden=false;
 }
 function hideCardDetail(){
   el("cardDetailBlur").classList.remove("show");
@@ -2126,6 +2218,127 @@ function renderSettings(){
   Object.keys(FONTS).forEach(function(k){var f=FONTS[k];if(f.gf&&!document.getElementById("gf_"+k)){var lk=document.createElement("link");lk.id="gf_"+k;lk.rel="stylesheet";lk.href=f.gf;document.head.appendChild(lk);}});
 }
 function renderDeckList(){var dl=el("deckList");dl.innerHTML="";el("noDeckHint").hidden=library.decks.length>0;library.decks.forEach(function(d){var row=document.createElement("div");row.className="deckRow"+(d.id===library.activeDeckId?" active":"");row.innerHTML='<span class="name">'+escapeHtml(d.name)+'</span><span class="count">'+knownCountOf(d)+'/'+d.cards.length+'</span>';row.addEventListener("click",function(){library.activeDeckId=d.id;scheduleSave();renderStudy(null,[d.id]);showScreen("study");});dl.appendChild(row);});}
+
+/* ---- deck manager: reorder, rename, delete, jump to card editing ---- */
+function renderDeckManager(){
+  var list=el("dmList");
+  list.innerHTML="";
+  el("dmEmptyHint").hidden=library.decks.length>0;
+  library.decks.forEach(function(d){
+    var row=document.createElement("div");
+    row.className="dmRow";
+    row.dataset.deckId=d.id;
+    row.innerHTML='<span class="dmHandle" title="Drag to reorder">⠿</span>'+
+      '<span class="dmName">'+escapeHtml(d.name)+'</span>'+
+      '<button class="dmBtn" data-action="rename" title="Rename">✎</button>'+
+      '<span class="dmCount">'+d.cards.length+' cards</span>'+
+      '<button class="dmBtn" data-action="editCards" title="Edit cards">Edit ›</button>'+
+      '<button class="dmBtn danger" data-action="delete" title="Delete deck">Delete</button>';
+    list.appendChild(row);
+    row.querySelector('[data-action="rename"]').addEventListener("click",function(){startRenameDeck(row,d);});
+    row.querySelector('[data-action="editCards"]').addEventListener("click",function(){library.activeDeckId=d.id;scheduleSave();showScreen("browse");});
+    twoStep(row.querySelector('[data-action="delete"]'),function(){deleteDeckById(d.id);});
+  });
+  initDeckManagerDnD();
+}
+function startRenameDeck(row,d){
+  var nameSpan=row.querySelector(".dmName");
+  if(!nameSpan)return;
+  var input=document.createElement("input");
+  input.className="dmNameInput";
+  input.value=d.name;
+  row.replaceChild(input,nameSpan);
+  input.focus();input.select();
+  var done=false;
+  function commit(){
+    if(done)return;done=true;
+    var v=input.value.trim();
+    if(v)d.name=v;
+    scheduleSave();
+    renderDeckManager();
+    renderSettings();
+  }
+  input.addEventListener("blur",commit);
+  input.addEventListener("keydown",function(e){
+    if(e.key==="Enter")input.blur();
+    if(e.key==="Escape"){done=true;renderDeckManager();}
+  });
+}
+function deleteDeckById(id){
+  library.decks=library.decks.filter(function(d){return d.id!==id;});
+  library.studySelectedIds=(library.studySelectedIds||[]).filter(function(x){return x!==id;});
+  if(library.activeDeckId===id)library.activeDeckId=library.decks.length?library.decks[0].id:null;
+  scheduleSave();
+  renderDeckManager();
+  renderSettings();
+}
+function initDeckManagerDnD(){
+  var list=el("dmList");
+  var dragRow=null,startY=0,rowH=0;
+  function onMove(e){
+    if(!dragRow)return;
+    var deltaY=e.clientY-startY;
+    dragRow.style.transform="translateY("+deltaY+"px)";
+    var dragRect=dragRow.getBoundingClientRect();
+    var dragCenter=dragRect.top+dragRect.height/2;
+    var siblings=Array.prototype.slice.call(list.children).filter(function(r){return r!==dragRow;});
+    for(var i=0;i<siblings.length;i++){
+      var sib=siblings[i];
+      var sibRect=sib.getBoundingClientRect();
+      var sibCenter=sibRect.top+sibRect.height/2;
+      var dragIsAfterSib=Array.prototype.indexOf.call(list.children,dragRow)>Array.prototype.indexOf.call(list.children,sib);
+      if(dragCenter<sibCenter&&dragIsAfterSib){flipMove(function(){list.insertBefore(dragRow,sib);});break;}
+      else if(dragCenter>sibCenter&&!dragIsAfterSib){flipMove(function(){list.insertBefore(dragRow,sib.nextSibling);});break;}
+    }
+  }
+  function flipMove(mutate){
+    var before={};
+    Array.prototype.forEach.call(list.children,function(r){if(r!==dragRow)before[r.dataset.deckId]=r.getBoundingClientRect().top;});
+    mutate();
+    Array.prototype.forEach.call(list.children,function(r){
+      if(r===dragRow)return;
+      var prevTop=before[r.dataset.deckId];
+      if(prevTop==null)return;
+      var newTop=r.getBoundingClientRect().top;
+      var delta=prevTop-newTop;
+      if(delta){
+        r.style.transition="none";
+        r.style.transform="translateY("+delta+"px)";
+        void r.offsetHeight;
+        r.style.transition="transform .18s ease";
+        r.style.transform="";
+      }
+    });
+  }
+  function onUp(){
+    if(!dragRow)return;
+    var finishedRow=dragRow;
+    finishedRow.classList.remove("dragging");
+    finishedRow.style.transition="transform .15s ease";
+    finishedRow.style.transform="";
+    document.removeEventListener("pointermove",onMove);
+    document.removeEventListener("pointerup",onUp);
+    var newOrder=Array.prototype.map.call(list.children,function(r){return parseInt(r.dataset.deckId,10);});
+    library.decks.sort(function(a,b){return newOrder.indexOf(a.id)-newOrder.indexOf(b.id);});
+    scheduleSave();
+    dragRow=null;
+    setTimeout(function(){renderDeckManager();renderSettings();},160);
+  }
+  Array.prototype.forEach.call(list.querySelectorAll(".dmRow"),function(row){
+    var handle=row.querySelector(".dmHandle");
+    handle.addEventListener("pointerdown",function(e){
+      e.preventDefault();
+      dragRow=row;
+      startY=e.clientY;
+      rowH=row.offsetHeight+8;
+      row.classList.add("dragging");
+      row.style.transition="none";
+      handle.setPointerCapture(e.pointerId);
+      document.addEventListener("pointermove",onMove);
+      document.addEventListener("pointerup",onUp);
+    });
+  });
+}
 var stagingArea=el("stagingArea"),previewBox=el("previewBox"),previewCount=el("previewCount"),previewRows=el("previewRows"),previewMore=el("previewMore"),destinationBlock=el("destinationBlock"),newDeckNameInput=el("newDeckName"),updateExistingBlock=el("updateExistingBlock"),updateDetail=el("updateDetail"),createDeckBtn=el("createDeckBtn"),appendBtn=el("appendBtn"),replaceBtn=el("replaceBtn");
 function readFileAsText(file){return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(r.result);};r.onerror=reject;r.readAsText(file);});}
 el("csvFileInput").addEventListener("change",function(e){var file=e.target.files[0];if(!file)return;if(!newDeckNameInput.value.trim())newDeckNameInput.value=file.name.replace(/\.csv$/i,"");readFileAsText(file).then(function(text){stagingArea.value=text;updatePreview();});e.target.value="";});
@@ -2138,6 +2351,7 @@ appendBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||st
 replaceBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||stagedCards.length===0)return;var r=mergeCards(deck.cards,deck.progress,stagedCards,"replace");deck.cards=r.cards;deck.progress=r.progress;scheduleSave();resetStaging();renderSettings();renderProgress();});
 function twoStep(btn,fn){var ok=false,t=null,orig=btn.textContent;btn.addEventListener("click",function(){if(!ok){ok=true;btn.textContent="Click again to confirm";btn.classList.add("confirming");t=setTimeout(function(){ok=false;btn.textContent=orig;btn.classList.remove("confirming");},3000);}else{clearTimeout(t);ok=false;btn.textContent=orig;btn.classList.remove("confirming");fn();}});}
 twoStep(el("resetProgressBtn"),function(){var deck=activeDeck();if(!deck)return;deck.progress={};scheduleSave();renderSettings();updateModeAvailability();});
+el("openDeckManagerBtn").addEventListener("click",function(){showScreen("deckManager");});
 twoStep(el("deleteDeckBtn"),function(){var deck=activeDeck();if(!deck)return;library.decks=library.decks.filter(function(d){return d.id!==deck.id;});library.studySelectedIds=(library.studySelectedIds||[]).filter(function(id){return id!==deck.id;});library.activeDeckId=library.decks.length?library.decks[0].id:null;scheduleSave();renderSettings();renderStudy(null,[library.activeDeckId]);});
 twoStep(el("clearHistoryBtn"),function(){var deck=activeDeck();if(!deck)return;library.history=(library.history||[]).filter(function(h){var ids=h.deckIds||(h.deckId!=null?[h.deckId]:[]);return ids.indexOf(deck.id)===-1;});deck.cardStats={};scheduleSave();renderSettings();});
 
@@ -2167,11 +2381,41 @@ el("splashBrowseBtn").addEventListener("click",function(){
   hideSplash();
   setTimeout(function(){showScreen("browse");},220);
 });
+el("splashManageDecksBtn").addEventListener("click",function(){
+  fromSplash=true;
+  hideSplash();
+  setTimeout(function(){showScreen("deckManager");},220);
+});
 el("exitBlur").addEventListener("click",function(){hideExitPopup();hideStartPopup();hideQuickFontPopup();});
 el("sdCloseBtn").addEventListener("click",hideSessionDetail);
 el("sessionDetailBlur").addEventListener("click",hideSessionDetail);
 el("cdCloseBtn").addEventListener("click",hideCardDetail);
 el("cardDetailBlur").addEventListener("click",hideCardDetail);
+el("cdEditBtn").addEventListener("click",function(){
+  if(!cdEditingCardId)return;
+  el("cdChar").hidden=true;el("cdReading").hidden=true;
+  el("cdEditFront").hidden=false;el("cdEditBack").hidden=false;el("cdEditActions").hidden=false;
+  el("cdEditBtn").hidden=true;
+  el("cdEditFront").value=el("cdChar").textContent;
+  el("cdEditBack").value=el("cdReading").textContent;
+  el("cdEditFront").focus();
+});
+el("cdSaveBtn").addEventListener("click",function(){
+  var deck=cdEditingDeck;
+  if(!deck){exitCardEdit();return;}
+  var c=deck.cards.find(function(cc){return String(cc.id)===String(cdEditingCardId);});
+  if(c){
+    var nf=el("cdEditFront").value.trim(),nb=el("cdEditBack").value.trim();
+    if(nf)c.front=nf;
+    if(nb)c.back=nb;
+    scheduleSave();
+  }
+  var savedId=cdEditingCardId,savedDeck=cdEditingDeck;
+  exitCardEdit();
+  showCardDetail(savedId,savedDeck);
+  renderBrowse();
+});
+el("cdCancelBtn").addEventListener("click",exitCardEdit);
 el("exitConfirmBtn").addEventListener("click",function(){
   hideExitPopup();
   saveSessionToHistory();
