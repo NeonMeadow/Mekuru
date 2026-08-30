@@ -495,6 +495,14 @@
   .ncCustomRow{display:flex;gap:8px;margin-bottom:12px;}
   .ncCustomRow .textInput{flex:1;}
   .ncCancelLink{background:none;border:none;color:var(--ink-soft);font-size:13px;font-family:inherit;cursor:pointer;padding:4px;}
+  #renameDialog{position:fixed;z-index:1060;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:20px;padding:26px 22px 20px;width:min(360px,calc(100% - 40px));box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
+  #renameDialog.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
+  .renameTitle{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:16px;}
+  #renameInput{width:100%;box-sizing:border-box;font-size:18px;font-family:inherit;text-align:center;border:1px solid var(--accent);border-radius:12px;background:var(--bg);color:var(--ink);padding:14px 12px;margin-bottom:16px;}
+  .renameActions{display:flex;gap:10px;}
+  .renameActions button{flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;}
+  #renameCancelBtn{background:none;border:1px solid var(--line);color:var(--ink);}
+  #renameSaveBtn{background:var(--ink);border:1px solid var(--ink);color:var(--paper);}
   #exitBlur.show{opacity:1;pointer-events:auto;}
   #exitPopup{position:fixed;z-index:1050;top:50%;left:50%;transform:translate(-50%,-44%) scale(.9);background:var(--paper);border-radius:22px;padding:30px 24px 24px;width:min(300px,calc(100% - 40px));box-shadow:0 24px 64px rgba(0,0,0,.24);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
   #exitPopup.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
@@ -587,6 +595,14 @@
     <button class="smallBtn primary" id="ncCustomBtn">Use this</button>
   </div>
   <button class="ncCancelLink" id="ncCancelBtn">Cancel</button>
+</div>
+<div id="renameDialog">
+  <div class="renameTitle">Rename deck</div>
+  <input type="text" id="renameInput" autocomplete="off" spellcheck="false">
+  <div class="renameActions">
+    <button id="renameCancelBtn">Cancel</button>
+    <button id="renameSaveBtn">Save</button>
+  </div>
 </div>
 <div id="exitPopup">
   <div class="exitPopupTitle">End this round?</div>
@@ -971,7 +987,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.29.0</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.30.0</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1364,6 +1380,17 @@ function fitTextToFace(textEl,faceEl,maxFontPx,minFontPx){
       while((textEl.scrollWidth>box.w||textEl.scrollHeight>box.h)&&fontSize>minFontPx&&tries<200){
         fontSize-=1;textEl.style.fontSize=fontSize+"px";tries++;
       }
+      /* minFontPx is a readability preference, not a hard limit — for
+         WRAPPED text, stopping there while still too tall/wide means
+         part of a line gets silently clipped by the face's
+         overflow:hidden (invisible content loss, not visible spillover,
+         which is why a simple bounding-box check can miss it). Losing
+         part of the text is worse than showing all of it slightly
+         smaller than preferred, so keep shrinking past the normal floor
+         down to an absolute safety minimum until it genuinely fits. */
+      while((textEl.scrollWidth>box.w||textEl.scrollHeight>box.h)&&fontSize>6&&tries<500){
+        fontSize-=1;textEl.style.fontSize=fontSize+"px";tries++;
+      }
     }
     return;
   }
@@ -1380,6 +1407,13 @@ function fitTextToFace(textEl,faceEl,maxFontPx,minFontPx){
     textEl.style.fontSize=fontSize2+"px";
     var tries2=0;
     while(textEl.scrollWidth>box.w&&fontSize2>minFontPx&&tries2<6){
+      fontSize2-=1;textEl.style.fontSize=fontSize2+"px";tries2++;
+    }
+    /* same reasoning as the wrapped-text branch above: the normal floor
+       is a readability preference, not a hard limit — keep shrinking
+       past it, down to an absolute safety minimum, before accepting a
+       clipped result. */
+    while(textEl.scrollWidth>box.w&&fontSize2>6&&tries2<300){
       fontSize2-=1;textEl.style.fontSize=fontSize2+"px";tries2++;
     }
   }
@@ -1441,13 +1475,6 @@ var startPopupSelectedMode="all";var startPopupContext=null;var pendingStudyDeck
 var flipped=false,marking=false,currentScreen="study",stagedCards=[];
 function activeDeck(){return library.decks.find(function(d){return d.id===library.activeDeckId;})||null;}
 var historyViewDeckId=null;
-function historyViewDeck(){
-  if(historyViewDeckId!=null){
-    var d=library.decks.find(function(x){return x.id===historyViewDeckId;});
-    if(d)return d;
-  }
-  return activeDeck();
-}
 function nextDeckId(){return library.decks.reduce(function(m,d){return Math.max(m,d.id);},0)+1;}
 function knownCountOf(d){return Object.keys(d.progress).filter(function(id){return d.progress[id]==="known";}).length;}
 /* ---- multi-deck session helpers ---- */
@@ -1462,7 +1489,7 @@ var headerLabel=el("headerLabel");
 /* headerConfirm removed — replaced by exit popup */
 function updateDeckPill(){var decks=decksById(session.deckIds);var show=decks.length>0&&currentScreen==="study";el("deckPill").hidden=!show;if(show)el("deckPillName").textContent=decks.length===1?decks[0].name:decks.length===2?decks.map(function(d){return d.name;}).join(" + "):decks.length+" decks";}
 el("deckPill").addEventListener("click",function(){showScreen("settings");});
-function showScreen(name){currentScreen=name;var screens={studyScreen:"study",settingsScreen:"settings",historyScreen:"history",browseScreen:"browse",deckManagerScreen:"deckManager"};Object.keys(screens).forEach(function(id){var isActive=screens[id]===name;el(id).classList.toggle("active",isActive);el(id).style.display=isActive?"flex":"none";});el("settingsToggle").classList.toggle("active",name==="settings");el("historyToggle").classList.toggle("active",name==="history");updateDeckPill();if(name==="settings")renderSettings();if(name==="history")renderHistory();if(name==="browse")renderBrowse();if(name==="deckManager")renderDeckManager();
+function showScreen(name){currentScreen=name;var screens={studyScreen:"study",settingsScreen:"settings",historyScreen:"history",browseScreen:"browse",deckManagerScreen:"deckManager"};Object.keys(screens).forEach(function(id){var isActive=screens[id]===name;el(id).classList.toggle("active",isActive);el(id).style.display=isActive?"flex":"none";});el("settingsToggle").classList.toggle("active",name==="settings");el("historyToggle").classList.toggle("active",name==="history");updateDeckPill();if(name==="settings")renderSettings();if(name==="history"){historyViewDeckId=null;renderHistory();}if(name==="browse")renderBrowse();if(name==="deckManager")renderDeckManager();
   if(name==="study"){var c=currentCard();if(c)setCardText(c.front,c.back);}
 }
 el("settingsToggle").addEventListener("click",function(){if(currentScreen==="settings"){if(fromSplash){goHome();}else{showScreen("study");}}else{showScreen("settings");}});
@@ -1660,7 +1687,6 @@ function renderSplash(){
   }
   if(!library.decks.some(function(d){return d.id===library.activeDeckId;})){library.activeDeckId=library.decks[0].id;}
   library.studySelectedIds=resolveDeckIds(library.studySelectedIds);
-  if(!library.studySelectedIds.length)library.studySelectedIds=[library.activeDeckId];
   library.decks.forEach(function(deck){
     var isSelected=library.studySelectedIds.indexOf(deck.id)!==-1;
     var btn=document.createElement("button");
@@ -1671,15 +1697,15 @@ function renderSplash(){
     btn.addEventListener("click",function(){
       var idx=library.studySelectedIds.indexOf(deck.id);
       if(idx===-1){library.studySelectedIds.push(deck.id);}
-      else if(library.studySelectedIds.length>1){library.studySelectedIds.splice(idx,1);}
+      else{library.studySelectedIds.splice(idx,1);}
       library.activeDeckId=deck.id;
       scheduleSave();
       btn.classList.toggle("selected",library.studySelectedIds.indexOf(deck.id)!==-1);
-      startBtn.disabled=false;
+      startBtn.disabled=library.studySelectedIds.length===0;
     });
     list.appendChild(btn);
   });
-  startBtn.disabled=false;statsBtn.disabled=false;browseBtn.disabled=false;
+  startBtn.disabled=library.studySelectedIds.length===0;statsBtn.disabled=false;browseBtn.disabled=false;
 }
 
 function showSplash(){
@@ -2345,7 +2371,25 @@ if(!session.deckIds.length){showSubview("empty");return;}
 startSession(mode||"all");}
 
 /* history */
-function deckHistory(){var deck=historyViewDeck();if(!deck||!library.history)return[];return library.history.filter(function(h){var ids=h.deckIds||(h.deckId!=null?[h.deckId]:[]);return ids.indexOf(deck.id)!==-1;});}
+function deckHistory(){
+  if(!library.history)return[];
+  if(historyViewDeckId==null)return library.history.slice();
+  return library.history.filter(function(h){var ids=h.deckIds||(h.deckId!=null?[h.deckId]:[]);return ids.indexOf(historyViewDeckId)!==-1;});
+}
+function historyDeckLabel(h,viewDeck){
+  if(viewDeck){
+    /* a specific deck is selected — its identity is already implied by
+       the picker, so only add a hint when the session ALSO spanned
+       other decks */
+    if(h.deckIds&&h.deckIds.length>1)return " · "+h.deckIds.length+" decks";
+    return "";
+  }
+  /* "All decks" view — nothing else implies which deck(s) this session
+     was for, so always show it */
+  if(!h.deckNames||h.deckNames.length===0)return "";
+  if(h.deckNames.length<=2)return " · "+h.deckNames.join(" + ");
+  return " · "+h.deckNames.length+" decks";
+}
 
 /* ---- session detail modal ---- */
 function showSessionDetail(h){
@@ -2353,7 +2397,7 @@ function showSessionDetail(h){
   el("sdScore").textContent=h.pct+"%";
   el("sdCounts").textContent=h.known+" / "+h.unknown;
   el("sdTime").textContent=h.duration?fmtDuration(h.duration):"—";
-  el("sdMode").textContent=h.mode.charAt(0).toUpperCase()+h.mode.slice(1)+(h.deckIds&&h.deckIds.length>1?" · "+h.deckIds.length+" decks":"");
+  el("sdMode").textContent=h.mode.charAt(0).toUpperCase()+h.mode.slice(1)+historyDeckLabel(h,null);
   var list=el("sdMissedList");list.innerHTML="";
   if(!h.wrongCards||h.wrongCards.length===0){
     list.innerHTML='<p class="sdEmptyMissed">No mistakes — clean sweep.</p>';
@@ -2375,15 +2419,18 @@ function hideSessionDetail(){
 
 /* ---- aggregate trouble spots / mastered ---- */
 var insightsOpen=false;
-function renderTroubleSpots(container,deck){
-  var stats=deck.cardStats||{};
-  var rows=Object.keys(stats).map(function(id){
-    var c=deck.cards.find(function(cc){return String(cc.id)===String(id);});
-    if(!c)return null;
-    var s=stats[id];
-    if(s.seen<2)return null;
-    return{id:c.id,front:c.front,back:c.back,seen:s.seen,correct:s.correct,acc:s.correct/s.seen};
-  }).filter(Boolean);
+function renderTroubleSpots(container,decks){
+  var rows=[];
+  decks.forEach(function(deck){
+    var stats=deck.cardStats||{};
+    Object.keys(stats).forEach(function(id){
+      var c=deck.cards.find(function(cc){return String(cc.id)===String(id);});
+      if(!c)return;
+      var s=stats[id];
+      if(s.seen<2)return;
+      rows.push({id:c.id,front:c.front,back:c.back,seen:s.seen,correct:s.correct,acc:s.correct/s.seen,deck:deck});
+    });
+  });
   if(rows.length===0)return;
 
   var worst=rows.slice().sort(function(a,b){return a.acc-b.acc||b.seen-a.seen;}).slice(0,8).filter(function(r){return r.acc<1;});
@@ -2396,7 +2443,7 @@ function renderTroubleSpots(container,deck){
     row.className="troubleRow";
     row.style.cursor="pointer";
     row.innerHTML='<span class="troubleChar">'+escapeHtml(r.front)+'</span><span class="troubleReading">'+escapeHtml(r.back)+'</span><span class="troubleBarWrap"><span class="troubleBarFill" style="width:'+pct+'%;background:'+color+'"></span></span><span class="troublePct" style="color:'+color+'">'+pct+'%</span>';
-    row.addEventListener("click",function(){showCardDetail(r.id,deck);});
+    row.addEventListener("click",function(){showCardDetail(r.id,r.deck);});
     return row;
   }
 
@@ -2500,12 +2547,20 @@ function renderBrowse(){
 
 function renderHistoryDeckPicker(container){
   if(!library.decks||library.decks.length<2)return;
-  var viewDeck=historyViewDeck();
   var wrap=document.createElement("div");
   wrap.className="histDeckPicker";
+  var allBtn=document.createElement("button");
+  allBtn.className="histDeckPickerBtn"+(historyViewDeckId==null?" active":"");
+  allBtn.textContent="All decks";
+  allBtn.addEventListener("click",function(){
+    if(historyViewDeckId==null)return;
+    historyViewDeckId=null;
+    renderHistory();
+  });
+  wrap.appendChild(allBtn);
   library.decks.forEach(function(d){
     var btn=document.createElement("button");
-    btn.className="histDeckPickerBtn"+(viewDeck&&d.id===viewDeck.id?" active":"");
+    btn.className="histDeckPickerBtn"+(historyViewDeckId===d.id?" active":"");
     btn.textContent=d.name;
     btn.addEventListener("click",function(){
       if(historyViewDeckId===d.id)return;
@@ -2515,30 +2570,34 @@ function renderHistoryDeckPicker(container){
     wrap.appendChild(btn);
   });
   container.appendChild(wrap);
+  var activeBtn=wrap.querySelector(".histDeckPickerBtn.active");
+  if(activeBtn)activeBtn.scrollIntoView({block:"nearest",inline:"nearest"});
 }
 
 function renderHistory(){
-  if(historyViewDeckId==null||!library.decks.some(function(d){return d.id===historyViewDeckId;})){historyViewDeckId=library.activeDeckId;}
-  var deck=historyViewDeck();var hist=deckHistory();var container=el("historyContent");container.innerHTML="";
+  if(historyViewDeckId!=null&&!library.decks.some(function(d){return d.id===historyViewDeckId;})){historyViewDeckId=null;}
+  var viewDeck=historyViewDeckId!=null?library.decks.find(function(d){return d.id===historyViewDeckId;}):null;
+  var hist=deckHistory();var container=el("historyContent");container.innerHTML="";
   renderHistoryDeckPicker(container);
-  if(!deck){var noD=document.createElement("p");noD.className="noHistHint";noD.textContent="Select a deck to see its history.";container.appendChild(noD);return;}
-  if(hist.length===0){var noH=document.createElement("p");noH.className="noHistHint";noH.textContent="No sessions yet for "+deck.name+".";container.appendChild(noH);return;}
+  if(!library.decks||library.decks.length===0){var noD=document.createElement("p");noD.className="noHistHint";noD.textContent="Import a deck to start seeing stats.";container.appendChild(noD);return;}
+  if(hist.length===0){var noH=document.createElement("p");noH.className="noHistHint";noH.textContent=viewDeck?("No sessions yet for "+viewDeck.name+"."):"No sessions yet — study a deck to see stats here.";container.appendChild(noH);return;}
   /* revise-mistakes rounds are short, artificially-high-scoring touch-ups —
      they'd skew averages and dominate "best session," so they're excluded
      everywhere in this view: top stats, best session, trend bubbles, and
      the Recent Sessions log. They're still saved (visible via session
      detail if you know where a card's log points), just not surfaced here. */
   var aggHist=hist.filter(function(h){return h.mode!=="revise";});
+  var decksForInsights=viewDeck?[viewDeck]:library.decks;
   if(aggHist.length>0){
     var totalSeen=aggHist.reduce(function(s,h){return s+h.seen;},0);var avgPct=Math.round(aggHist.reduce(function(s,h){return s+h.pct;},0)/aggHist.length);var sDiv=document.createElement("div");sDiv.className="histStats";var bestStr=bestCombo>0?bestCombo+"✓":"—";sDiv.innerHTML='<div class="histStat"><div class="histStatN">'+aggHist.length+'</div><div class="histStatL">Sessions</div></div><div class="histStat"><div class="histStatN">'+totalSeen+'</div><div class="histStatL">Cards seen</div></div><div class="histStat"><div class="histStatN">'+avgPct+'%</div><div class="histStatL">Avg score</div></div><div class="histStat"><div class="histStatN">'+bestStr+'</div><div class="histStatL">Best streak</div></div>';container.appendChild(sDiv);
-    renderTroubleSpots(container,deck);
-    var best=aggHist.slice().sort(function(a,b){return b.pct!==a.pct?b.pct-a.pct:b.seen-a.seen;})[0];var bKP=best.seen>0?Math.round(best.known/best.seen*100):0,bUP=best.seen>0?Math.round(best.unknown/best.seen*100):0;var bestDiv=document.createElement("div");bestDiv.className="bestSessionCard";bestDiv.style.cursor="pointer";bestDiv.innerHTML='<div class="bestLabel">Best session</div><div class="bestRow"><span class="bestPct" style="color:'+pctColor(best.pct)+'">'+best.pct+'%</span><div class="bestMeta">'+best.known+' got it · '+best.unknown+' to review<br>'+fmtDate(best.ts)+' · '+best.mode+(best.deckIds&&best.deckIds.length>1?' · '+best.deckIds.length+' decks':'')+'</div></div><div class="bestBar"><div class="bestBarKnown" style="width:'+bKP+'%"></div><div class="bestBarUnknown" style="width:'+bUP+'%"></div></div>';bestDiv.addEventListener("click",function(){showSessionDetail(best);});container.appendChild(bestDiv);
-    var bSec=document.createElement("div");bSec.className="bubblesSection";bSec.innerHTML='<div class="bubblesLabel">All sessions · newest first</div>';var bWrap=document.createElement("div");bWrap.className="bubblesWrap";var histNewestFirst=aggHist.slice().reverse();histNewestFirst.forEach(function(h,i){var b=document.createElement("div");b.className="bubble";b.style.background=pctColor(h.pct);b.textContent=h.pct+"%";b.title=fmtDate(h.ts)+(i===0?" · Most recent":"")+"\n"+h.known+" got it · "+h.unknown+" · "+h.mode+(h.deckIds&&h.deckIds.length>1?" · "+h.deckIds.length+" decks":"");b.addEventListener("click",function(){showSessionDetail(h);});bWrap.appendChild(b);});bSec.appendChild(bWrap);container.appendChild(bSec);
+    renderTroubleSpots(container,decksForInsights);
+    var best=aggHist.slice().sort(function(a,b){return b.pct!==a.pct?b.pct-a.pct:b.seen-a.seen;})[0];var bKP=best.seen>0?Math.round(best.known/best.seen*100):0,bUP=best.seen>0?Math.round(best.unknown/best.seen*100):0;var bestDiv=document.createElement("div");bestDiv.className="bestSessionCard";bestDiv.style.cursor="pointer";bestDiv.innerHTML='<div class="bestLabel">Best session</div><div class="bestRow"><span class="bestPct" style="color:'+pctColor(best.pct)+'">'+best.pct+'%</span><div class="bestMeta">'+best.known+' got it · '+best.unknown+' to review<br>'+fmtDate(best.ts)+' · '+best.mode+historyDeckLabel(best,viewDeck)+'</div></div><div class="bestBar"><div class="bestBarKnown" style="width:'+bKP+'%"></div><div class="bestBarUnknown" style="width:'+bUP+'%"></div></div>';bestDiv.addEventListener("click",function(){showSessionDetail(best);});container.appendChild(bestDiv);
+    var bSec=document.createElement("div");bSec.className="bubblesSection";bSec.innerHTML='<div class="bubblesLabel">All sessions · newest first</div>';var bWrap=document.createElement("div");bWrap.className="bubblesWrap";var histNewestFirst=aggHist.slice().reverse();histNewestFirst.forEach(function(h,i){var b=document.createElement("div");b.className="bubble";b.style.background=pctColor(h.pct);b.textContent=h.pct+"%";b.title=fmtDate(h.ts)+(i===0?" · Most recent":"")+"\n"+h.known+" got it · "+h.unknown+" · "+h.mode+historyDeckLabel(h,viewDeck);b.addEventListener("click",function(){showSessionDetail(h);});bWrap.appendChild(b);});bSec.appendChild(bWrap);container.appendChild(bSec);
   } else {
-    renderTroubleSpots(container,deck);
+    renderTroubleSpots(container,decksForInsights);
     var onlyRevise=document.createElement("p");onlyRevise.className="noHistHint";onlyRevise.textContent="Only revision rounds so far — study a full session to see stats here.";container.appendChild(onlyRevise);
   }
-  var lLabel=document.createElement("div");lLabel.className="bubblesLabel";lLabel.textContent="Recent sessions";container.appendChild(lLabel);var lDiv=document.createElement("div");lDiv.className="histList";aggHist.slice().reverse().slice(0,20).forEach(function(h){var entry=document.createElement("div");entry.className="histEntry";var kP=h.seen>0?Math.round(h.known/h.seen*100):0,uP=h.seen>0?Math.round(h.unknown/h.seen*100):0;entry.innerHTML='<div class="histPctBadge" style="background:'+pctColor(h.pct)+'">'+h.pct+'%</div><div class="histMeta"><div class="histDate">'+fmtDate(h.ts)+'</div><div class="histSub">'+h.known+' got it · '+h.unknown+' to review · '+h.seen+' cards · '+h.mode+(h.deckIds&&h.deckIds.length>1?' · '+h.deckIds.length+' decks':'')+(h.duration?' · '+fmtDuration(h.duration):'')+'</div><div class="histBar"><div class="histBarKnown" style="width:'+kP+'%"></div><div class="histBarUnknown" style="width:'+uP+'%"></div></div></div>';entry.addEventListener("click",function(){showSessionDetail(h);});lDiv.appendChild(entry);});container.appendChild(lDiv);}
+  var lLabel=document.createElement("div");lLabel.className="bubblesLabel";lLabel.textContent="Recent sessions";container.appendChild(lLabel);var lDiv=document.createElement("div");lDiv.className="histList";aggHist.slice().reverse().slice(0,20).forEach(function(h){var entry=document.createElement("div");entry.className="histEntry";var kP=h.seen>0?Math.round(h.known/h.seen*100):0,uP=h.seen>0?Math.round(h.unknown/h.seen*100):0;entry.innerHTML='<div class="histPctBadge" style="background:'+pctColor(h.pct)+'">'+h.pct+'%</div><div class="histMeta"><div class="histDate">'+fmtDate(h.ts)+'</div><div class="histSub">'+h.known+' got it · '+h.unknown+' to review · '+h.seen+' cards · '+h.mode+historyDeckLabel(h,viewDeck)+(h.duration?' · '+fmtDuration(h.duration):'')+'</div><div class="histBar"><div class="histBarKnown" style="width:'+kP+'%"></div><div class="histBarUnknown" style="width:'+uP+'%"></div></div></div>';entry.addEventListener("click",function(){showSessionDetail(h);});lDiv.appendChild(entry);});container.appendChild(lDiv);}
 
 /* settings */
 function renderSettings(){
@@ -2577,28 +2636,29 @@ function renderDeckManager(){
   });
   initDeckManagerDnD();
 }
+var renameEditingDeck=null;
 function startRenameDeck(row,d){
-  var nameSpan=row.querySelector(".dmName");
-  if(!nameSpan)return;
-  var input=document.createElement("input");
-  input.className="dmNameInput";
-  input.value=d.name;
-  row.replaceChild(input,nameSpan);
-  input.focus();input.select();
-  var done=false;
-  function commit(){
-    if(done)return;done=true;
-    var v=input.value.trim();
-    if(v&&v!==d.name){d.name=v;d.nameEditedAt=Date.now();delete d.nameConflict;delete d.nameResolved;}
-    scheduleSave(true);
-    renderDeckManager();
-    renderSettings();
-  }
-  input.addEventListener("blur",commit);
-  input.addEventListener("keydown",function(e){
-    if(e.key==="Enter")input.blur();
-    if(e.key==="Escape"){done=true;renderDeckManager();}
-  });
+  renameEditingDeck=d;
+  el("renameInput").value=d.name;
+  el("exitBlur").classList.add("show");
+  el("renameDialog").classList.add("show");
+  el("renameInput").focus();
+  el("renameInput").select();
+}
+function hideRenameDialog(){
+  renameEditingDeck=null;
+  el("renameDialog").classList.remove("show");
+  el("exitBlur").classList.remove("show");
+}
+function commitRename(){
+  var d=renameEditingDeck;
+  if(!d){hideRenameDialog();return;}
+  var v=el("renameInput").value.trim();
+  if(v&&v!==d.name){d.name=v;d.nameEditedAt=Date.now();delete d.nameConflict;delete d.nameResolved;}
+  scheduleSave(true);
+  hideRenameDialog();
+  renderDeckManager();
+  renderSettings();
 }
 function showNameConflictDialog(d){
   var c=d.nameConflict;if(!c)return;
@@ -2738,7 +2798,7 @@ stagingArea.addEventListener("input",updatePreview);
 function updatePreview(){var text=stagingArea.value;if(!text.trim()){previewBox.hidden=true;stagedCards=[];renderDestinationBlock();return;}var rows=parseCSV(text),cards=rowsToCards(rows);stagedCards=cards;previewBox.hidden=false;if(cards.length===0){previewBox.classList.add("error");previewCount.textContent="No valid rows found";previewRows.textContent="Make sure each line has two values separated by a comma.";previewMore.textContent="";}else{previewBox.classList.remove("error");previewCount.textContent=cards.length+(cards.length===1?" card found":" cards found");previewRows.textContent=cards.slice(0,5).map(function(c){return c.front+" → "+c.back;}).join("\n");previewMore.textContent=cards.length>5?"…and "+(cards.length-5)+" more":"";}renderDestinationBlock();}
 function renderDestinationBlock(){var hC=stagedCards.length>0;destinationBlock.classList.toggle("disabled",!hC);createDeckBtn.disabled=!hC;createDeckBtn.textContent=hC?"Create new deck — "+stagedCards.length+" card"+(stagedCards.length===1?"":"s"):"Create new deck";var deck=activeDeck();updateExistingBlock.hidden=!deck;if(deck&&hC){var ebk={};deck.cards.forEach(function(c){ebk[cardKey(c)]=true;});var nO=stagedCards.filter(function(c){return!ebk[cardKey(c)];}).length;var du=stagedCards.length-nO,ma=stagedCards.filter(function(c){return ebk[cardKey(c)];}).length;appendBtn.disabled=false;replaceBtn.disabled=false;appendBtn.textContent="Add "+nO+" new card"+(nO===1?"":"s");replaceBtn.textContent="Replace deck ("+stagedCards.length+" total)";updateDetail.textContent="Adding: skips "+du+" already in \u201c"+deck.name+"\u201d. Replacing: keeps progress for "+ma+" matching card"+(ma===1?"":"s")+".";}else if(deck){appendBtn.disabled=true;replaceBtn.disabled=true;appendBtn.textContent="Add new cards";replaceBtn.textContent="Replace deck";updateDetail.textContent="";}}
 function resetStaging(){stagingArea.value="";stagedCards=[];previewBox.hidden=true;newDeckNameInput.value="";renderDestinationBlock();}
-createDeckBtn.addEventListener("click",function(){if(stagedCards.length===0)return;var id=nextDeckId(),cards=stagedCards.map(function(c,i){return{id:i+1,front:c.front,back:c.back};});library.decks.push({id:id,name:newDeckNameInput.value.trim()||("Deck "+id),cards:cards,progress:{}});library.activeDeckId=id;scheduleSave(true);resetStaging();if(fromSplash){goHome();}else{renderStudy(null,[id]);showScreen("study");}});
+createDeckBtn.addEventListener("click",function(){if(stagedCards.length===0)return;var id=nextDeckId(),cards=stagedCards.map(function(c,i){return{id:i+1,front:c.front,back:c.back};});library.decks.push({id:id,name:newDeckNameInput.value.trim()||("Deck "+id),cards:cards,progress:{}});library.activeDeckId=id;library.studySelectedIds=[id];scheduleSave(true);resetStaging();if(fromSplash){goHome();}else{renderStudy(null,[id]);showScreen("study");}});
 appendBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||stagedCards.length===0)return;var r=mergeCards(deck.cards,deck.progress,stagedCards,"append");deck.cards=r.cards;deck.progress=r.progress;scheduleSave(true);resetStaging();renderSettings();renderProgress();});
 replaceBtn.addEventListener("click",function(){var deck=activeDeck();if(!deck||stagedCards.length===0)return;var r=mergeCards(deck.cards,deck.progress,stagedCards,"replace");deck.cards=r.cards;deck.progress=r.progress;scheduleSave(true);resetStaging();renderSettings();renderProgress();});
 var confirmCallback=null;
@@ -2765,6 +2825,12 @@ el("ncCustomBtn").addEventListener("click",function(){
   var v=el("ncCustomInput").value.trim();
   if(!v||!ncEditingDeck)return;
   resolveNameConflict(ncEditingDeck,v);
+});
+el("renameCancelBtn").addEventListener("click",hideRenameDialog);
+el("renameSaveBtn").addEventListener("click",commitRename);
+el("renameInput").addEventListener("keydown",function(e){
+  if(e.key==="Enter"){e.preventDefault();commitRename();}
+  if(e.key==="Escape")hideRenameDialog();
 });
 el("resetProgressBtn").addEventListener("click",function(){
   var deck=activeDeck();if(!deck)return;
@@ -2837,7 +2903,7 @@ el("splashManageDecksBtn").addEventListener("click",function(){
   hideSplash();
   setTimeout(function(){showScreen("deckManager");},220);
 });
-el("exitBlur").addEventListener("click",function(){hideExitPopup();hideStartPopup();hideQuickFontPopup();hideConfirmDialog();hideNameConflictDialog();});
+el("exitBlur").addEventListener("click",function(){hideExitPopup();hideStartPopup();hideQuickFontPopup();hideConfirmDialog();hideNameConflictDialog();hideRenameDialog();});
 el("sdCloseBtn").addEventListener("click",hideSessionDetail);
 el("sessionDetailBlur").addEventListener("click",hideSessionDetail);
 el("cdCloseBtn").addEventListener("click",hideCardDetail);
