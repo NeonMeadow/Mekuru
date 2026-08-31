@@ -990,7 +990,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.30.1</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.30.2</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1233,9 +1233,19 @@ function ghDecksLookRelated(ld,rd){
   return ld.cards.some(function(c){return rd.cards.some(function(rc){return rc.id===c.id&&rc.front===c.front&&rc.back===c.back;});});
 }
 function ghMergeLibrary(local,remote){
-  if(!remote||!remote.decks)return {decks:local.decks||[],history:local.history||[]};
+  if(!remote||!remote.decks)return {decks:local.decks||[],history:local.history||[],deletedDeckIds:local.deletedDeckIds||[]};
   var localDecks=local.decks||[];
   var remoteDecks=remote.decks||[];
+  /* deletion tombstones: a deck id deliberately removed on EITHER side
+     stays removed, permanently — without this, a deck deleted here but
+     still present in a not-yet-caught-up remote copy looks IDENTICAL
+     to a genuinely new deck that should be pulled in (both are simply
+     "present on one side, absent on the other"), so it would keep
+     getting resurrected on every sync. Deck ids are never reused once
+     assigned, so a tombstone is safe to keep forever. */
+  var deletedIds={};
+  (local.deletedDeckIds||[]).forEach(function(id){deletedIds[id]=true;});
+  (remote.deletedDeckIds||[]).forEach(function(id){deletedIds[id]=true;});
   var localById={};localDecks.forEach(function(d){localById[d.id]=d;});
   var remoteById={};remoteDecks.forEach(function(d){remoteById[d.id]=d;});
   var mergedDecks=[],handled={};
@@ -1247,6 +1257,7 @@ function ghMergeLibrary(local,remote){
   });
   var usedDeckIds={};mergedDecks.forEach(function(d){usedDeckIds[d.id]=true;});
   remoteDecks.forEach(function(rd){
+    if(deletedIds[rd.id])return; /* tombstoned — never resurrect */
     if(handled[rd.id]){
       var ld=localById[rd.id];
       if(ld&&!ghDecksLookRelated(ld,rd)){
@@ -1259,13 +1270,15 @@ function ghMergeLibrary(local,remote){
     }
     mergedDecks.push(rd);usedDeckIds[rd.id]=true;
   });
+  mergedDecks=mergedDecks.filter(function(d){return !deletedIds[d.id];});
   var histById={};
   (local.history||[]).forEach(function(h){histById[h.id]=h;});
   (remote.history||[]).forEach(function(h){if(!histById[h.id])histById[h.id]=h;});
   var mergedHistory=Object.keys(histById).map(function(k){return histById[k];});
   mergedHistory.sort(function(a,b){return a.ts-b.ts;});
   if(mergedHistory.length>200)mergedHistory=mergedHistory.slice(-200);
-  return {decks:mergedDecks,history:mergedHistory};
+  var mergedDeletedIds=Object.keys(deletedIds).map(function(k){return parseInt(k,10);});
+  return {decks:mergedDecks,history:mergedHistory,deletedDeckIds:mergedDeletedIds};
 }
 
 function ghSetStatus(text,isError){
@@ -1283,8 +1296,9 @@ function ghSyncNow(showStatus){
       var merged=ghMergeLibrary(library,remote);
       library.decks=merged.decks;
       library.history=merged.history;
+      library.deletedDeckIds=merged.deletedDeckIds;
       if(!library.decks.some(function(d){return d.id===library.activeDeckId;})&&library.decks.length)library.activeDeckId=library.decks[0].id;
-      return ghPushRemote(token,gistId,{decks:library.decks,history:library.history}).then(function(){
+      return ghPushRemote(token,gistId,{decks:library.decks,history:library.history,deletedDeckIds:library.deletedDeckIds||[]}).then(function(){
         storageSet(LIB_KEY,library);
         ghSyncing=false;
         try{localStorage.setItem(GH_LAST_SYNC_KEY,String(Date.now()));}catch(e){}
@@ -1625,7 +1639,7 @@ document.querySelectorAll(".fontPickerBtn").forEach(function(btn){
 });
 
 /* sync export/import */
-function exportLib(){var json=JSON.stringify({decks:library.decks,activeDeckId:library.activeDeckId,history:library.history});return json;}
+function exportLib(){var json=JSON.stringify({decks:library.decks,activeDeckId:library.activeDeckId,history:library.history,deletedDeckIds:library.deletedDeckIds||[]});return json;}
 function importLib(json){var data=JSON.parse(json);if(!data.decks||!Array.isArray(data.decks))throw new Error("Invalid data");return data;}
 var syncMode="";
 el("exportBtn").addEventListener("click",function(){
@@ -1649,7 +1663,7 @@ el("syncActionBtn").addEventListener("click",function(){
   } else {
     try{
       var data=importLib(el("syncArea").value.trim());
-      library=data;if(!library.history)library.history=[];if(!library.studySelectedIds)library.studySelectedIds=[];
+      library=data;if(!library.history)library.history=[];if(!library.studySelectedIds)library.studySelectedIds=[];if(!library.deletedDeckIds)library.deletedDeckIds=[];
       if(!library.decks.some(function(d){return d.id===library.activeDeckId;})&&library.decks.length)library.activeDeckId=library.decks[0].id;
       storageSet(LIB_KEY,library);
       el("syncNote").textContent="Imported successfully — "+library.decks.length+" deck(s) loaded.";el("syncNote").className="syncNote success";
@@ -2631,7 +2645,7 @@ function renderDeckManager(){
     row.querySelector('[data-action="rename"]').addEventListener("click",function(){startRenameDeck(row,d);});
     row.querySelector('[data-action="editCards"]').addEventListener("click",function(){library.activeDeckId=d.id;scheduleSave();showScreen("browse");});
     row.querySelector('[data-action="delete"]').addEventListener("click",function(){
-      showConfirm('Delete "'+d.name+'"? This removes all its cards and progress.',"Delete",function(){deleteDeckById(d.id);});
+      showConfirm('Delete "'+d.name+'"? This removes all its cards and progress.',"Delete",function(){deleteDeckById(d.id);renderDeckManager();renderSettings();});
     });
     if(d.nameConflict){
       row.querySelector('[data-action="nameConflict"]').addEventListener("click",function(){showNameConflictDialog(d);});
@@ -2693,10 +2707,10 @@ function resolveNameConflict(d,chosenName){
 function deleteDeckById(id){
   library.decks=library.decks.filter(function(d){return d.id!==id;});
   library.studySelectedIds=(library.studySelectedIds||[]).filter(function(x){return x!==id;});
+  if(!library.deletedDeckIds)library.deletedDeckIds=[];
+  if(library.deletedDeckIds.indexOf(id)===-1)library.deletedDeckIds.push(id);
   if(library.activeDeckId===id)library.activeDeckId=library.decks.length?library.decks[0].id:null;
   scheduleSave(true);
-  renderDeckManager();
-  renderSettings();
 }
 function initDeckManagerDnD(){
   var list=el("dmList");
@@ -2861,10 +2875,8 @@ el("ghDisconnectBtn").addEventListener("click",function(){
 el("deleteDeckBtn").addEventListener("click",function(){
   var deck=activeDeck();if(!deck)return;
   showConfirm('Delete "'+deck.name+'"? This removes all its cards and progress.',"Delete",function(){
-    library.decks=library.decks.filter(function(d){return d.id!==deck.id;});
-    library.studySelectedIds=(library.studySelectedIds||[]).filter(function(id){return id!==deck.id;});
-    library.activeDeckId=library.decks.length?library.decks[0].id:null;
-    scheduleSave();renderSettings();renderStudy(null,[library.activeDeckId]);
+    deleteDeckById(deck.id);
+    renderSettings();renderStudy(null,[library.activeDeckId]);
   });
 });
 el("clearHistoryBtn").addEventListener("click",function(){
@@ -2951,7 +2963,7 @@ if(document.fonts&&document.fonts.addEventListener){
   });
 }
 /* boot */
-Promise.all([storageGet(LIB_KEY),storageGet(THEME_KEY),storageGet(FONT_KEY),storageGet(FONT_FACE_KEY),storageGet(SWIPE_REVEAL_KEY),storageGet(COMBO_KEY),storageGet(BEST_COMBO_KEY),storageGet(LIGHT_THEME_KEY),storageGet(DARK_THEME_KEY),storageGet(FRESH_N_KEY)]).then(function(res){var data=res[0],theme=res[1],scale=res[2],fontFace=res[3],swipeRevealPref=res[4],comboPref=res[5],bestComboPref=res[6],savedLight=res[7],savedDark=res[8],savedFreshN=res[9];if(data&&data.decks&&data.decks.length){library=data;if(!library.history)library.history=[];if(!library.studySelectedIds)library.studySelectedIds=[];if(!library.decks.some(function(d){return d.id===library.activeDeckId;}))library.activeDeckId=library.decks[0].id;}
+Promise.all([storageGet(LIB_KEY),storageGet(THEME_KEY),storageGet(FONT_KEY),storageGet(FONT_FACE_KEY),storageGet(SWIPE_REVEAL_KEY),storageGet(COMBO_KEY),storageGet(BEST_COMBO_KEY),storageGet(LIGHT_THEME_KEY),storageGet(DARK_THEME_KEY),storageGet(FRESH_N_KEY)]).then(function(res){var data=res[0],theme=res[1],scale=res[2],fontFace=res[3],swipeRevealPref=res[4],comboPref=res[5],bestComboPref=res[6],savedLight=res[7],savedDark=res[8],savedFreshN=res[9];if(data&&data.decks&&data.decks.length){library=data;if(!library.history)library.history=[];if(!library.studySelectedIds)library.studySelectedIds=[];if(!library.deletedDeckIds)library.deletedDeckIds=[];if(!library.decks.some(function(d){return d.id===library.activeDeckId;}))library.activeDeckId=library.decks[0].id;}
 if(swipeRevealPref===false){swipeRevealEnabled=false;if(el("swipeRevealCheck"))el("swipeRevealCheck").checked=false;}
 if(comboPref===false){comboEnabled=false;if(el("comboCheck"))el("comboCheck").checked=false;}
 if(typeof bestComboPref==="number")bestCombo=bestComboPref;
