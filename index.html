@@ -106,8 +106,8 @@
   .card.flipped .cardInner{transform:rotateY(180deg);}
   .face{position:absolute;inset:0;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;padding:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden;text-align:center;overflow:hidden;}
   .face-back{transform:rotateY(180deg);}
-  .face-front .text{font-family:var(--font-display);font-size:calc(clamp(38px,11vw,58px)*var(--text-scale));font-weight:var(--font-display-weight);line-height:1.2;word-break:keep-all;overflow-wrap:normal;max-width:100%;min-width:0;}
-  .face-back .text{font-family:var(--font-back);font-style:italic;font-size:calc(clamp(38px,11vw,58px)*var(--text-scale));line-height:1.4;color:var(--ink);max-width:100%;min-width:0;}
+  .face-front .text{display:inline-block;font-family:var(--font-display);font-size:calc(clamp(38px,11vw,58px)*var(--text-scale));font-weight:var(--font-display-weight);line-height:1.2;word-break:keep-all;overflow-wrap:normal;max-width:100%;min-width:0;}
+  .face-back .text{display:inline-block;font-family:var(--font-back);font-style:italic;font-size:calc(clamp(38px,11vw,58px)*var(--text-scale));line-height:1.4;color:var(--ink);max-width:100%;min-width:0;}
   .tapHint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
 
   /* subtle circular swipe hints */
@@ -187,9 +187,9 @@
   .undoResolveCard{position:absolute;inset:0;z-index:250;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 14px 40px rgba(0,0,0,.22);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;}
   .undoResolveCard.show{display:flex;animation:urSlideIn .32s cubic-bezier(.22,.9,.32,1.1) forwards;}
   .undoResolveCard.hide{display:flex;animation:urSlideOut .26s ease-in forwards;}
-  .urTop .text{font-family:var(--font-display);font-weight:var(--font-display-weight);font-size:clamp(30px,9vw,46px);line-height:1.15;word-break:keep-all;overflow-wrap:normal;}
+  .urTop .text{display:inline-block;max-width:100%;font-family:var(--font-display);font-weight:var(--font-display-weight);font-size:clamp(30px,9vw,46px);line-height:1.15;word-break:keep-all;overflow-wrap:normal;}
   .urDivider{width:44px;height:1px;background:var(--line);margin:14px 0;}
-  .urBottom .text{font-family:var(--font-back);font-style:italic;font-size:clamp(15px,4.5vw,20px);color:var(--ink-soft);line-height:1.35;word-break:keep-all;overflow-wrap:normal;}
+  .urBottom .text{display:inline-block;max-width:100%;font-family:var(--font-back);font-style:italic;font-size:clamp(15px,4.5vw,20px);color:var(--ink-soft);line-height:1.35;word-break:keep-all;overflow-wrap:normal;}
   .urHint{margin-top:16px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;}
   .skipLink{background:none;border:1px solid var(--line);color:var(--ink-soft);font-size:13px;font-weight:500;border-radius:12px;padding:11px;margin-top:8px;width:100%;cursor:pointer;font-family:inherit;}
   @media (hover:hover){.skipLink:hover{border-color:var(--ink-soft);color:var(--ink);}}
@@ -990,7 +990,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.30.2</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.30.4</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1351,6 +1351,9 @@ function escapeHtml(s){var d=document.createElement("div");d.textContent=s;retur
    to multiple lines if it still doesn't fit even at the readable floor.
    The user's text-size slider sets the ceiling each card may reach. */
 function innerBox(faceEl){
+  if(faceEl&&typeof faceEl.w==="number"&&typeof faceEl.h==="number"&&faceEl.clientWidth===undefined){
+    return faceEl; /* already a plain {w,h} box, e.g. from fitUndoResolveText */
+  }
   var cs=getComputedStyle(faceEl);
   return{
     w:faceEl.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),
@@ -1362,7 +1365,22 @@ function fitTextToFace(textEl,faceEl,maxFontPx,minFontPx){
   var box=innerBox(faceEl);
   if(box.w<=0||box.h<=0)return; /* not laid out yet */
   var raw=textEl.textContent; /* capture before any innerHTML transform below */
-  var hasSpace=raw.indexOf(" ")!==-1;
+  /* allow a line break right before an opening bracket and right after a
+     closing one ([ ] （ ） 「 」) even when there's no literal space
+     there — common in cards that annotate an optional/inserted word in
+     brackets, e.g. "[どうぞ]よろしく[おねがいします]。", which
+     otherwise has to sit on one long unbroken line and forces a much
+     smaller, harder-to-read font. Both sides matter: a break point only
+     after the closing bracket still leaves the word right before the
+     NEXT opening bracket glued to it (e.g. "よろしく[おねがいします]"
+     staying one unbreakable run). A zero-width space is invisible (no
+     visible gap) but is a standard, legal break point the browser will
+     only actually use if the line would otherwise overflow at the
+     current size — so it never splits text that already fits
+     comfortably on one line. */
+  raw=raw.replace(/([\[（「])/g,"\u200B$1").replace(/([\]）」])/g,"$1\u200B");
+  textEl.textContent=raw;
+  var hasSpace=raw.indexOf(" ")!==-1||raw.indexOf("\u200B")!==-1;
   if(hasSpace){
     /* let the browser wrap naturally at whichever spaces are needed to
        fit the CURRENT font size — never force a break at every space
@@ -1376,7 +1394,6 @@ function fitTextToFace(textEl,faceEl,maxFontPx,minFontPx){
        "break only if it doesn't fit at the current size", with the
        browser deciding how many words share a line rather than a
        forced break per space. */
-    textEl.textContent=raw;
     textEl.style.whiteSpace="normal";
     var fontSize=maxFontPx;
     textEl.style.fontSize=fontSize+"px";
@@ -1434,6 +1451,28 @@ function fitTextToFace(textEl,faceEl,maxFontPx,minFontPx){
       fontSize2-=1;textEl.style.fontSize=fontSize2+"px";tries2++;
     }
   }
+}
+/* the undo-resolve overlay (#undoResolveCard) shows front+back stacked
+   together with a divider, using its own separate text elements that
+   never went through the normal per-face fitting — they just used a
+   static CSS clamp() with no shrink-to-fit at all, so long text (e.g.
+   a multi-character katakana word) could overflow past the card edge.
+   Reuses the same fitTextToFace logic, splitting the card's available
+   height between the two stacked text blocks around the divider/hint's
+   own fixed space. */
+function fitUndoResolveText(){
+  var container=el("undoResolveCard");
+  var box=innerBox(container);
+  if(box.w<=0||box.h<=0)return;
+  var divider=container.querySelector(".urDivider");
+  var hint=container.querySelector(".urHint");
+  var dividerCs=getComputedStyle(divider);
+  var hintCs=getComputedStyle(hint);
+  var dividerSpace=divider.offsetHeight+parseFloat(dividerCs.marginTop)+parseFloat(dividerCs.marginBottom);
+  var hintSpace=hint.offsetHeight+parseFloat(hintCs.marginTop||0);
+  var remaining=Math.max(60,box.h-dividerSpace-hintSpace);
+  fitTextToFace(el("urFront"),{w:box.w,h:remaining*0.68},46,16);
+  fitTextToFace(el("urBack"),{w:box.w,h:remaining*0.32},20,10);
 }
 function setCardText(front,back){
   frontText.textContent=front;
@@ -2058,6 +2097,7 @@ function performUndo(){
   el("urBack").textContent=card.back;
   var ur=el("undoResolveCard");
   ur.classList.remove("hide");void ur.offsetWidth;ur.classList.add("show");
+  fitUndoResolveText();
   haptic("light");
 }
 
