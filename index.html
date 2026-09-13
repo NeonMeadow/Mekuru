@@ -47,13 +47,13 @@
   html{min-height:100vh;min-height:100dvh;background:var(--bg);}
   [hidden]{display:none !important;}
   html{height:100vh;height:100svh;}/* svh = small viewport, correct in iframes */
-  body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);height:100%;overflow:hidden;display:flex;justify-content:center;transition:background-color .2s ease,color .2s ease;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);height:100%;overflow:hidden;display:flex;justify-content:center;}
   #app{width:100%;max-width:440px;height:100%;display:flex;flex-direction:column;padding:0 20px max(16px,env(safe-area-inset-bottom));background:var(--bg);}
   button{font-family:inherit;cursor:pointer;}input,textarea,select{font-family:inherit;}
   input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
   button,button:active,button:focus,button:focus-visible,button:hover{outline:none !important;-webkit-tap-highlight-color:transparent !important;}
 
-  header{position:sticky;top:0;z-index:100;background:var(--bg);padding:max(12px,env(safe-area-inset-top)) 0 10px;border-bottom:1px solid var(--line);margin:0 0 12px;display:flex;flex-direction:column;transition:background-color .2s ease;}
+  header{position:sticky;top:0;z-index:100;background:var(--bg);padding:max(12px,env(safe-area-inset-top)) 0 10px;border-bottom:1px solid var(--line);margin:0 0 12px;display:flex;flex-direction:column;}
   .headerMain{display:flex;align-items:center;justify-content:space-between;gap:10px;}
   #headerLabel{display:flex;align-items:center;min-width:0;overflow:hidden;flex:1;cursor:pointer;}
   @media (hover:hover){#headerLabel:hover{opacity:.8;}}
@@ -904,6 +904,10 @@
         <span class="sub">Combo streak counter</span>
         <label class="switch"><input type="checkbox" id="comboCheck" checked><span class="switchTrack"></span></label>
       </label>
+      <label class="switchLabel" style="margin-top:4px;">
+        <span class="sub">Show skip button</span>
+        <label class="switch"><input type="checkbox" id="skipEnabledCheck" checked><span class="switchTrack"></span></label>
+      </label>
       <div class="fieldLabel" style="margin-top:14px;">Card font</div>
       <div class="fontPicker" id="fontPicker">
         <button class="fontPickerBtn active" data-font="system"><span class="fChar" style="font-family:-apple-system,'Hiragino Sans',sans-serif">あ</span><span class="fLabel">System</span></button>
@@ -990,7 +994,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.30.4</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.30.7</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1057,10 +1061,11 @@
 /* Layout uses CSS svh/dvh — no window.innerHeight needed */
 /* storage */
 var hasCS=(typeof window.storage!=="undefined"&&window.storage&&typeof window.storage.get==="function");
-var LIB_KEY="flashcards:library",THEME_KEY="flashcards:theme",FONT_KEY="flashcards:textScale",FONT_FACE_KEY="flashcards:fontFace",SWIPE_REVEAL_KEY="flashcards:swipeReveal",COMBO_KEY="flashcards:comboEnabled",BEST_COMBO_KEY="flashcards:bestCombo",LIGHT_THEME_KEY="flashcards:lightTheme",DARK_THEME_KEY="flashcards:darkTheme",FRESH_N_KEY="flashcards:freshN";
+var LIB_KEY="flashcards:library",THEME_KEY="flashcards:theme",FONT_KEY="flashcards:textScale",FONT_FACE_KEY="flashcards:fontFace",SWIPE_REVEAL_KEY="flashcards:swipeReveal",COMBO_KEY="flashcards:comboEnabled",BEST_COMBO_KEY="flashcards:bestCombo",LIGHT_THEME_KEY="flashcards:lightTheme",DARK_THEME_KEY="flashcards:darkTheme",FRESH_N_KEY="flashcards:freshN",SKIP_ENABLED_KEY="flashcards:skipEnabled";
 var swipeRevealEnabled=true,comboEnabled=true;
 var comboCount=0,bestCombo=0,sessionBestCombo=0;
-var lastMark=null,undoResolveActive=false,undoResolveOriginalStatus=null;
+var lastMark=null,undoResolveActive=false,undoResolveOriginalStatus=null,skipEnabled=true;
+function updateSkipVisibility(){el("skipBtn").hidden=!skipEnabled||undoResolveActive||session.mode==="quiz"||session.mode==="type";}
 var DARK_THEMES=["dark","amoled"],lightTheme="washi",darkTheme="dark",colorMode="light";
 var freshN=15,currentFontFace="system";
 var fromSplash=false; /* tracks if settings was opened from splash */
@@ -1616,6 +1621,11 @@ el("comboCheck").addEventListener("change",function(){
   if(!comboEnabled){comboCount=0;updateComboDisplay();}
   storageSet(COMBO_KEY,comboEnabled);
 });
+el("skipEnabledCheck").addEventListener("change",function(){
+  skipEnabled=el("skipEnabledCheck").checked;
+  updateSkipVisibility();
+  storageSet(SKIP_ENABLED_KEY,skipEnabled);
+});
 
 /* font slider */
 var fontSlider=el("fontSlider"),textScale=1;
@@ -1984,7 +1994,7 @@ el("quickFontCloseBtn").addEventListener("click",hideQuickFontPopup);
 function updateStudyUi(){
   var isQuiz=session.mode==="quiz";
   var isType=session.mode==="type";
-  actionRow.hidden=isQuiz||isType;skipBtn.hidden=isQuiz||isType;quizGrid.hidden=!isQuiz;tapHint.hidden=isQuiz||isType;
+  actionRow.hidden=isQuiz||isType;updateSkipVisibility();quizGrid.hidden=!isQuiz;tapHint.hidden=isQuiz||isType;
   el("typeArea").hidden=!isType;
   hintRow.textContent=isQuiz?"select the correct reading":isType?"type the reading, then press Check":"";
   hintRow.hidden=!(isQuiz||isType);
@@ -2022,7 +2032,7 @@ if(window.visualViewport){
 }
 
 function startSession(mode,overrideIds,isRevise){var decks=decksById(session.deckIds);if(!decks.length){showSubview("empty");return;}pendingStudyDeckIds=session.deckIds;session.mode=mode||"all";session.isRevise=!!isRevise;session.results={};session.startTime=Date.now();session.reviseIds=null;flipped=false;marking=false;
-lastMark=null;undoResolveActive=false;undoResolveOriginalStatus=null;el("undoBtn").hidden=true;el("undoConfirmMsg").classList.remove("show");el("undoResolveCard").classList.remove("show","hide");session.savedHistoryEntry=null;
+lastMark=null;undoResolveActive=false;undoResolveOriginalStatus=null;el("undoBtn").hidden=true;updateSkipVisibility();el("undoConfirmMsg").classList.remove("show");el("undoResolveCard").classList.remove("show","hide");session.savedHistoryEntry=null;
 comboCount=0;sessionBestCombo=0;updateComboDisplay();if(session.mode!=="wild")applyFontFace(currentFontFace);session.cardIndex=buildCardIndex(decks);session.order=shuffleSpread(overrideIds||buildPool(session.mode,decks),decks.length>1);session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
 
 function renderProgress(){if(!session.deckIds||!session.deckIds.length)return;var tot=session.order.length;var kN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;var uN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;el("scoreKnown").textContent="✓ "+kN;el("scoreUnknown").textContent="✗ "+uN;el("progressRight").textContent=(kN+uN)+" / "+tot;var kP=tot?Math.round(kN/tot*100):0,uP=tot?Math.round(uN/tot*100):0;el("progressKnown").style.width=kP+"%";el("progressUnknown").style.left=kP+"%";el("progressUnknown").style.width=uP+"%";}
@@ -2090,7 +2100,7 @@ function performUndo(){
   scheduleSave();renderProgress();updateComboDisplay();
 
   undoResolveActive=true;undoResolveOriginalStatus=m.status;
-  lastMark=null;el("undoBtn").hidden=true;
+  lastMark=null;el("undoBtn").hidden=true;updateSkipVisibility();
   el("undoConfirmMsg").classList.remove("show");
 
   el("urFront").textContent=card.front;
@@ -2104,7 +2114,7 @@ function performUndo(){
 function resolveUndoCard(status){
   if(!undoResolveActive)return;
   var e=currentCardEntry();var card=e&&e.card,deck=e&&e.deck;
-  if(!card||!deck){undoResolveActive=false;return;}
+  if(!card||!deck){undoResolveActive=false;updateSkipVisibility();return;}
   recordResultWithUndo(card,deck,status);
   scheduleSave();renderProgress();
   haptic(status==="known"?"success":"medium");
@@ -2125,7 +2135,7 @@ function resolveUndoCard(status){
   setTimeout(function(){
     ur.classList.remove("hide");ur.style.display="none";void ur.offsetWidth;ur.style.display="";
     session.pos++;
-    undoResolveActive=false;undoResolveOriginalStatus=null;
+    undoResolveActive=false;undoResolveOriginalStatus=null;updateSkipVisibility();
     if(session.pos>=session.order.length){
       renderCard(); /* was the last card — recompute and re-show the complete screen */
     }
@@ -3003,9 +3013,11 @@ if(document.fonts&&document.fonts.addEventListener){
   });
 }
 /* boot */
-Promise.all([storageGet(LIB_KEY),storageGet(THEME_KEY),storageGet(FONT_KEY),storageGet(FONT_FACE_KEY),storageGet(SWIPE_REVEAL_KEY),storageGet(COMBO_KEY),storageGet(BEST_COMBO_KEY),storageGet(LIGHT_THEME_KEY),storageGet(DARK_THEME_KEY),storageGet(FRESH_N_KEY)]).then(function(res){var data=res[0],theme=res[1],scale=res[2],fontFace=res[3],swipeRevealPref=res[4],comboPref=res[5],bestComboPref=res[6],savedLight=res[7],savedDark=res[8],savedFreshN=res[9];if(data&&data.decks&&data.decks.length){library=data;if(!library.history)library.history=[];if(!library.studySelectedIds)library.studySelectedIds=[];if(!library.deletedDeckIds)library.deletedDeckIds=[];if(!library.decks.some(function(d){return d.id===library.activeDeckId;}))library.activeDeckId=library.decks[0].id;}
+Promise.all([storageGet(LIB_KEY),storageGet(THEME_KEY),storageGet(FONT_KEY),storageGet(FONT_FACE_KEY),storageGet(SWIPE_REVEAL_KEY),storageGet(COMBO_KEY),storageGet(BEST_COMBO_KEY),storageGet(LIGHT_THEME_KEY),storageGet(DARK_THEME_KEY),storageGet(FRESH_N_KEY),storageGet(SKIP_ENABLED_KEY)]).then(function(res){var data=res[0],theme=res[1],scale=res[2],fontFace=res[3],swipeRevealPref=res[4],comboPref=res[5],bestComboPref=res[6],savedLight=res[7],savedDark=res[8],savedFreshN=res[9],skipEnabledPref=res[10];if(data&&data.decks&&data.decks.length){library=data;if(!library.history)library.history=[];if(!library.studySelectedIds)library.studySelectedIds=[];if(!library.deletedDeckIds)library.deletedDeckIds=[];if(!library.decks.some(function(d){return d.id===library.activeDeckId;}))library.activeDeckId=library.decks[0].id;}
 if(swipeRevealPref===false){swipeRevealEnabled=false;if(el("swipeRevealCheck"))el("swipeRevealCheck").checked=false;}
 if(comboPref===false){comboEnabled=false;if(el("comboCheck"))el("comboCheck").checked=false;}
+if(skipEnabledPref===false){skipEnabled=false;if(el("skipEnabledCheck"))el("skipEnabledCheck").checked=false;}
+updateSkipVisibility();
 if(typeof bestComboPref==="number")bestCombo=bestComboPref;
 if(savedLight)lightTheme=savedLight;
 if(savedDark)darkTheme=savedDark;
