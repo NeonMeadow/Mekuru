@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#1D4166">
 <title>Mekuru</title>
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAADt0lEQVR42u1WTWgdVRQ+5/7NzHvz+tL8CGJoTUISjCklNFCxFPxBqogLVyH+rVoF97p048KtilsrujIF0U3JKim6SNtA+1oSIW1i/aEkoU2iaV5f7sy9c4+LeX15894ziUhXdmDgzuWc7zvn+869DB56/QN4mA+Dh/w8IvhvBLg/DPz3BIwxRHSJI6J03QIWkTFGRC5x6Xq/BIhYKVessV7gc8HTNbIMBzK0xlbKFS64F/jG2O1ypWUdohk91vHoS6PHX3mm/fGOWEe3rv8yPTG9eXdT+pIcpeixjtu62l4Ye7H3aK/yvY2V9UuTl0rTJc9XRFQPyItPnahXRt/Xz489N/7+2MGuts2NP8NifnhosO/4wPzMvL6vOeeIaI0tdhTf/eTMyMjTliXbW5XDfYeOPTuyHeul0pLyMhw7BIhoYvNYd9fbH76RJPbbzya+/+KHK1NX27vbhwf7nYS5mXnlK0SMKtFrp18dHRm+Mnv9y4/O/vjdT2vLdweP9fcN98zNzG/9VeaCt/AAGZrI9Awd7vTCpbnFi5Oz0pfrK+tT5y5Ysv1HeoJ84BLnrMsVcgNHeg3ZqXMX1lc3pCcvTl5emlvs9MOeoSdNZOoNy5hMAEHgSwC9pYUUiKh8ZbRxmAS+J5UgIiISSgS+cmBNZNKehOT63rYECHIe7T5FCCAABMNUR3KECAKQZ2MYgECGCNUwIsGYaHUkWPM3r+5S+iIAB+TZ3AbKbOLuHSAIAJbC1yYBoBkurZceaMsw3cHdCAgAAQUAq4vDKkEms7mnBsr9SLRDIQA57hQBAByBZxVngHtIhHUms6ylzRLt0kHD7SdaThFDzO4gUvUwVuGIGupgTZW19qAmUTpDyFDr2FpzIB9wzuPIxLERghdyfmKs1jEiAqWJyAEQcA8PgACdQ1edbqXk6srab4u3u8PCW++8HBZyhUIw/uapJ3Lhr4u3V1fWlZLpUUAidK7J46xERORJ0c5YPvCoqgk4574+e37g4/fGT504efIoEHTnwztaf/PVeedcqhkR5ALVwZinxD/epojgHBWLofLVtZ9vLdz4QwhOREqJ5eW1q6UbXj44WAwTk1wu3fz084mFhd9zOc85AgDnqKuzTcd29trN5eU1KXmNBev/ixDRGBvFRgruebIWxBjTOrKJOxDmAOBeuSIY8wPPOVcrLoqMsYmnpJSZJholklKkstYHOed8XwGgsRYAwnwAQDX0VCLPU76PDYktxrQ54gEHAVA6pvXQeyY++vH6HxD8DZ9mrghOtQQhAAAAAElFTkSuQmCC">
@@ -442,6 +442,17 @@
   /* ---- action button press spring ---- */
   .actionBtn{flex:1;border-radius:18px;border:none;background:var(--paper);padding:0;display:flex;align-items:center;justify-content:center;height:clamp(70px,9dvh,84px);transition:transform .1s ease;}
   .actionBtn:active{transform:scale(.93);}
+  .reviewGradeRow{display:flex;gap:8px;margin-top:10px;}
+  .reviewGradeBtn{flex:1;border-radius:14px;border:none;padding:10px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:var(--font-ui);cursor:pointer;transition:transform .1s ease;height:clamp(58px,7dvh,68px);}
+  .reviewGradeBtn:active{transform:scale(.94);}
+  .reviewGradeBtn .rgLabel{font-size:13px;font-weight:700;}
+  .reviewGradeBtn .rgInterval{font-size:10.5px;opacity:.75;}
+  .reviewGradeBtn.again{background:var(--btn-x-bg);color:var(--btn-x-fg);}
+  .reviewGradeBtn.good{background:var(--btn-v-bg);color:var(--btn-v-fg);}
+  .reviewGradeBtn.hard{background:rgba(200,140,40,.22);color:#8a5a10;}
+  .reviewGradeBtn.easy{background:rgba(60,120,190,.2);color:#265a8a;}
+  [data-theme="dark"] .reviewGradeBtn.hard,[data-theme="amoled"] .reviewGradeBtn.hard{background:rgba(220,160,70,.22);color:#e8c088;}
+  [data-theme="dark"] .reviewGradeBtn.easy,[data-theme="amoled"] .reviewGradeBtn.easy{background:rgba(110,170,230,.2);color:#a8cdf0;}
   .actionBtn.dontknow{background:var(--btn-x-bg);color:var(--btn-x-fg);}
   @media (hover:hover){.actionBtn.dontknow:hover{opacity:.85;}}
   .actionBtn.know{background:var(--btn-v-bg);color:var(--btn-v-fg);}
@@ -636,6 +647,11 @@
   <div class="freshPopupTitle">Choose a mode</div>
   <div class="startPopupScroll">
   <div class="startOptionList" id="startModeRow">
+    <button class="startOption" id="modeReview">
+      <svg class="startOptIcon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10.5" r="7"/><path d="M10 6.5v4l3 2"/></svg>
+      <span class="startOptText"><span class="startOptName">Review</span>
+      <span class="startOptDesc" id="modeReviewDesc">Spaced repetition — cards due for review today.</span></span>
+    </button>
     <button class="startOption active" id="modeAll">
       <svg class="startOptIcon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="11" height="9" rx="1.5"/><path d="M6.5 7V5.5A1.5 1.5 0 0 1 8 4h7a1.5 1.5 0 0 1 1.5 1.5V13a1.5 1.5 0 0 1-1.5 1.5H15"/></svg>
       <span class="startOptText"><span class="startOptName">All</span>
@@ -833,6 +849,12 @@
         <button class="undoBtn" id="undoBtn" hidden title="Undo last mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h9a5 5 0 0 1 0 10h-2"/><polyline points="8,5 4,10 8,15"/></svg></button>
         <button class="actionBtn know" id="btnKnow"><svg class="actionIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="4,13 9,18 20,7"/></svg></button>
       </div>
+      <div class="reviewGradeRow" id="reviewGradeRow" hidden>
+        <button class="reviewGradeBtn again" id="gradeAgain" data-grade="1"><span class="rgLabel">Again</span><span class="rgInterval" id="rgIntervalAgain"></span></button>
+        <button class="reviewGradeBtn hard" id="gradeHard" data-grade="2"><span class="rgLabel">Hard</span><span class="rgInterval" id="rgIntervalHard"></span></button>
+        <button class="reviewGradeBtn good" id="gradeGood" data-grade="3"><span class="rgLabel">Good</span><span class="rgInterval" id="rgIntervalGood"></span></button>
+        <button class="reviewGradeBtn easy" id="gradeEasy" data-grade="4"><span class="rgLabel">Easy</span><span class="rgInterval" id="rgIntervalEasy"></span></button>
+      </div>
       <button class="skipLink" id="skipBtn">Skip</button>
       <p class="undoConfirmMsg" id="undoConfirmMsg"></p>
       <p class="hintRow" id="hintRow"></p>
@@ -971,6 +993,10 @@
 
     <div class="panelSection" id="thisDeckSection" hidden>
       <h3>This deck</h3>
+      <label class="switchLabel" style="margin-bottom:12px;">
+        <span class="sub">Study both directions (spaced repetition)</span>
+        <label class="switch"><input type="checkbox" id="dualDirectionCheck"><span class="switchTrack"></span></label>
+      </label>
       <div class="btnRow">
         <button class="smallBtn" id="resetProgressBtn">Reset progress</button>
         <button class="smallBtn danger" id="deleteDeckBtn">Delete deck</button>
@@ -994,7 +1020,7 @@
         <button class="smallBtn" id="clearCacheBtn">↻ Reload and clear cache</button>
       </div>
     </div>
-    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.30.7</span></div>
+    <div class="appFooter"><span class="appFooterName">Mekuru</span><span class="appFooterDot">·</span><span class="appFooterVer">v1.31.1</span></div>
   </div>
 
   <!-- HISTORY -->
@@ -1179,6 +1205,19 @@ function ghMergeDeckIdentity(ld,rd){
   if(rt>lt)return {name:rd.name,nameEditedAt:rd.nameEditedAt,nameConflict:null,nameResolved:!!rd.nameResolved};
   return {name:ld.name,nameEditedAt:ld.nameEditedAt,nameConflict:null,nameResolved:!!ld.nameResolved};
 }
+function ghMergeFsrsState(a,b){
+  /* independently-scheduled spaced-repetition state for one direction
+     of a card. If both devices reviewed it before ever syncing, the
+     naive "whichever side happens to be local wins" approach used
+     elsewhere in this merge would silently discard a real review —
+     the same class of bug already fixed for card text. Each state
+     carries its own lastReview timestamp, so prefer whichever is
+     actually more recent; if only one side has ever reviewed this
+     direction, that's the only real state there is. */
+  if(!a)return b||null;
+  if(!b)return a;
+  return b.lastReview>a.lastReview?b:a;
+}
 function ghMergeDeck(ld,rd){
   /* card text: same id, same content on both sides is just the same
      unchanged card. If the text actually differs, resolve using each
@@ -1190,20 +1229,28 @@ function ghMergeDeck(ld,rd){
      before this was tracked). A card id present on only one side is a
      genuine new addition and is pulled in as-is. Progress/stats always
      merge fully by id below, regardless of which card text wins. */
+  var localCardById={};ld.cards.forEach(function(c){localCardById[c.id]=c;});
   var remoteCardById={};rd.cards.forEach(function(c){remoteCardById[c.id]=c;});
   var mergedCards=[];
   var handledIds={};
   ld.cards.forEach(function(lc){
     var rc=remoteCardById[lc.id];
+    var merged;
     if(!rc||(rc.front===lc.front&&rc.back===lc.back)){
-      mergedCards.push(lc);
+      merged={id:lc.id,front:lc.front,back:lc.back};
+      if(lc.editedAt)merged.editedAt=lc.editedAt;
     } else {
       var winner;
       if(lc.editedAt&&rc.editedAt)winner=rc.editedAt>lc.editedAt?rc:lc;
       else if(rc.editedAt&&!lc.editedAt)winner=rc;
       else winner=lc;
-      mergedCards.push({id:lc.id,front:winner.front,back:winner.back,editedAt:winner.editedAt});
+      merged={id:lc.id,front:winner.front,back:winner.back,editedAt:winner.editedAt};
     }
+    var mergedFwd=ghMergeFsrsState(lc.fsrsFwd,rc&&rc.fsrsFwd);
+    var mergedRev=ghMergeFsrsState(lc.fsrsRev,rc&&rc.fsrsRev);
+    if(mergedFwd)merged.fsrsFwd=mergedFwd;
+    if(mergedRev)merged.fsrsRev=mergedRev;
+    mergedCards.push(merged);
     handledIds[lc.id]=true;
   });
   rd.cards.forEach(function(rc){
@@ -1231,6 +1278,12 @@ function ghMergeDeck(ld,rd){
   if(identity.nameEditedAt)result.nameEditedAt=identity.nameEditedAt;
   if(identity.nameConflict)result.nameConflict=identity.nameConflict;
   if(identity.nameResolved)result.nameResolved=true;
+  /* dual-direction and the one-time migration flag are additive,
+     safe-to-keep-on settings — if either device turned them on, keep
+     them on rather than risk silently losing reverse-direction
+     scheduling data or re-running migration unnecessarily. */
+  if(ld.dualDirection||rd.dualDirection)result.dualDirection=true;
+  if(ld.fsrsMigrated||rd.fsrsMigrated)result.fsrsMigrated=true;
   return result;
 }
 function ghDecksLookRelated(ld,rd){
@@ -1489,7 +1542,88 @@ function setCardText(front,back){
   fitTextToFace(frontText,frontText.parentElement,Math.round(frontCeil*scale),Math.max(11,Math.round(15*scale)));
   fitTextToFace(backText,backText.parentElement,Math.round(backCeil*scale),Math.max(10,Math.round(12*scale)));
 }
+/* ---- FSRS-4.5 (spaced repetition) ---- */
+var FSRS_W=[0.40255,1.18385,3.173,15.69105,7.1949,0.5345,1.4604,0.0046,1.54575,0.1192,1.01925,1.9395,0.11,0.29605,2.2698,0.2315,2.9898,0.51655,0.6621];
+var FSRS_FACTOR=19/81;
+var FSRS_DECAY=-0.5;
+var FSRS_RETENTION=0.9;
+function fsrsRetrievability(elapsedDays,stability){
+  if(stability<=0)return 0;
+  return Math.pow(1+FSRS_FACTOR*(elapsedDays/stability),FSRS_DECAY);
+}
+function fsrsInterval(stability){
+  return (stability/FSRS_FACTOR)*(Math.pow(FSRS_RETENTION,1/FSRS_DECAY)-1);
+}
+function fsrsClampDifficulty(d){return Math.min(10,Math.max(1,d));}
+function fsrsInitialStability(grade){return FSRS_W[grade-1];}
+function fsrsInitialDifficulty(grade){return fsrsClampDifficulty(FSRS_W[4]-Math.exp(FSRS_W[5]*(grade-1))+1);}
+function fsrsNextDifficulty(d,grade){
+  var deltaD=-FSRS_W[6]*(grade-3);
+  var dp=d+deltaD*((10-d)/9);
+  return fsrsClampDifficulty(FSRS_W[7]*fsrsInitialDifficulty(4)+(1-FSRS_W[7])*dp);
+}
+function fsrsNextStabilitySuccess(d,s,r,grade){
+  var tD=11-d,tS=Math.pow(s,-FSRS_W[9]),tR=Math.exp(FSRS_W[10]*(1-r))-1;
+  var h=grade===2?FSRS_W[15]:1,b=grade===4?FSRS_W[16]:1,c=Math.exp(FSRS_W[8]);
+  return s*(1+tD*tS*tR*h*b*c);
+}
+function fsrsNextStabilityFail(d,s,r){
+  var dF=Math.pow(d,-FSRS_W[12]),sF=Math.pow(s+1,FSRS_W[13])-1,rF=Math.exp(FSRS_W[14]*(1-r));
+  return Math.min(dF*sF*rF*FSRS_W[11],s);
+}
+/* Apply a review grade (1=Again,2=Hard,3=Good,4=Easy) to a card's FSRS
+   state ({stability,difficulty,due,lastReview} or null if never
+   reviewed) and return the updated state, including the new due date.
+   Anki's separate sub-day "learning steps" (e.g. 1min/10min for brand
+   new cards) are intentionally not implemented — every review is
+   scheduled at least 1 day out, straight into normal FSRS scheduling.
+   This is still a genuine, correctly-implemented FSRS scheduler, just
+   without that one additional Anki-specific UX layer. */
+function fsrsReview(state,grade){
+  var now=Date.now();
+  var s,d;
+  if(!state||state.stability==null){
+    s=fsrsInitialStability(grade);
+    d=fsrsInitialDifficulty(grade);
+  } else {
+    var elapsedDays=Math.max(0,(now-state.lastReview)/86400000);
+    var r=fsrsRetrievability(elapsedDays,state.stability);
+    s=grade===1?fsrsNextStabilityFail(state.difficulty,state.stability,r):fsrsNextStabilitySuccess(state.difficulty,state.stability,r,grade);
+    d=fsrsNextDifficulty(state.difficulty,grade);
+  }
+  var intervalDays=Math.max(Math.round(fsrsInterval(s)),1);
+  return {stability:s,difficulty:d,lastReview:now,due:now+intervalDays*86400000};
+}
+/* One-time, per-deck migration into spaced repetition: a card already
+   marked "known" under the old system gets a modest head start (as if
+   it had just received a first "Good" rating — due in a few days, not
+   immediately), rather than every already-studied card suddenly
+   flooding the very first Review session as "due now". Cards that
+   were never marked known (or never studied) start genuinely fresh,
+   which is honest — nothing has actually demonstrated retention yet.
+   Runs once per deck, guarded by a flag, and never overwrites a card
+   that already has real FSRS history. */
+function migrateDeckToFsrs(deck){
+  if(deck.fsrsMigrated)return;
+  deck.fsrsMigrated=true;
+  deck.cards.forEach(function(c){
+    if(deck.progress[c.id]==="known"){
+      if(!c.fsrsFwd)c.fsrsFwd=fsrsReview(null,3);
+      if(deck.dualDirection&&!c.fsrsRev)c.fsrsRev=fsrsReview(null,3);
+    }
+  });
+  /* this mutates library data as a side effect of a display/pool
+     calculation (buildPool gets called just to compute counts for the
+     UI, not only when a session actually starts) — without an
+     explicit save here, the migration only lives in memory and is
+     silently lost if nothing else happens to trigger a save before
+     the page closes, quietly re-running (harmlessly, but wastefully)
+     next time instead of ever actually sticking. */
+  scheduleSave(true);
+}
+
 function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
 /* shuffle that also spreads out cards which would otherwise cluster —
    cards from the same deck (in a multi-deck session) or cards that sat
    right next to each other in the original pool order are kept apart
@@ -1541,7 +1675,7 @@ function knownCountOf(d){return Object.keys(d.progress).filter(function(id){retu
 /* ---- multi-deck session helpers ---- */
 function resolveDeckIds(ids){return (ids||[]).filter(function(id){return library.decks.some(function(d){return d.id===id;});});}
 function decksById(ids){return resolveDeckIds(ids).map(function(id){return library.decks.find(function(d){return d.id===id;});});}
-function buildCardIndex(decks){var idx={};decks.forEach(function(d){d.cards.forEach(function(c){idx[d.id+":"+c.id]={card:c,deck:d};});});return idx;}
+function buildCardIndex(decks){var idx={};decks.forEach(function(d){d.cards.forEach(function(c){idx[d.id+":"+c.id]={card:c,deck:d,reverse:false};if(d.dualDirection)idx[d.id+":"+c.id+":rev"]={card:c,deck:d,reverse:true};});});return idx;}
 function currentCardEntry(){if(session.pos>=session.order.length)return null;var cid=session.order[session.pos];return(session.cardIndex&&session.cardIndex[cid])||null;}
 function currentDeck(){var e=currentCardEntry();return e?e.deck:null;}
 
@@ -1729,6 +1863,42 @@ var frontText=el("frontText"),backText=el("backText"),tapHint=el("tapHint");
 var actionRow=el("actionRow"),quizGrid=el("quizGrid"),hintRow=el("hintRow"),skipBtn=el("skipBtn");
 var frontFace=frontText.parentElement,backFace=backText.parentElement;
 function fmtDuration(ms){var s=Math.max(0,Math.round(ms/1000));if(s<60)return s+"s";var m=Math.floor(s/60),r=s%60;if(m<60)return m+"m"+(r>0?" "+r+"s":"");var h=Math.floor(m/60),rm=m%60;return h+"h"+(rm>0?" "+rm+"m":"");}
+function fmtIntervalDays(days){
+  if(days<30)return Math.round(days)+"d";
+  if(days<365)return Math.round(days/30)+"mo";
+  return (days/365).toFixed(1)+"y";
+}
+function renderReviewGradeIntervals(){
+  var card=currentCard();
+  if(!card)return;
+  var stateKey=session.isReverse?"fsrsRev":"fsrsFwd";
+  var state=card[stateKey];
+  var labelIds={1:"rgIntervalAgain",2:"rgIntervalHard",3:"rgIntervalGood",4:"rgIntervalEasy"};
+  [1,2,3,4].forEach(function(grade){
+    var result=fsrsReview(state,grade);
+    var days=Math.max(1,Math.round((result.due-Date.now())/86400000));
+    el(labelIds[grade]).textContent=fmtIntervalDays(days);
+  });
+}
+function gradeCard(grade){
+  if(undoResolveActive)return;
+  if(marking)return;
+  var e=currentCardEntry();
+  var card=e&&e.card,deck=e&&e.deck;
+  if(!card||!deck)return;
+  marking=true;
+  var isRev=session.isReverse;
+  var stateKey=isRev?"fsrsRev":"fsrsFwd";
+  card[stateKey]=fsrsReview(card[stateKey],grade);
+  var compositeId=deck.id+":"+card.id+(isRev?":rev":"");
+  var status=grade===1?"unknown":"known";
+  session.results[compositeId]=status;
+  scheduleSave();
+  renderProgress();
+  haptic(status==="known"?"success":"medium");flashScreen(status);triggerThwack();if(status==="known")spawnParticles();updateCombo(status);
+  var go=function(){setTimeout(advance,650);};
+  if(!flipped){flipped=true;cardEl.classList.add("flipped");setTimeout(go,370);}else{go();}
+}
 function resetFaces(){frontFace.style.opacity="";backFace.style.opacity="";backFace.style.transform="";backFace.style.zIndex="";}
 
 /* ---- splash screen ---- */
@@ -1919,6 +2089,27 @@ function buildPool(mode,decks){
     var restIds=scored.slice(weakCount).map(function(s){return s.id;});
     var sampleCount=Math.min(restIds.length,Math.max(0,Math.round(weakIds.length*0.2)));
     return shuffle(weakIds.concat(shuffle(restIds).slice(0,sampleCount)));
+  }else if(mode==="review"){
+    /* spaced repetition: every card due today (or never yet reviewed
+       in this direction), oldest-due first. Dual-direction decks also
+       queue the reverse (back→front) item, tracked completely
+       separately since it's its own memory task with its own FSRS
+       state. No daily new-card cap — everything eligible right now is
+       included. */
+    decks.forEach(migrateDeckToFsrs);
+    var now=Date.now(),items=[];
+    decks.forEach(function(d){
+      d.cards.forEach(function(c){
+        var fwd=c.fsrsFwd;
+        if(!fwd||fwd.due<=now)items.push({id:d.id+":"+c.id,due:fwd?fwd.due:-1});
+        if(d.dualDirection){
+          var rev=c.fsrsRev;
+          if(!rev||rev.due<=now)items.push({id:d.id+":"+c.id+":rev",due:rev?rev.due:-1});
+        }
+      });
+    });
+    items.sort(function(a,b){return a.due-b.due;});
+    return items.map(function(it){return it.id;});
   }else{
     var allIds=[];
     decks.forEach(function(d){d.cards.forEach(function(c){allIds.push(d.id+":"+c.id);});});
@@ -1926,9 +2117,9 @@ function buildPool(mode,decks){
   }
 }
 
-function setModeBtns(mode){["all","focus","mixed","quiz","wild","fresh","weak","type"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.classList.toggle("active",m===mode);});}
+function setModeBtns(mode){["all","focus","mixed","quiz","wild","fresh","weak","type","review"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.classList.toggle("active",m===mode);});}
 
-function updateModeAvailability(){var decks=decksById(pendingStudyDeckIds);var focusOk=decks.length>0&&decks.some(function(d){return knownCountOf(d)>0;})&&buildPool("focus",decks).length>0;el("modeFocus").hidden=!focusOk;var weakOk=decks.some(function(d){return d.cardStats&&Object.keys(d.cardStats).length>0;});el("modeWeak").hidden=!weakOk;}
+function updateModeAvailability(){var decks=decksById(pendingStudyDeckIds);var focusOk=decks.length>0&&decks.some(function(d){return knownCountOf(d)>0;})&&buildPool("focus",decks).length>0;el("modeFocus").hidden=!focusOk;var weakOk=decks.some(function(d){return d.cardStats&&Object.keys(d.cardStats).length>0;});el("modeWeak").hidden=!weakOk;var reviewCount=decks.length?buildPool("review",decks).length:0;el("modeReviewDesc").textContent=reviewCount===0?"Spaced repetition — nothing due right now.":"Spaced repetition — "+reviewCount+" card"+(reviewCount===1?"":"s")+" due today.";}
 
 /* ---- unified start-session popup ---- */
 function selectStartMode(m){
@@ -1994,8 +2185,11 @@ el("quickFontCloseBtn").addEventListener("click",hideQuickFontPopup);
 function updateStudyUi(){
   var isQuiz=session.mode==="quiz";
   var isType=session.mode==="type";
-  actionRow.hidden=isQuiz||isType;updateSkipVisibility();quizGrid.hidden=!isQuiz;tapHint.hidden=isQuiz||isType;
+  var isReview=session.mode==="review";
+  actionRow.hidden=isQuiz||isType||isReview;updateSkipVisibility();quizGrid.hidden=!isQuiz;tapHint.hidden=isQuiz||isType;
   el("typeArea").hidden=!isType;
+  el("reviewGradeRow").hidden=!isReview;
+  if(isReview)renderReviewGradeIntervals();
   hintRow.textContent=isQuiz?"select the correct reading":isType?"type the reading, then press Check":"";
   hintRow.hidden=!(isQuiz||isType);
   fitCardToStage();
@@ -2033,7 +2227,7 @@ if(window.visualViewport){
 
 function startSession(mode,overrideIds,isRevise){var decks=decksById(session.deckIds);if(!decks.length){showSubview("empty");return;}pendingStudyDeckIds=session.deckIds;session.mode=mode||"all";session.isRevise=!!isRevise;session.results={};session.startTime=Date.now();session.reviseIds=null;flipped=false;marking=false;
 lastMark=null;undoResolveActive=false;undoResolveOriginalStatus=null;el("undoBtn").hidden=true;updateSkipVisibility();el("undoConfirmMsg").classList.remove("show");el("undoResolveCard").classList.remove("show","hide");session.savedHistoryEntry=null;
-comboCount=0;sessionBestCombo=0;updateComboDisplay();if(session.mode!=="wild")applyFontFace(currentFontFace);session.cardIndex=buildCardIndex(decks);session.order=shuffleSpread(overrideIds||buildPool(session.mode,decks),decks.length>1);session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
+comboCount=0;sessionBestCombo=0;updateComboDisplay();if(session.mode!=="wild")applyFontFace(currentFontFace);session.cardIndex=buildCardIndex(decks);session.order=overrideIds?shuffleSpread(overrideIds,decks.length>1):(session.mode==="review"?buildPool(session.mode,decks):shuffleSpread(buildPool(session.mode,decks),decks.length>1));session.pos=0;setModeBtns(session.mode);updateModeAvailability();renderProgress();renderCard();}
 
 function renderProgress(){if(!session.deckIds||!session.deckIds.length)return;var tot=session.order.length;var kN=Object.keys(session.results).filter(function(id){return session.results[id]==="known";}).length;var uN=Object.keys(session.results).filter(function(id){return session.results[id]==="unknown";}).length;el("scoreKnown").textContent="✓ "+kN;el("scoreUnknown").textContent="✗ "+uN;el("progressRight").textContent=(kN+uN)+" / "+tot;var kP=tot?Math.round(kN/tot*100):0,uP=tot?Math.round(uN/tot*100):0;el("progressKnown").style.width=kP+"%";el("progressUnknown").style.left=kP+"%";el("progressUnknown").style.width=uP+"%";}
 
@@ -2169,6 +2363,8 @@ function saveSessionToHistory(){
 
 function renderCard(){
   var card=currentCard();
+  var entry=currentCardEntry();
+  session.isReverse=!!(entry&&entry.reverse);
   flipped=false;
   /* the flip transition actually lives on .cardInner (transform:rotateY),
      not on the outer .card element — suppressing transition on cardEl
@@ -2219,7 +2415,7 @@ function renderCard(){
   cardEl.style.transform="translateY(8px) scale(0.97)";
   cardEl.style.opacity="0";
   void cardEl.offsetHeight;
-  setCardText(card.front,card.back);
+  setCardText((session.isReverse?card.back:card.front),(session.isReverse?card.front:card.back));
   if(session.mode==="quiz")renderQuizOptions(card);
   if(session.mode==="type")renderTypeInput();
   if(session.mode==="wild"){var wKeys=Object.keys(FONTS);var wKey=wKeys[Math.floor(Math.random()*wKeys.length)];var wFont=FONTS[wKey];if(wFont.gf&&!document.getElementById("gf_"+wKey)){var wLk=document.createElement("link");wLk.id="gf_"+wKey;wLk.rel="stylesheet";wLk.href=wFont.gf;document.head.appendChild(wLk);}document.documentElement.style.setProperty("--font-display",wFont.family);}
@@ -2358,13 +2554,13 @@ function advance(){marking=false;session.pos++;renderCard();}
 /* smooth swipe — snap back then flip to reveal answer */
 var tStartX=0,tStartY=0,swipeMode=false,lastSwipeTime=0,SWIPE_THRESH=72;
 cardEl.addEventListener("touchstart",function(e){
-  if(e.touches.length!==1||marking||session.mode==="quiz"||session.mode==="type"||undoResolveActive)return;
+  if(e.touches.length!==1||marking||session.mode==="quiz"||session.mode==="type"||session.mode==="review"||undoResolveActive)return;
   tStartX=e.touches[0].clientX;tStartY=e.touches[0].clientY;swipeMode=false;
   cardEl.style.transition="none";cardEl.style.zIndex="200";
   if(!flipped){backFace.style.transform="none";backFace.style.zIndex="2";backFace.style.opacity="0";}
 },{passive:true});
 cardEl.addEventListener("touchmove",function(e){
-  if(marking||session.mode==="quiz"||session.mode==="type"||!currentCard()||undoResolveActive)return;
+  if(marking||session.mode==="quiz"||session.mode==="type"||session.mode==="review"||!currentCard()||undoResolveActive)return;
   var dx=e.touches[0].clientX-tStartX,dy=e.touches[0].clientY-tStartY;
   if(!swipeMode){if(Math.abs(dx)<8&&Math.abs(dy)<8)return;if(Math.abs(dy)>Math.abs(dx))return;swipeMode=true;}
   e.preventDefault();
@@ -2416,14 +2612,17 @@ haptic(status==="known"?"success":"medium");flashScreen(status);triggerThwack();
 cardEl.addEventListener("click",function(){if(Date.now()-lastSwipeTime<300||swipeMode||undoResolveActive)return;if(session.mode!=="quiz"&&session.mode!=="type")flipCard();});
 el("btnKnow").addEventListener("click",function(e){e.stopPropagation();markCard("known");});
 el("btnDontKnow").addEventListener("click",function(e){e.stopPropagation();markCard("unknown");});
+Array.prototype.forEach.call(document.querySelectorAll(".reviewGradeBtn"),function(btn){
+  btn.addEventListener("click",function(e){e.stopPropagation();gradeCard(parseInt(btn.dataset.grade,10));});
+});
 el("skipBtn").addEventListener("click",function(e){e.stopPropagation();advance();});
-["all","focus","mixed","quiz","wild","fresh","weak","type"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.addEventListener("click",function(){selectStartMode(m);});});
+["all","focus","mixed","quiz","wild","fresh","weak","type","review"].forEach(function(m){var btn=el("mode"+m.charAt(0).toUpperCase()+m.slice(1));if(btn)btn.addEventListener("click",function(){selectStartMode(m);});});
 
 
 el("undoBtn").addEventListener("click",function(e){e.stopPropagation();performUndo();});
 el("completeUndoBtn").addEventListener("click",function(e){e.stopPropagation();performUndo();});
 
-document.addEventListener("keydown",function(e){if(currentScreen!=="study")return;if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;if(!liveView.classList.contains("active")||session.mode==="quiz"||session.mode==="type")return;if(e.code==="Space"||e.code==="Enter"||e.code==="ArrowUp"){e.preventDefault();if(!undoResolveActive)flipCard();}else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}else if(e.code==="ArrowDown"){e.preventDefault();if(lastMark&&!undoResolveActive)performUndo();}});
+document.addEventListener("keydown",function(e){if(currentScreen!=="study")return;if(document.activeElement&&(document.activeElement.tagName==="TEXTAREA"||document.activeElement.tagName==="INPUT"))return;if(!liveView.classList.contains("active")||session.mode==="quiz"||session.mode==="type")return;if(e.code==="Space"||e.code==="Enter"||e.code==="ArrowUp"){e.preventDefault();if(!undoResolveActive)flipCard();}else if(session.mode==="review"){if(!undoResolveActive){if(e.code==="Digit1"){e.preventDefault();gradeCard(1);}else if(e.code==="Digit2"){e.preventDefault();gradeCard(2);}else if(e.code==="Digit3"){e.preventDefault();gradeCard(3);}else if(e.code==="Digit4"){e.preventDefault();gradeCard(4);}}}else if(e.code==="ArrowRight"){e.preventDefault();markCard("known");}else if(e.code==="ArrowLeft"){e.preventDefault();markCard("unknown");}else if(e.code==="ArrowDown"){e.preventDefault();if(lastMark&&!undoResolveActive)performUndo();}});
 
 /* complete screen */
 el("studyAgainBtn").addEventListener("click",function(){openStartPopup("again");});
@@ -2669,6 +2868,7 @@ function renderHistory(){
 /* settings */
 function renderSettings(){
   renderDeckList();renderDestinationBlock();el("thisDeckSection").hidden=!activeDeck();
+  var ad=activeDeck();if(ad)el("dualDirectionCheck").checked=!!ad.dualDirection;
   renderGhSyncUI();
   Object.keys(FONTS).forEach(function(k){var f=FONTS[k];if(f.gf&&!document.getElementById("gf_"+k)){var lk=document.createElement("link");lk.id="gf_"+k;lk.rel="stylesheet";lk.href=f.gf;document.head.appendChild(lk);}});
 }
@@ -2904,6 +3104,11 @@ el("resetProgressBtn").addEventListener("click",function(){
   showConfirm("Reset all progress for this deck? This can't be undone.","Reset",function(){
     deck.progress={};scheduleSave();renderSettings();updateModeAvailability();
   });
+});
+el("dualDirectionCheck").addEventListener("change",function(){
+  var deck=activeDeck();if(!deck)return;
+  deck.dualDirection=el("dualDirectionCheck").checked;
+  scheduleSave(true);
 });
 el("openDeckManagerBtn").addEventListener("click",function(){showScreen("deckManager");});
 el("ghConnectBtn").addEventListener("click",function(){
